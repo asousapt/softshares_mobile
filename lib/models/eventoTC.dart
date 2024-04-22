@@ -7,11 +7,17 @@ class EventTC {
   final String titulo;
   final int categoria;
   final String descricao;
+  final int numeroMaxPart;
+  final int numeroInscritos;
+  final String localizacao;
 
   const EventTC(
     this.titulo,
     this.categoria,
     this.descricao,
+    this.numeroMaxPart,
+    this.numeroInscritos,
+    this.localizacao,
   );
 }
 
@@ -23,17 +29,17 @@ final kEvents = LinkedHashMap<DateTime, List<EventTC>>(
 
 final Map<DateTime, List<EventTC>> _kEventSource = {
   DateTime(2024, 4, 19): [
-    EventTC('Event 1', 1, 'gfwergferw'),
-    EventTC('Event 2', 2, 'gfwergferw'),
-    EventTC('Event 17', 1, 'gfwergferw'),
-    EventTC('Event 99', 2, 'gfwergferw'),
-    EventTC('Event 98', 2, 'gfwergferw'),
+    EventTC('Event 1', 1, 'gfwergferw', 200, 1, "Restaurante da Beira"),
+    EventTC('Event 2', 2, 'gfwergferw', 0, 100, "Restaurante da Beira"),
+    EventTC('Event 17', 1, 'gfwergferw', 10, 10, "Restaurante da Beira"),
+    EventTC('Event 99', 2, 'gfwergferw', 200, 1, "Restaurante da Beira"),
+    EventTC('Event 98', 2, 'gfwergferw', 100, 50, "Restaurante da Beira"),
   ],
   DateTime(2024, 4, 20): [
-    EventTC('Event 3', 3, 'gfwergferw'),
+    EventTC('Event 3', 3, 'gfwergferw', 150, 50, "Restaurante da Beira"),
   ],
   DateTime(2024, 4, 25): [
-    EventTC('Event 4', 3, 'gfwergferw'),
+    EventTC('Event 4', 3, 'gfwergferw', 12, 10, "Restaurante da Beira"),
   ],
 };
 
