@@ -1,6 +1,7 @@
 import "Login/registo.dart";
 import "Login/login.dart";
 import "package:flutter/material.dart";
+//import 'package:softshares_mobile/screens/home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,9 @@ class MyApp extends StatelessWidget {
       },
       theme: ThemeData(
         colorSchemeSeed: Color(0xFF0465D9)
-      ),
+      )
+    /*return const MaterialApp(
+      home: HomeScreen(),*/
     );
   }
 }
