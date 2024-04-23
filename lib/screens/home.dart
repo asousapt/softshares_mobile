@@ -3,6 +3,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:softshares_mobile/models/eventoTC.dart';
 import 'package:softshares_mobile/widgets/eventos/calendario.dart';
 import 'package:softshares_mobile/widgets/eventos/event_list.dart';
+import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -83,14 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: NavigationBar(
-        destinations: [
-          NavigationDestination(icon: Icon(Icons.home), label: "TEXT"),
-          NavigationDestination(icon: Icon(Icons.abc), label: "TEXT"),
-          NavigationDestination(icon: Icon(Icons.safety_check), label: "TEXT"),
-          NavigationDestination(icon: Icon(Icons.abc_sharp), label: "TEXT"),
-        ],
-      ),
+      bottomNavigationBar: const BottomNavigation(),
       backgroundColor: const Color.fromRGBO(29, 90, 161, 1),
       appBar: AppBar(
         title: const Text("Página Inicial"),
