@@ -79,7 +79,7 @@ class TableCalendarWidget extends StatelessWidget {
         rangeEndDay: rangeEnd,
         calendarFormat: calendarFormat,
         headerStyle:
-            HeaderStyle(formatButtonVisible: false, titleCentered: true),
+            const HeaderStyle(formatButtonVisible: false, titleCentered: true),
         rangeSelectionMode: rangeSelectionMode,
         eventLoader: (day) => eventLoader(day),
         startingDayOfWeek: StartingDayOfWeek.monday,
