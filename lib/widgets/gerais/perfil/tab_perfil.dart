@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/custom_tab.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/models/polo.dart';
+import 'package:softshares_mobile/models/subcategoria.dart';
+import 'package:softshares_mobile/models/departamento.dart';
+import 'package:softshares_mobile/models/funcao.dart';
+import 'package:softshares_mobile/widgets/gerais/dropdown_generica.dart';
 
 class TabPerfil extends StatefulWidget {
   TabPerfil({super.key, required this.utilizador});
@@ -19,6 +24,35 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _passwd = TextEditingController();
   final TextEditingController _sobre = TextEditingController();
+  Departamento? _departamento;
+  Polo? _polo;
+  Funcao? _funcao;
+
+  List<Polo> polos = [
+    Polo(1, 'Polo 1'),
+    Polo(2, 'Polo 2'),
+    Polo(3, 'Polo 3'),
+  ];
+
+  List<Subcategoria> subcategorias = [
+    Subcategoria(1, 'Subcategoria 1'),
+    Subcategoria(2, 'Subcategoria 2'),
+    Subcategoria(3, 'Subcategoria 3'),
+    Subcategoria(4, 'Subcategoria 4'),
+  ];
+
+  List<Departamento> departamentos = [
+    Departamento(1, 'Administração'),
+    Departamento(2, 'Financeiro'),
+    Departamento(3, 'Logistica'),
+    Departamento(4, 'RH'),
+  ];
+  List<Funcao> funcoes = [
+    Funcao(1, 'Gestor'),
+    Funcao(2, 'Programador'),
+    Funcao(3, 'Técnico de RH'),
+    Funcao(4, 'Administrativo'),
+  ];
 
   @override
   void initState() {
@@ -29,6 +63,37 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
     _unome.text = widget.utilizador.uNome;
     _email.text = widget.utilizador.email;
     _sobre.text = widget.utilizador.sobre;
+    _departamento = departamentos.firstWhere((element) =>
+        element.departamentoId == widget.utilizador.departamentoId);
+    _polo = polos
+        .firstWhere((element) => element.poloId == widget.utilizador.poloId);
+    _funcao = funcoes.firstWhere(
+        (element) => element.funcaoId == widget.utilizador.funcaoId);
+  }
+
+  // faz a mudança de departamento
+  void _mudaDepartamento(value) {
+    setState(() {
+      _departamento = value;
+      widget.utilizador.departamentoId =
+          _departamento == null ? 0 : _departamento!.departamentoId;
+    });
+  }
+
+  // muda a funcao do utilizador
+  void _mudaFuncao(value) {
+    setState(() {
+      _funcao = value;
+      widget.utilizador.funcaoId = _funcao == null ? 0 : _funcao!.funcaoId;
+    });
+  }
+
+  //muda o polo do utilizador
+  void _mudaPolo(value) {
+    setState(() {
+      _polo = value;
+      widget.utilizador.poloId = _polo == null ? 0 : _polo!.poloId;
+    });
   }
 
   @override
@@ -54,7 +119,7 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
               ],
             ),
           ),
-          Container(
+          SizedBox(
             height: MediaQuery.of(context).size.height,
             child: TabBarView(
               children: [
@@ -115,7 +180,34 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                   ),
                 ),
                 Container(
-                  child: Text("222"),
+                  child: Column(
+                    children: [
+                      // Dropdown de seleccao do polo
+                      DropdownGenereica(
+                        items: polos,
+                        onChanged: _mudaPolo,
+                        titulo: "Polo",
+                        value: _polo,
+                        getText: (polo) => polo.nome,
+                      ),
+                      //DropDown departamento
+                      DropdownGenereica(
+                        items: departamentos,
+                        onChanged: _mudaDepartamento,
+                        titulo: "Departamento",
+                        value: _departamento,
+                        getText: (departamento) => departamento.descricao,
+                      ),
+                      //DropDown Fucao
+                      DropdownGenereica(
+                        items: funcoes,
+                        onChanged: _mudaFuncao,
+                        titulo: "Função",
+                        value: _funcao,
+                        getText: (funcao) => funcao.descricao,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

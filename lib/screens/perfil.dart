@@ -5,9 +5,9 @@ import 'package:softshares_mobile/widgets/gerais/perfil/perfil_img.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen({super.key, required this.utilizador});
+  const ProfileScreen({super.key, required this.utilizador});
 
-  Utilizador utilizador;
+  final Utilizador utilizador;
 
   @override
   State<StatefulWidget> createState() {
@@ -28,7 +28,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           user.poloId == 0 ||
           user.departamentoId == 0 ||
           user.funcaoId == 0 ||
-          user.sobre.isEmpty) {
+          user.sobre.isEmpty ||
+          user.departamentoId == 0 ||
+          user.funcaoId == 0 ||
+          user.poloId == 0) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Campos não preenchidos"),
