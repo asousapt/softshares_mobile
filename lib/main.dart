@@ -1,5 +1,5 @@
-import "Login/registo.dart";
-import "Login/login.dart";
+import "screens/Login/registo.dart";
+import "screens/Login/login.dart";
 import "package:flutter/material.dart";
 //import 'package:softshares_mobile/screens/home.dart';
 
@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Softshares',
       initialRoute: "/login", // c)
       routes: {
         "/login": (context) => const EcraLogin(),

@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 
-class EcraLogin extends StatelessWidget {
-  const EcraLogin({Key? key}) : super(key: key);
+class EcraRegistar extends StatelessWidget {
+  const EcraRegistar({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -50,34 +50,51 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(100),
+      body: Container(
+        decoration: BoxDecoration(color: Color(0xFFFFFFFF)),
+        padding: EdgeInsets.all(60),
         child: Column(
           children: <Widget>[
             Text(
-              "Softshares",
+              "Criar uma conta",
               style: TextStyle(
-                fontSize: 65, // Set the font size to 20
+                fontSize: 55, // Set the font size to 20
                 fontWeight: FontWeight.bold,
                 color: const Color.fromARGB(255, 48, 48,
                     48), // Set the color to dark grey (800 is the shade)
               ),
             ),
             Text(
-              "Bem  Vindo de volta\nRealize o login",
+              "Bem  Vindo de volta\nRealize o rEcraRegistar",
               textAlign: TextAlign.center,
             ),
+            SizedBox(
+              height: 20,
+            ),
             TextField(
-                controller: controlEmail,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.account_circle_outlined),
-                  labelText: "Email")),
-                
-            TextField(
-              controller: controlPass,
+              controller: controlEmail,
               decoration: InputDecoration(
-                prefixIcon : Icon(Icons.lock_outline_rounded),
-                labelText: "Password"),
+                prefixIcon: Icon(Icons.account_circle_outlined),
+                labelText: "Email",
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(30.0), // Adjust the value as needed
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(top: 20),
+              child: TextField(
+                controller: controlPass,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.lock_outline_rounded),
+                  labelText: "Password",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(
+                        30.0), // Adjust the value as needed
+                  ),
+                ),
+              ),
             ),
             Row(
               children: [
@@ -97,22 +114,26 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               ],
             ),
-            ElevatedButton(onPressed: sub, child: Text("Login")),
+            ElevatedButton(onPressed: sub, child: Text("rEcraRegistar")),
             SizedBox(
               height: 40,
             ),
-            ElevatedButton(onPressed: sub, child: Row(
-              children: [
-                Icon(Icons.facebook_outlined),
-                Text("Facebook"),
-              ],
-            )),
-            ElevatedButton(onPressed: sub, child: Row(
-              children: [
-                Icon(Icons.apps),
-                Text("Google"),
-              ],
-            )),
+            ElevatedButton(
+                onPressed: sub,
+                child: Row(
+                  children: [
+                    Icon(Icons.facebook_outlined),
+                    Text("Facebook"),
+                  ],
+                )),
+            ElevatedButton(
+                onPressed: sub,
+                child: Row(
+                  children: [
+                    Icon(Icons.apps),
+                    Text("Google"),
+                  ],
+                )),
           ],
         ),
       ),
