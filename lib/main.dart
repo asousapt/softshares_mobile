@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:softshares_mobile/screens/home.dart';
 import 'package:softshares_mobile/screens/perfil.dart';

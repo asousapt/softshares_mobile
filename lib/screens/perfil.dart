@@ -34,6 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             content: Text("Campos não preenchidos"),
           ),
         );
+        return false;
       }
       return true;
     }

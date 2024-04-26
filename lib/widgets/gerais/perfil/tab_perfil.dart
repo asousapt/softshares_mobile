@@ -19,7 +19,6 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _passwd = TextEditingController();
   final TextEditingController _sobre = TextEditingController();
-  bool? isFieldEmpty;
 
   @override
   void initState() {
@@ -30,16 +29,6 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
     _unome.text = widget.utilizador.uNome;
     _email.text = widget.utilizador.email;
     _sobre.text = widget.utilizador.sobre;
-
-    if (_pnome.text.isEmpty) {
-      setState(() {
-        isFieldEmpty = true;
-      });
-    } else {
-      setState(() {
-        isFieldEmpty = false;
-      });
-    }
   }
 
   @override
@@ -79,35 +68,24 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                         controller: _pnome,
                         decoration: InputDecoration(
                           label: Text("Primeiro nome"),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color:
-                                    isFieldEmpty! ? Colors.red : Colors.grey),
-                          ),
                         ),
                         onChanged: (value) {
-                          if (value.isEmpty) {
-                            setState(() {
-                              isFieldEmpty = true;
-                              print(isFieldEmpty);
-                            });
-                          } else {
-                            setState(() {
-                              isFieldEmpty = false;
-                              widget.utilizador.pNome = value;
-                            });
-                          }
+                          widget.utilizador.pNome = value;
                         },
                       ),
                       TextFormField(
                         maxLength: 60,
+                        keyboardType: TextInputType.text,
                         controller: _unome,
                         decoration: InputDecoration(
                           label: Text("último nome"),
                         ),
-                        onChanged: (value) {},
+                        onChanged: (value) {
+                          widget.utilizador.uNome = value;
+                        },
                       ),
                       TextFormField(
+                        maxLength: 60,
                         readOnly: true,
                         controller: _email,
                         decoration: InputDecoration(
@@ -123,10 +101,15 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                       TextFormField(
                         minLines: 5,
                         maxLines: 7,
+                        maxLength: 140,
+                        keyboardType: TextInputType.text,
                         controller: _sobre,
                         decoration: InputDecoration(
                           label: Text("Sobre mim "),
                         ),
+                        onChanged: (value) {
+                          widget.utilizador.sobre = value;
+                        },
                       ),
                     ],
                   ),
