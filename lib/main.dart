@@ -29,11 +29,15 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Softshares',
+      initialRoute: "/login",
       routes: {
         "/login": (context) => const EcraLogin(),
         "/registar": (context) => const EcraRegistar()
       },
-      home: HomeScreen(),
+      //home: HomeScreen(),
+      theme: ThemeData(
+        colorSchemeSeed: Color(0xFF0465D9)
+      )
     );
   }
 }

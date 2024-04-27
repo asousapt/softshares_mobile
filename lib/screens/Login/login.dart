@@ -5,7 +5,7 @@ class EcraLogin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: MyHomePage(title: "Softshares"),
+      child: const MyHomePage(title: "Softshares"),
     );
   }
 }
