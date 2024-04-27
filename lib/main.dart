@@ -1,8 +1,6 @@
 import "screens/Login/registo.dart";
 import "screens/Login/login.dart";
 import "package:flutter/material.dart";
-//import 'package:softshares_mobile/screens/home.dart';
-import 'package:flutter/material.dart';
 import 'package:softshares_mobile/screens/home.dart';
 import 'package:softshares_mobile/screens/perfil.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
@@ -29,14 +27,15 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp(
-        title: 'Softshares',
-        initialRoute: "/login",
-        theme: SoftSharesTheme.lightTheme,
-        routes: {
-          "/login": (context) => const EcraLogin(),
-          "/registar": (context) => const EcraRegistar()
-        },
-        //home: HomeScreen(),
-        theme: ThemeData(colorSchemeSeed: Color(0xFF0465D9)));
+      title: 'Softshares',
+      //initialRoute: "/login",
+      theme: SoftSharesTheme.lightTheme,
+      routes: {
+        "/login": (context) => const EcraLogin(),
+        "/registar": (context) => const EcraRegistar(),
+        "/perfil": (context) => ProfileScreen(utilizador: utilizador)
+      },
+      home: EcraLogin(),
+    );
   }
 }

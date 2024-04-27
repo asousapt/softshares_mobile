@@ -1,23 +1,17 @@
 import "package:flutter/material.dart";
+import 'package:country_flags/country_flags.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class EcraLogin extends StatelessWidget {
-  const EcraLogin({Key? key}) : super(key: key);
+class EcraLogin extends StatefulWidget {
+  const EcraLogin({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: const MyHomePage(title: "Softshares"),
-    );
+  State<EcraLogin> createState() {
+    return _EcraLoginState();
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
+class _EcraLoginState extends State<EcraLogin> {
   String email = '';
   String pass = '';
   late TextEditingController controlEmail;
@@ -48,163 +42,201 @@ class _MyHomePageState extends State<MyHomePage> {
     //bd.inserirvalor(Email, Passricao);
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 120, 20, 0),
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Color(0xFFFFFFFF)),
-              padding: EdgeInsets.fromLTRB(20, 80, 20, 20),
+      body: Padding(
+        padding:
+            const EdgeInsets.only(left: 12, right: 12, top: 100, bottom: 90),
+        child: Container(
+          color: Theme.of(context).canvasColor,
+          child: SingleChildScrollView(
+            child: Expanded(
               child: Column(
-                children: <Widget>[
-                  Text(
-                    "Softshares",
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const SizedBox(height: 40),
+                  const Text(
+                    'SoftShares',
                     style: TextStyle(
-                      fontSize: 55, // Set the font size to 20
+                      fontSize: 42,
                       fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 48, 48,
-                          48), // Set the color to dark grey (800 is the shade)
                     ),
                   ),
-                  SizedBox(
-                    height: 30,
-                  ),
+                  const SizedBox(height: 20),
                   Text(
-                    "Bem Vindo de volta\nRealize o login",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700
-                    ),
+                    "Bem-vindo de volta",
+                    style: const TextStyle(fontSize: 14),
                   ),
-                  SizedBox(
-                    height: 80,
+                  SizedBox(height: 5),
+                  Text(
+                    "Ralize o Login",
+                    style: const TextStyle(fontSize: 14),
                   ),
-                  TextField(
-                    controller: controlEmail,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.account_circle_outlined),
-                      labelText: "Email",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                            30.0), // Adjust the value as needed
-                      ),
-                    ),
-                  ),
+                  const SizedBox(height: 50),
                   Container(
-                    padding: EdgeInsets.only(top: 20),
-                    child: TextField(
-                      controller: controlPass,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock_outline_rounded),
-                        labelText: "Password",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                              30.0), // Adjust the value as needed
+                    margin:
+                        const EdgeInsets.only(left: 8, right: 8, bottom: 30),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: controlEmail,
+                          decoration: InputDecoration(
+                            labelText: "Email",
+                            prefixIcon:
+                                const Icon(Icons.account_circle_outlined),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: controlPass,
+                          decoration: InputDecoration(
+                            labelText: "Palavra-passe",
+                            prefixIcon: Icon(Icons.lock_outline_rounded),
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          children: [
+                            Text(
+                              "Esqueci-me da palavra-passe",
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                "Clique aqui",
+                                style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 3),
+                        SizedBox(
+                          height: 50,
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed: () {},
+                            child: Text("Login"),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                print("escolhi PT");
+                              },
+                              child: CircleAvatar(
+                                radius: 32,
+                                backgroundColor: Colors
+                                    .transparent, // Make the background transparent
+                                child: AspectRatio(
+                                  aspectRatio:
+                                      1.0, // Ensure aspect ratio is 1:1 to maintain the circular shape
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    child: CountryFlag.fromCountryCode(
+                                      'PT',
+                                      height: 48,
+                                      width: 48,
+                                      borderRadius: 48,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                print("escolhi ES");
+                              },
+                              child: CircleAvatar(
+                                radius: 32,
+                                backgroundColor: Colors.transparent,
+                                child: AspectRatio(
+                                  aspectRatio: 1.0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    child: CountryFlag.fromCountryCode(
+                                      'ES',
+                                      height: 48,
+                                      width: 48,
+                                      borderRadius: 48,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                print("escolhi GB");
+                              },
+                              child: CircleAvatar(
+                                radius: 32,
+                                backgroundColor: Colors.transparent,
+                                child: AspectRatio(
+                                  aspectRatio: 1.0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    child: CountryFlag.fromCountryCode(
+                                      'GB',
+                                      height: 48,
+                                      width: 48,
+                                      borderRadius: 48,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(color: Colors.grey),
+                        ElevatedButton(
+                          onPressed: sub,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 40,
+                                vertical: 10), // Adjust padding as needed
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(FontAwesomeIcons.facebook),
+                              SizedBox(width: 4),
+                              Text("Facebook"),
+                            ],
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: sub,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 40,
+                              vertical: 10,
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(FontAwesomeIcons.google),
+                              SizedBox(width: 4),
+                              Text("Google"),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Row(
-                    children: [
-                      const Text("Esqueci-me da password. ",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          )),
-                      TextButton(
-                        onPressed: () =>
-                            {Navigator.pushNamed(context, "/recuperarPass")},
-                        child: const Text("Clicar Aqui",
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline)),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  FilledButton(
-                    onPressed: sub,
-                    child: Text("Login"),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 10
-                      ),
-                      textStyle: TextStyle(
-                        fontSize: 22, // Adjust the font size as needed
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(onPressed: (){}, icon: Icon(Icons.circle)),
-                      IconButton(onPressed: (){}, icon: Icon(Icons.circle))
-                    ],
-                  ),
-                  Divider(color: Color(0xFF0465D9),),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  ElevatedButton(
-                      onPressed: sub,
-                      style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 10), // Adjust padding as needed
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.facebook_outlined),
-                          Text("Facebook"),
-                        ],
-                      )),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton(
-                      onPressed: sub,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.apps),
-                          Text("Google"),
-                        ],
-                      )),
                 ],
               ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Não tens conta? ",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  )),
-              TextButton(
-                onPressed: () => {Navigator.pushNamed(context, "/registar")},
-                child: const Text("Registar",
-                    style: TextStyle(
-                        color: Color(0xFF83B1FF),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline)),
-              )
-            ],
-          )
-        ],
+        ),
       ),
-      backgroundColor: Color(0xFF0465D9),
     );
   }
 }

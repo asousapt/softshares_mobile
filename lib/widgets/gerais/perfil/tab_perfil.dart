@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/custom_tab.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
@@ -112,19 +113,17 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            child: TabBar(
-              tabs: [
-                CustomTab(
-                  icon: FontAwesomeIcons.user,
-                  text: "Dados Pessoais",
-                ),
-                CustomTab(
-                  icon: FontAwesomeIcons.heart,
-                  text: "Favoritos",
-                ),
-              ],
-            ),
+          TabBar(
+            tabs: [
+              CustomTab(
+                icon: FontAwesomeIcons.user,
+                text: "Dados Pessoais",
+              ),
+              CustomTab(
+                icon: FontAwesomeIcons.heart,
+                text: "Favoritos",
+              ),
+            ],
           ),
           SizedBox(
             height: MediaQuery.of(context).size.height,
@@ -167,6 +166,7 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                         ),
                       ),
                       TextFormField(
+                        readOnly: true,
                         controller: _passwd,
                         decoration: InputDecoration(
                           label: Text("Password"),
@@ -222,7 +222,7 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                       Text(
                         textAlign: TextAlign.left,
                         "Subcategorias Favoritas",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Expanded(
                         child: ListView(

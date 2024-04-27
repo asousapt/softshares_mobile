@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/tab_perfil.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/perfil_img.dart';
@@ -53,8 +54,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             IconButton(
               icon: const FaIcon(
                 FontAwesomeIcons.check,
-
-                //color: Color.fromRGBO(29, 90, 161, 1),
               ),
               onPressed: () {
                 if (validadados()) {
@@ -65,7 +64,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
           title: const Text("Perfil"),
         ),
-        //backgroundColor: const Color.fromRGBO(29, 90, 161, 1),
         body: Padding(
           padding: const EdgeInsets.only(
             left: 12,
@@ -73,23 +71,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
             top: 15,
             bottom: 20,
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                UserProfileWidget(
-                  nome: nomeCompleto,
-                  descricao: "Chefe de Vendas - Marketing",
-                ),
-                Container(
-                  color: Theme.of(context).canvasColor,
-                  child: TabPerfil(
-                    utilizador: user,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              UserProfileWidget(
+                  nome: nomeCompleto, descricao: "Chefe de Vendas - Marketing"),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Container(
+                    color: Theme.of(context).canvasColor,
+                    child: TabPerfil(utilizador: user),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
