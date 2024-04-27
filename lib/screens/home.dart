@@ -87,7 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: const MainDrawer(),
       bottomNavigationBar: const BottomNavigation(),
-      backgroundColor: const Color.fromRGBO(29, 90, 161, 1),
       appBar: AppBar(
         title: const Text("Página Inicial"),
       ),

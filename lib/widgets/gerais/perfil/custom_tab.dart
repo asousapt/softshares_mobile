@@ -7,12 +7,13 @@ class CustomTab extends StatelessWidget {
   const CustomTab({
     required this.icon,
     required this.text,
+    super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Row(
         children: [
           Icon(
@@ -22,7 +23,7 @@ class CustomTab extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             text,
-            style: TextStyle(fontSize: 11),
+            style: const TextStyle(fontSize: 11),
           ),
         ],
       ),

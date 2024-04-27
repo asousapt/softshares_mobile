@@ -53,7 +53,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             IconButton(
               icon: const FaIcon(
                 FontAwesomeIcons.check,
-                color: Color.fromRGBO(29, 90, 161, 1),
+
+                //color: Color.fromRGBO(29, 90, 161, 1),
               ),
               onPressed: () {
                 if (validadados()) {
@@ -64,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
           title: const Text("Perfil"),
         ),
-        backgroundColor: const Color.fromRGBO(29, 90, 161, 1),
+        //backgroundColor: const Color.fromRGBO(29, 90, 161, 1),
         body: Padding(
           padding: const EdgeInsets.only(
             left: 12,
@@ -82,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   descricao: "Chefe de Vendas - Marketing",
                 ),
                 Container(
-                  color: const Color.fromRGBO(217, 215, 215, 1),
+                  color: Theme.of(context).canvasColor,
                   child: TabPerfil(
                     utilizador: user,
                   ),

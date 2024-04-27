@@ -34,7 +34,7 @@ class TableCalendarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: const Color.fromRGBO(217, 215, 215, 1),
+          color: Theme.of(context).canvasColor,
           borderRadius: BorderRadius.circular(15)),
       margin: const EdgeInsets.only(left: 15, right: 12),
       child: TableCalendar<EventTC>(

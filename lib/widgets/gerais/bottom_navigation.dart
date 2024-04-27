@@ -14,10 +14,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return NavigationBar(
-      selectedIndex: 1,
+      selectedIndex: 0,
       destinations: [
         NavigationDestination(
-            icon: FaIcon(FontAwesomeIcons.homeAlt), label: "Home"),
+            icon: FaIcon(FontAwesomeIcons.house), label: "Home"),
         NavigationDestination(
             icon: FaIcon(FontAwesomeIcons.mapLocation), label: "Pontos Int."),
         NavigationDestination(

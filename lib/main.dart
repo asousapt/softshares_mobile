@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:softshares_mobile/screens/home.dart';
 import 'package:softshares_mobile/screens/perfil.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/softshares_theme.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     Utilizador utilizador = Utilizador(
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp(
+      theme: SoftSharesTheme.lightTheme,
       routes: {
         '/perfil': (context) => ProfileScreen(
               utilizador: utilizador,

@@ -139,6 +139,7 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                         maxLength: 60,
                         controller: _pnome,
                         decoration: InputDecoration(
+                          border: Theme.of(context).inputDecorationTheme.border,
                           label: Text("Primeiro nome"),
                         ),
                         onChanged: (value) {
@@ -150,6 +151,7 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                         keyboardType: TextInputType.text,
                         controller: _unome,
                         decoration: InputDecoration(
+                          border: Theme.of(context).inputDecorationTheme.border,
                           label: Text("último nome"),
                         ),
                         onChanged: (value) {

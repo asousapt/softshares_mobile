@@ -31,7 +31,7 @@ class EventListView extends StatelessWidget {
                 ),
                 child: Container(
                     decoration: BoxDecoration(
-                        color: const Color.fromRGBO(217, 215, 215, 1),
+                        color: Theme.of(context).canvasColor,
                         borderRadius: BorderRadius.circular(15)),
                     child: EventItem(
                       evento: value[index],
