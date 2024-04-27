@@ -1,8 +1,6 @@
 import 'dart:collection';
 import 'package:table_calendar/table_calendar.dart';
 
-/// Exemplo da class evento table calendar
-/// Poderão ser carregados mais campos na estrutura
 class EventTC {
   final String titulo;
   final int categoria;
