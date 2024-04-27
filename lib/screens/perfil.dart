@@ -42,47 +42,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return true;
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: const FaIcon(
-              FontAwesomeIcons.check,
-              color: Color.fromRGBO(29, 90, 161, 1),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        print("object");
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+              icon: const FaIcon(
+                FontAwesomeIcons.check,
+                color: Color.fromRGBO(29, 90, 161, 1),
+              ),
+              onPressed: () {
+                if (validadados()) {
+                  setState(() {});
+                }
+              },
             ),
-            onPressed: () {
-              if (validadados()) {
-                setState(() {});
-              }
-            },
-          ),
-        ],
-        title: const Text("Perfil"),
-      ),
-      backgroundColor: const Color.fromRGBO(29, 90, 161, 1),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          left: 12,
-          right: 12,
-          top: 15,
-          bottom: 20,
+          ],
+          title: const Text("Perfil"),
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              UserProfileWidget(
-                nome: nomeCompleto,
-                descricao: "Chefe de Vendas - Marketing",
-              ),
-              Container(
-                color: const Color.fromRGBO(217, 215, 215, 1),
-                child: TabPerfil(
-                  utilizador: user,
+        backgroundColor: const Color.fromRGBO(29, 90, 161, 1),
+        body: Padding(
+          padding: const EdgeInsets.only(
+            left: 12,
+            right: 12,
+            top: 15,
+            bottom: 20,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                UserProfileWidget(
+                  nome: nomeCompleto,
+                  descricao: "Chefe de Vendas - Marketing",
                 ),
-              ),
-            ],
+                Container(
+                  color: const Color.fromRGBO(217, 215, 215, 1),
+                  child: TabPerfil(
+                    utilizador: user,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

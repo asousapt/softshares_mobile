@@ -24,6 +24,8 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _passwd = TextEditingController();
   final TextEditingController _sobre = TextEditingController();
+  List<int>? subcatFav;
+
   Departamento? _departamento;
   Polo? _polo;
   Funcao? _funcao;
@@ -69,6 +71,11 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
         .firstWhere((element) => element.poloId == widget.utilizador.poloId);
     _funcao = funcoes.firstWhere(
         (element) => element.funcaoId == widget.utilizador.funcaoId);
+    if (widget.utilizador.preferencias.isNotEmpty) {
+      subcatFav = widget.utilizador.preferencias;
+    } else {
+      subcatFav = [];
+    }
   }
 
   // faz a mudança de departamento
@@ -124,7 +131,7 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
             child: TabBarView(
               children: [
                 Container(
-                  margin: EdgeInsets.only(left: 10, right: 10),
+                  margin: const EdgeInsets.only(left: 10, right: 10),
                   child: Column(
                     children: [
                       TextFormField(
@@ -180,7 +187,9 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                   ),
                 ),
                 Container(
+                  margin: const EdgeInsets.only(left: 10, right: 10),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Dropdown de seleccao do polo
                       DropdownGenereica(
@@ -205,6 +214,32 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                         titulo: "Função",
                         value: _funcao,
                         getText: (funcao) => funcao.descricao,
+                      ),
+                      const SizedBox(height: 10),
+                      const Divider(thickness: 3, color: Colors.black),
+                      Text(
+                        textAlign: TextAlign.left,
+                        "Subcategorias Favoritas",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: subcategorias.map((subcat) {
+                            return CheckboxListTile(
+                              value: subcatFav!.contains(subcat.subcategoriaId),
+                              onChanged: (value) {
+                                setState(() {
+                                  if (value == null || value == false) {
+                                    subcatFav!.remove(subcat.subcategoriaId);
+                                  } else {
+                                    subcatFav!.add(subcat.subcategoriaId);
+                                  }
+                                });
+                              },
+                              title: Text(subcat.descricao),
+                            );
+                          }).toList(),
+                        ),
                       ),
                     ],
                   ),
