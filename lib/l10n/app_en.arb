@@ -7,5 +7,10 @@
   "login": "Login", 
   "noAccount": "Don't have an account?", 
   "register": "Register", 
-  "keepMeLoggedIn": "Keep me logged in"
+  "keepMeLoggedIn": "Keep me logged in", 
+  "home": "Home", 
+  "poi": "Point of Int.", 
+  "eventos": "Events", 
+  "threads": "Threads", 
+  "messages": "Messages"
 }

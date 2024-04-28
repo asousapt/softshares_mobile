@@ -6,5 +6,10 @@
   "clickHere": "Clique aqui", 
   "login": "Iniciar Sessão", 
   "noAccount": "Não tem uma conta?", 
-  "keepMeLoggedIn": "Manter sessão iniciada"
+  "keepMeLoggedIn": "Manter sessão iniciada", 
+  "home": "Início", 
+  "poi": "Pontos Int.", 
+  "eventos": "Eventos", 
+  "threads": "Fórum", 
+  "messages": "Mensagens"
 }

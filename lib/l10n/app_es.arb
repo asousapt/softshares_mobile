@@ -7,5 +7,10 @@
   "login": "Inicio de Sesión", 
   "noAccount": "¿No tiene cuenta?", 
   "register": "Registro", 
-  "keepMeLoggedIn": "Mantenerme conectado"
+  "keepMeLoggedIn": "Mantenerme conectado", 
+  "home": "Inicio", 
+  "poi": "Puntos Int", 
+  "eventos": "Eventos", 
+  "threads": "Foro", 
+  "messages": "Mensajes"
 }

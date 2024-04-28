@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const MainDrawer(),
-      bottomNavigationBar: const BottomNavigation(),
+      bottomNavigationBar: BottomNavigation(seleccao: 0),
       appBar: AppBar(
         title: const Text("Página Inicial"),
       ),
