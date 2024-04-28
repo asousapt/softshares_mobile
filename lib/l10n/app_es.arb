@@ -1,0 +1,11 @@
+{
+  "bemVindo": "Bienvenido de nuevo",
+  "doLogin": "Iniciar sesión", 
+  "password": "Contraseña", 
+  "forgotPassword": "He olvidado mi contraseña", 
+  "clickHere": "Pulse aquí", 
+  "login": "Inicio de Sesión", 
+  "noAccount": "¿No tiene cuenta?", 
+  "register": "Registro", 
+  "keepMeLoggedIn": "Mantenerme conectado"
+}

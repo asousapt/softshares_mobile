@@ -1,0 +1,11 @@
+{
+  "bemVindo": "Welcome back",
+  "doLogin": "Sign In",
+  "password": "Password", 
+  "forgotPassword": "I forgot my password", 
+  "clickHere": "Click here", 
+  "login": "Login", 
+  "noAccount": "Don't have an account?", 
+  "register": "Register", 
+  "keepMeLoggedIn": "Keep me logged in"
+}

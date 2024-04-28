@@ -1,0 +1,10 @@
+{
+  "bemVindo": "Bem-vindo de volta",
+  "doLogin": "Início de Sessão", 
+  "password": "Palavra-passe", 
+  "forgotPassword": "Esqueci-me da palavra-passe", 
+  "clickHere": "Clique aqui", 
+  "login": "Iniciar Sessão", 
+  "noAccount": "Não tem uma conta?", 
+  "keepMeLoggedIn": "Manter sessão iniciada"
+}

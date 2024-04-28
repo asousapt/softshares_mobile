@@ -5,13 +5,38 @@ import 'package:softshares_mobile/screens/home.dart';
 import 'package:softshares_mobile/screens/perfil.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/softshares_theme.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() {
+    return _MyAppState();
+  }
+}
+
+class _MyAppState extends State<MyApp> {
+  String local = 'pt';
+
+  @override
+  void initState() {
+    local = 'pt';
+    super.initState();
+  }
+
+  //Funcao que faz a mudamça da linguagem da aplicação
+  void _mudaIdioma(String linguagem) {
+    setState(() {
+      local = linguagem;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Utilizador utilizador = Utilizador(
@@ -31,11 +56,24 @@ class MyApp extends StatelessWidget {
       //initialRoute: "/login",
       theme: SoftSharesTheme.lightTheme,
       routes: {
-        "/login": (context) => const EcraLogin(),
+        "/login": (context) => EcraLogin(mudaIdioma: _mudaIdioma),
         "/registar": (context) => const EcraRegistar(),
-        "/perfil": (context) => ProfileScreen(utilizador: utilizador)
+        "/perfil": (context) => ProfileScreen(utilizador: utilizador),
+        '/home': (context) => const HomeScreen()
       },
-      home: EcraLogin(),
+      locale: Locale(local),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('es'),
+        Locale('pt'),
+      ],
+      home: EcraLogin(mudaIdioma: _mudaIdioma),
     );
   }
 }
