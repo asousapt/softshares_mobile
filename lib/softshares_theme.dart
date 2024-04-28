@@ -52,5 +52,8 @@ class SoftSharesTheme {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
         ),
+      ),
+      dialogTheme: const DialogTheme(
+        backgroundColor: Color.fromRGBO(230, 230, 230, 1),
       ));
 }
