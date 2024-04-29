@@ -12,5 +12,20 @@
   "poi": "Point of Int.", 
   "eventos": "Events", 
   "threads": "Threads", 
-  "messages": "Messages"
+  "messages": "Messages",
+  "fillAllFields": "Please fill all fields", 
+  "perfil": "Profile", 
+  "personalData": "Personal Data", 
+  "favoritos": "Favorites", 
+  "primeiroNome": "First Name", 
+  "ultimoNome": "Last Name", 
+  "sobreMim" : "About me", 
+  "polo": "Office", 
+  "departamento": "Department", 
+  "funcao": "Role", 
+  "subcatFav": "Favorite Subcategories", 
+  "yes": "Yes", 
+  "no": "No", 
+  "sairSemGuardar": "Leave without saving?", 
+  "dadosSeraoPerdidos": "The changes will be lost!"
 }

@@ -12,5 +12,20 @@
   "poi": "Puntos Int", 
   "eventos": "Eventos", 
   "threads": "Foro", 
-  "messages": "Mensajes"
+  "messages": "Mensajes", 
+  "fillAllFields": "Por favor, rellene todos los campos", 
+  "perfil": "Perfil", 
+  "personalData": "Información Personal", 
+  "favoritos": "Favoritos", 
+  "primeiroNome": "Nombre", 
+  "ultimoNome": "Apellido", 
+  "sobreMim" : "Sobre mí", 
+  "polo": "Oficina", 
+  "departamento": "Departmento", 
+  "funcao": "Puesto", 
+  "subcatFav": "Subcategorías Favoritas", 
+  "yes": "Si", 
+  "no": "No", 
+  "sairSemGuardar": "¿Irse sin ahorrar?", 
+  "dadosSeraoPerdidos": "¡Los cambios se perderán!"
 }
