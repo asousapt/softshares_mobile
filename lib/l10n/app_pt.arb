@@ -26,5 +26,12 @@
   "yes": "Sim", 
   "no": "Não", 
   "sairSemGuardar": "Sair sem guardar?", 
-  "dadosSeraoPerdidos": "As alterações serão perdidas!"
+  "dadosSeraoPerdidos": "As alterações serão perdidas!", 
+  "notificacoes": "Notificações", 
+  "suporte": "Suporte", 
+  "seleccionarPolo": "Seleccionar Polo", 
+  "definicoes": "Definições", 
+  "logout": "Desconectar", 
+  "paginaInicial": "Página Inicial", 
+  "comunidade": "Comunidade Softshares"
 }

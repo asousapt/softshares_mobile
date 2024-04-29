@@ -27,5 +27,12 @@
   "yes": "Yes", 
   "no": "No", 
   "sairSemGuardar": "Leave without saving?", 
-  "dadosSeraoPerdidos": "The changes will be lost!"
+  "dadosSeraoPerdidos": "The changes will be lost!",
+  "notificacoes": "Notifications", 
+  "suporte": "Support", 
+  "seleccionarPolo": "Select Office", 
+  "definicoes": "Settings", 
+  "logout": "Sign Out", 
+  "paginaInicial": "Home", 
+  "comunidade": "Softshares Community"
 }

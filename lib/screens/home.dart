@@ -5,6 +5,7 @@ import 'package:softshares_mobile/models/eventoTC.dart';
 import 'package:softshares_mobile/widgets/eventos/calendario.dart';
 import 'package:softshares_mobile/widgets/eventos/event_list.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -86,19 +87,19 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const MainDrawer(),
-      bottomNavigationBar: BottomNavigation(seleccao: 0),
+      bottomNavigationBar: const BottomNavigation(seleccao: 0),
       appBar: AppBar(
-        title: const Text("Página Inicial"),
+        title: Text(AppLocalizations.of(context)!.paginaInicial),
       ),
       body: Expanded(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 10, left: 15),
+            Padding(
+              padding: const EdgeInsets.only(top: 10, left: 15),
               child: Text(
-                "Comunidade Softshares",
-                style: TextStyle(
+                AppLocalizations.of(context)!.comunidade,
+                style: const TextStyle(
                   color: Color.fromRGBO(217, 215, 215, 1),
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -130,11 +131,11 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             const SizedBox(height: 15),
-            const Padding(
-              padding: EdgeInsets.only(left: 15, bottom: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 15, bottom: 10),
               child: Text(
-                "Eventos",
-                style: TextStyle(
+                AppLocalizations.of(context)!.eventos,
+                style: const TextStyle(
                   color: Color.fromRGBO(217, 215, 215, 1),
                   fontSize: 21,
                   fontWeight: FontWeight.bold,

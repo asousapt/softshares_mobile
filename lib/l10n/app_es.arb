@@ -27,5 +27,12 @@
   "yes": "Si", 
   "no": "No", 
   "sairSemGuardar": "¿Irse sin ahorrar?", 
-  "dadosSeraoPerdidos": "¡Los cambios se perderán!"
+  "dadosSeraoPerdidos": "¡Los cambios se perderán!", 
+  "notificacoes": "Notificaciones", 
+  "suporte": "Ayuda", 
+  "seleccionarPolo": "Seleccionar Oficina", 
+  "definicoes": "Ajustes", 
+  "logout": "Cerrar sesión", 
+  "paginaInicial": "Inicio", 
+  "comunidade": "Comunidad Softshares"
 }
