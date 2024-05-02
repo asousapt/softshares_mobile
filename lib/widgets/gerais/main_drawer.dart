@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({super.key});
@@ -13,39 +14,41 @@ class MainDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pushNamed(context, '/perfil');
             },
-            contentPadding: EdgeInsets.only(top: 15, left: 15),
-            leading: Icon(FontAwesomeIcons.user),
-            title: Text("Perfil"),
+            contentPadding: const EdgeInsets.only(top: 15, left: 15),
+            leading: const Icon(FontAwesomeIcons.user),
+            title: Text(AppLocalizations.of(context)!.perfil),
+          ),
+          ListTile(
+            onTap: () {
+              Navigator.pushNamed(context, '/notificacoes');
+            },
+            contentPadding: const EdgeInsets.only(left: 15, top: 10),
+            leading: const Icon(FontAwesomeIcons.bell),
+            title: Text(AppLocalizations.of(context)!.notificacoes),
           ),
           ListTile(
             onTap: () {},
-            contentPadding: EdgeInsets.only(left: 15, top: 10),
-            leading: Icon(FontAwesomeIcons.bell),
-            title: Text("Notificações"),
+            contentPadding: const EdgeInsets.only(left: 15, top: 10),
+            leading: const Icon(FontAwesomeIcons.headset),
+            title: Text(AppLocalizations.of(context)!.suporte),
           ),
           ListTile(
             onTap: () {},
-            contentPadding: EdgeInsets.only(left: 15, top: 10),
-            leading: Icon(FontAwesomeIcons.headset),
-            title: Text("Suporte"),
+            contentPadding: const EdgeInsets.only(left: 15, top: 10),
+            leading: const Icon(FontAwesomeIcons.city),
+            title: Text(AppLocalizations.of(context)!.seleccionarPolo),
           ),
           ListTile(
             onTap: () {},
-            contentPadding: EdgeInsets.only(left: 15, top: 10),
-            leading: Icon(FontAwesomeIcons.city),
-            title: Text("Escolher Polo"),
+            contentPadding: const EdgeInsets.only(left: 15, top: 10),
+            leading: const Icon(FontAwesomeIcons.gears),
+            title: Text(AppLocalizations.of(context)!.definicoes),
           ),
           ListTile(
             onTap: () {},
-            contentPadding: EdgeInsets.only(left: 15, top: 10),
-            leading: Icon(FontAwesomeIcons.gears),
-            title: Text("Definições"),
-          ),
-          ListTile(
-            onTap: () {},
-            contentPadding: EdgeInsets.only(left: 15, top: 10),
-            leading: Icon(FontAwesomeIcons.rightFromBracket),
-            title: Text("Desconectar"),
+            contentPadding: const EdgeInsets.only(left: 15, top: 10),
+            leading: const Icon(FontAwesomeIcons.rightFromBracket),
+            title: Text(AppLocalizations.of(context)!.logout),
           ),
         ],
       ),

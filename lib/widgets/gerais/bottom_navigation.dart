@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BottomNavigation extends StatefulWidget {
-  const BottomNavigation({super.key});
+  const BottomNavigation({
+    super.key,
+    required this.seleccao,
+  });
+
+  final int seleccao;
 
   @override
   State<BottomNavigation> createState() {
@@ -11,27 +17,38 @@ class BottomNavigation extends StatefulWidget {
 }
 
 class _BottomNavigationState extends State<BottomNavigation> {
+  int? selecionado;
+
+  @override
+  void initState() {
+    super.initState();
+    selecionado = widget.seleccao;
+  }
+
   @override
   Widget build(BuildContext context) {
     return NavigationBar(
-      selectedIndex: 0,
+      selectedIndex: selecionado!,
       destinations: [
         NavigationDestination(
-            icon: FaIcon(FontAwesomeIcons.house), label: "Home"),
+          icon: const FaIcon(FontAwesomeIcons.house),
+          label: AppLocalizations.of(context)!.home,
+        ),
         NavigationDestination(
-            icon: FaIcon(FontAwesomeIcons.mapLocation), label: "Pontos Int."),
+            icon: const FaIcon(FontAwesomeIcons.mapLocation),
+            label: AppLocalizations.of(context)!.poi),
         NavigationDestination(
-            icon: FaIcon(FontAwesomeIcons.globe), label: "Fórum"),
+            icon: const FaIcon(FontAwesomeIcons.globe),
+            label: AppLocalizations.of(context)!.threads),
         NavigationDestination(
-            icon: FaIcon(FontAwesomeIcons.calendar), label: "Eventos"),
+            icon: const FaIcon(FontAwesomeIcons.calendar),
+            label: AppLocalizations.of(context)!.eventos),
         NavigationDestination(
             icon: Badge(
               label: Text("2"),
-              child: Icon(
-                FontAwesomeIcons.message,
-              ),
+              child: const Icon(FontAwesomeIcons.message),
             ),
-            label: "Mensagens"),
+            label: AppLocalizations.of(context)!.messages),
       ],
     );
   }

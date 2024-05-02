@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/custom_tab.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
@@ -8,6 +7,7 @@ import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/models/departamento.dart';
 import 'package:softshares_mobile/models/funcao.dart';
 import 'package:softshares_mobile/widgets/gerais/dropdown_generica.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TabPerfil extends StatefulWidget {
   TabPerfil({super.key, required this.utilizador});
@@ -116,13 +116,11 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
           TabBar(
             tabs: [
               CustomTab(
-                icon: FontAwesomeIcons.user,
-                text: "Dados Pessoais",
-              ),
+                  icon: FontAwesomeIcons.user,
+                  text: AppLocalizations.of(context)!.personalData),
               CustomTab(
-                icon: FontAwesomeIcons.heart,
-                text: "Favoritos",
-              ),
+                  icon: FontAwesomeIcons.heart,
+                  text: AppLocalizations.of(context)!.favoritos),
             ],
           ),
           SizedBox(
@@ -130,7 +128,11 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
             child: TabBarView(
               children: [
                 Container(
-                  margin: const EdgeInsets.only(left: 10, right: 10),
+                  margin: const EdgeInsets.only(
+                    left: 10,
+                    right: 10,
+                    top: 18,
+                  ),
                   child: Column(
                     children: [
                       TextFormField(
@@ -139,7 +141,8 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                         controller: _pnome,
                         decoration: InputDecoration(
                           border: Theme.of(context).inputDecorationTheme.border,
-                          label: Text("Primeiro nome"),
+                          label:
+                              Text(AppLocalizations.of(context)!.primeiroNome),
                         ),
                         onChanged: (value) {
                           widget.utilizador.pNome = value;
@@ -151,7 +154,7 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                         controller: _unome,
                         decoration: InputDecoration(
                           border: Theme.of(context).inputDecorationTheme.border,
-                          label: Text("último nome"),
+                          label: Text(AppLocalizations.of(context)!.ultimoNome),
                         ),
                         onChanged: (value) {
                           widget.utilizador.uNome = value;
@@ -161,7 +164,7 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                         maxLength: 60,
                         readOnly: true,
                         controller: _email,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           label: Text("Email"),
                         ),
                       ),
@@ -169,17 +172,18 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                         readOnly: true,
                         controller: _passwd,
                         decoration: InputDecoration(
-                          label: Text("Password"),
+                          label: Text(AppLocalizations.of(context)!.password),
                         ),
                       ),
+                      const SizedBox(height: 24),
                       TextFormField(
-                        minLines: 5,
-                        maxLines: 7,
+                        minLines: 3,
+                        maxLines: 6,
                         maxLength: 140,
                         keyboardType: TextInputType.text,
                         controller: _sobre,
                         decoration: InputDecoration(
-                          label: Text("Sobre mim "),
+                          label: Text(AppLocalizations.of(context)!.sobreMim),
                         ),
                         onChanged: (value) {
                           widget.utilizador.sobre = value;
@@ -189,7 +193,7 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(left: 10, right: 10),
+                  margin: const EdgeInsets.only(left: 10, right: 10, top: 18),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -197,31 +201,33 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                       DropdownGenereica(
                         items: polos,
                         onChanged: _mudaPolo,
-                        titulo: "Polo",
+                        titulo: AppLocalizations.of(context)!.polo,
                         value: _polo,
                         getText: (polo) => polo.nome,
                       ),
+                      const SizedBox(height: 24),
                       //DropDown departamento
                       DropdownGenereica(
                         items: departamentos,
                         onChanged: _mudaDepartamento,
-                        titulo: "Departamento",
+                        titulo: AppLocalizations.of(context)!.departamento,
                         value: _departamento,
                         getText: (departamento) => departamento.descricao,
                       ),
+                      const SizedBox(height: 24),
                       //DropDown Fucao
                       DropdownGenereica(
                         items: funcoes,
                         onChanged: _mudaFuncao,
-                        titulo: "Função",
+                        titulo: AppLocalizations.of(context)!.funcao,
                         value: _funcao,
                         getText: (funcao) => funcao.descricao,
                       ),
                       const SizedBox(height: 10),
                       const Divider(thickness: 3, color: Colors.black),
                       Text(
+                        AppLocalizations.of(context)!.subcatFav,
                         textAlign: TextAlign.left,
-                        "Subcategorias Favoritas",
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Expanded(
