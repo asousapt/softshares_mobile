@@ -1,23 +1,19 @@
 import "package:flutter/material.dart";
+import 'package:country_flags/country_flags.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-class EcraRegistar extends StatelessWidget {
-  const EcraRegistar({Key? key}) : super(key: key);
+class EcraLogin extends StatefulWidget {
+  const EcraLogin({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: MyHomePage(title: "Softshares"),
-    );
+  State<EcraLogin> createState() {
+    return _EcraLoginState();
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
+class _EcraLoginState extends State<EcraLogin> {
+  String version = 'Loading...';
   String email = '';
   String pass = '';
   late TextEditingController controlEmail;
@@ -29,7 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     controlEmail = TextEditingController();
     controlPass = TextEditingController();
-// inicializacao do controlador
+    getVersion();
   }
 
   @override
@@ -48,96 +44,214 @@ class _MyHomePageState extends State<MyHomePage> {
     //bd.inserirvalor(Email, Passricao);
   }
 
+  Future<void> getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      version = packageInfo.version;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(color: Color(0xFFFFFFFF)),
-        padding: EdgeInsets.all(60),
-        child: Column(
-          children: <Widget>[
-            Text(
-              "Criar uma conta",
-              style: TextStyle(
-                fontSize: 55, // Set the font size to 20
-                fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 48, 48,
-                    48), // Set the color to dark grey (800 is the shade)
-              ),
-            ),
-            Text(
-              "Bem  Vindo de volta\nRealize o rEcraRegistar",
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextField(
-              controller: controlEmail,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.account_circle_outlined),
-                labelText: "Email",
-                border: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(30.0), // Adjust the value as needed
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 20),
-              child: TextField(
-                controller: controlPass,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.lock_outline_rounded),
-                  labelText: "Password",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                        30.0), // Adjust the value as needed
+      body: Padding(
+        padding: const EdgeInsets.only(left: 12, right: 12, top: 100),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                color: Theme.of(context).canvasColor,
+                child: Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      const SizedBox(height: 40),
+                      const Text(
+                        'SoftShares',
+                        style: TextStyle(
+                          fontSize: 42,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        "Bem-vindo de volta",
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        "Realize o Login",
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      const SizedBox(height: 50),
+                      Container(
+                        margin: const EdgeInsets.only(
+                            left: 8, right: 8, bottom: 30),
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: controlEmail,
+                              decoration: InputDecoration(
+                                labelText: "Email",
+                                prefixIcon:
+                                    const Icon(Icons.account_circle_outlined),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              controller: controlPass,
+                              decoration: InputDecoration(
+                                labelText: "Palavra-passe",
+                                prefixIcon: Icon(Icons.lock_outline_rounded),
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Text(
+                                  "Esqueci-me da palavra-passe",
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                TextButton(
+                                  onPressed: () {},
+                                  child: Text(
+                                    "Clique aqui",
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.underline),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 3),
+                            SizedBox(
+                              height: 50,
+                              width: double.infinity,
+                              child: FilledButton(
+                                onPressed: () {},
+                                child: Text("Login"),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    print("escolhi PT");
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 32,
+                                    backgroundColor: Colors
+                                        .transparent, // Make the background transparent
+                                    child: AspectRatio(
+                                      aspectRatio:
+                                          1.0, // Ensure aspect ratio is 1:1 to maintain the circular shape
+                                      child: Container(
+                                        padding: EdgeInsets.all(8),
+                                        child: CountryFlag.fromCountryCode(
+                                          'PT',
+                                          height: 48,
+                                          width: 48,
+                                          borderRadius: 48,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    print("escolhi ES");
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 32,
+                                    backgroundColor: Colors.transparent,
+                                    child: AspectRatio(
+                                      aspectRatio: 1.0,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: CountryFlag.fromCountryCode(
+                                          'ES',
+                                          height: 48,
+                                          width: 48,
+                                          borderRadius: 48,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    print("escolhi GB");
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 32,
+                                    backgroundColor: Colors.transparent,
+                                    child: AspectRatio(
+                                      aspectRatio: 1.0,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: CountryFlag.fromCountryCode(
+                                          'GB',
+                                          height: 48,
+                                          width: 48,
+                                          borderRadius: 48,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(color: Colors.grey),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
-            Row(
-              children: [
-                const Text("Esqueci-me da password. ",
-                    style: TextStyle(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Já tens uma conta?",
+                    style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    )),
-                TextButton(
-                  onPressed: () =>
-                      {Navigator.pushNamed(context, "/recuperarPass")},
-                  child: const Text("Clicar Aqui",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline)),
-                )
-              ],
-            ),
-            ElevatedButton(onPressed: sub, child: Text("rEcraRegistar")),
-            SizedBox(
-              height: 40,
-            ),
-            ElevatedButton(
-                onPressed: sub,
-                child: Row(
-                  children: [
-                    Icon(Icons.facebook_outlined),
-                    Text("Facebook"),
-                  ],
-                )),
-            ElevatedButton(
-                onPressed: sub,
-                child: Row(
-                  children: [
-                    Icon(Icons.apps),
-                    Text("Google"),
-                  ],
-                )),
-          ],
+                      color: const Color.fromRGBO(230, 230, 230, 1),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () =>
+                        {Navigator.pushNamed(context, "/login")},
+                    child: const Text("Entrar",
+                        style: TextStyle(
+                            color: Color(0xFF83B1FF),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.underline)),
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.copyright,
+                    color: Color.fromRGBO(230, 230, 230, 1),
+                  ),
+                  const SizedBox(width: 3),
+                  Text(
+                    "Softinsa v$version",
+                    style: const TextStyle(
+                        color: Color.fromRGBO(230, 230, 230, 1)),
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
-      backgroundColor: Color(0xFF0465D9),
     );
   }
 }
