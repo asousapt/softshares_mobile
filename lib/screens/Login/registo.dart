@@ -3,21 +3,26 @@ import 'package:country_flags/country_flags.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-class EcraLogin extends StatefulWidget {
-  const EcraLogin({super.key});
+class EcraRegistar extends StatefulWidget {
+  const EcraRegistar({super.key});
 
   @override
-  State<EcraLogin> createState() {
-    return _EcraLoginState();
+  State<EcraRegistar> createState() {
+    return _EcraRegistarState();
   }
 }
 
-class _EcraLoginState extends State<EcraLogin> {
+class _EcraRegistarState extends State<EcraRegistar> {
   String version = 'Loading...';
+  String pNome = '';
+  String uNome = '';
   String email = '';
   String pass = '';
   late TextEditingController controlEmail;
   late TextEditingController controlPass;
+  late TextEditingController controlPNome;
+  late TextEditingController controlUNome;
+  late TextEditingController controlPass2;
   //Basededados bd = Basededados();
 
   @override
@@ -25,12 +30,18 @@ class _EcraLoginState extends State<EcraLogin> {
     super.initState();
     controlEmail = TextEditingController();
     controlPass = TextEditingController();
+    controlPNome = TextEditingController();
+    controlUNome = TextEditingController();
+    controlPass2 = TextEditingController();
     getVersion();
   }
 
   @override
   void dispose() {
     //libertar recurso
+    controlPNome.dispose();
+    controlUNome.dispose();
+    controlPass2.dispose();
     controlEmail.dispose();
     controlPass.dispose();
     super.dispose();
@@ -38,6 +49,8 @@ class _EcraLoginState extends State<EcraLogin> {
 
   void sub() {
     setState(() {
+      pNome = controlPNome.text;
+      uNome = controlUNome.text;
       email = controlEmail.text;
       pass = controlPass.text;
     });
@@ -67,7 +80,7 @@ class _EcraLoginState extends State<EcraLogin> {
                     children: [
                       const SizedBox(height: 40),
                       const Text(
-                        'SoftShares',
+                        'Criar uma conta',
                         style: TextStyle(
                           fontSize: 42,
                           fontWeight: FontWeight.bold,
@@ -75,12 +88,7 @@ class _EcraLoginState extends State<EcraLogin> {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        "Bem-vindo de volta",
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        "Realize o Login",
+                        "Começa agora!",
                         style: const TextStyle(fontSize: 14),
                       ),
                       const SizedBox(height: 50),
@@ -89,6 +97,24 @@ class _EcraLoginState extends State<EcraLogin> {
                             left: 8, right: 8, bottom: 30),
                         child: Column(
                           children: [
+                            TextFormField(
+                              controller: controlEmail,
+                              decoration: InputDecoration(
+                                labelText: "Primeiro Nome",
+                                prefixIcon:
+                                    const Icon(Icons.account_circle_outlined),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              controller: controlEmail,
+                              decoration: InputDecoration(
+                                labelText: "",
+                                prefixIcon:
+                                    const Icon(Icons.account_circle_outlined),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
                             TextFormField(
                               controller: controlEmail,
                               decoration: InputDecoration(
