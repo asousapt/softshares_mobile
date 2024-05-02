@@ -7,6 +7,7 @@ import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/softshares_theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/screens/notifications_alert.dart';
 
 void main() {
   runApp(const MyApp());
@@ -59,7 +60,8 @@ class _MyAppState extends State<MyApp> {
         "/login": (context) => EcraLogin(mudaIdioma: _mudaIdioma),
         "/registar": (context) => const EcraRegistar(),
         "/perfil": (context) => ProfileScreen(utilizador: utilizador),
-        '/home': (context) => const HomeScreen()
+        '/home': (context) => const HomeScreen(),
+        '/notificacoes': (context) => const NotificationsAlertScreen()
       },
       locale: Locale(local),
       localizationsDelegates: const [

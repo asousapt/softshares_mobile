@@ -19,7 +19,9 @@ class MainDrawer extends StatelessWidget {
             title: Text(AppLocalizations.of(context)!.perfil),
           ),
           ListTile(
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, '/notificacoes');
+            },
             contentPadding: const EdgeInsets.only(left: 15, top: 10),
             leading: const Icon(FontAwesomeIcons.bell),
             title: Text(AppLocalizations.of(context)!.notificacoes),
