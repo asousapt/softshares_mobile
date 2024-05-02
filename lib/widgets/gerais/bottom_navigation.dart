@@ -28,6 +28,29 @@ class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return NavigationBar(
+      onDestinationSelected: (value) {
+        // FALTA MUDAR AS ROTAS DOS BOTAOES DE 1 a 4
+        switch (value) {
+          case 0:
+            Navigator.pushNamed(context, '/home');
+            break;
+          case 1:
+            Navigator.pushNamed(context, '/home');
+            break;
+          case 2:
+            Navigator.pushNamed(context, '/home');
+            break;
+          case 3:
+            Navigator.pushNamed(context, '/home');
+            break;
+          case 4:
+            Navigator.pushNamed(context, '/home');
+            break;
+          default:
+            Navigator.pushNamed(context, '/home');
+            break;
+        }
+      },
       selectedIndex: selecionado!,
       destinations: [
         NavigationDestination(

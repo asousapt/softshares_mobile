@@ -6,6 +6,7 @@ import 'package:softshares_mobile/models/alertas.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/custom_tab.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/widgets/gerais/notificacoes/notification_item.dart';
 
 class NotificationsAlertScreen extends StatefulWidget {
   const NotificationsAlertScreen({super.key});
@@ -96,7 +97,7 @@ class _NotificationsAlertScreenState extends State<NotificationsAlertScreen> {
                                 onDismissed: (direction) {
                                   print(e.notificacaoId);
                                 },
-                                child: ListTile(title: Text(e.notificacao)));
+                                child: NotificationCard(texto: e.notificacao));
                           }).toList(),
                         ),
                         ListView(
