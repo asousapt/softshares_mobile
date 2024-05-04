@@ -35,5 +35,12 @@
   "logout": "Sign Out", 
   "paginaInicial": "Home", 
   "comunidade": "Softshares Community", 
-  "alertas": "Alerts"
+  "alertas": "Alerts", 
+  "contacteSuporte": "Contact Support", 
+  "cancelar": "Cancel", 
+  "enviar": "Send", 
+  "sairSuporte": "Exit Support", 
+  "msgSairSuporte": "Do you want to exit without send a support ticket?", 
+  "assunto": "Subject", 
+  "mensagem": "Message"
 }

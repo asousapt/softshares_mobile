@@ -27,7 +27,9 @@ class MainDrawer extends StatelessWidget {
             title: Text(AppLocalizations.of(context)!.notificacoes),
           ),
           ListTile(
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, '/suporte');
+            },
             contentPadding: const EdgeInsets.only(left: 15, top: 10),
             leading: const Icon(FontAwesomeIcons.headset),
             title: Text(AppLocalizations.of(context)!.suporte),

@@ -34,5 +34,12 @@
   "logout": "Desconectar", 
   "paginaInicial": "Página Inicial", 
   "comunidade": "Comunidade Softshares", 
-  "alertas": "Alertas"
+  "alertas": "Alertas", 
+  "contacteSuporte": "Contacte o Suporte", 
+  "cancelar": "Cancelar", 
+  "enviar": "Enviar", 
+  "sairSuporte": "Sair do Suporte", 
+  "msgSairSuporte": "Pretende sair sem contactar o suporte?", 
+  "assunto": "Assunto", 
+  "mensagem": "Mensagem"
 }

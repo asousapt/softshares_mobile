@@ -1,13 +1,15 @@
+import 'package:softshares_mobile/screens/drawerLateral/contacte_suporte.dart';
+
 import "screens/Login/registo.dart";
 import "screens/Login/login.dart";
 import "package:flutter/material.dart";
 import 'package:softshares_mobile/screens/home.dart';
-import 'package:softshares_mobile/screens/perfil.dart';
+import 'package:softshares_mobile/screens/drawerLateral/perfil.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/softshares_theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:softshares_mobile/screens/notifications_alert.dart';
+import 'package:softshares_mobile/screens/drawerLateral/notifications_alert.dart';
 
 void main() {
   runApp(const MyApp());
@@ -61,7 +63,8 @@ class _MyAppState extends State<MyApp> {
         "/registar": (context) => const EcraRegistar(),
         "/perfil": (context) => ProfileScreen(utilizador: utilizador),
         '/home': (context) => const HomeScreen(),
-        '/notificacoes': (context) => const NotificationsAlertScreen()
+        '/notificacoes': (context) => const NotificationsAlertScreen(),
+        '/suporte': (context) => const ContactSupport()
       },
       locale: Locale(local),
       localizationsDelegates: const [

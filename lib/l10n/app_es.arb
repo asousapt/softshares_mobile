@@ -35,5 +35,12 @@
   "logout": "Cerrar sesión", 
   "paginaInicial": "Inicio", 
   "comunidade": "Comunidad Softshares", 
-  "alertas": "Alertas"
+  "alertas": "Alertas", 
+  "contacteSuporte": "Contactar Asistencia", 
+  "cancelar": "Cancelar", 
+  "enviar": "Enviar", 
+  "sairSuporte": "Salir de la Asistencia", 
+  "msgSairSuporte": "¿Quieres salir sin enviar un ticket de soporte?", 
+  "assunto": "Tema", 
+  "mensagem": "Mensaje"
 }
