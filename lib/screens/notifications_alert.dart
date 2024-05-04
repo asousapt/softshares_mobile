@@ -26,7 +26,10 @@ class _NotificationsAlertScreenState extends State<NotificationsAlertScreen> {
     super.initState();
     listaNotificacoes = [
       Notificacao(1, 'Nova mensagem recebida', false),
-      Notificacao(2, 'Você tem uma nova solicitação de amizade', false),
+      Notificacao(
+          2,
+          'Você tem uma nova solicitação de amizade trhrt h btrhntrvhb rrt vnhjtrhnt hbtrhv btrhvbr',
+          false),
       Notificacao(3, 'Novo evento agendado para amanhã', false),
       Notificacao(3, 'Novo evento agendado para amanhã', false),
       Notificacao(3, 'Novo evento agendado para amanhã', false),
@@ -91,18 +94,37 @@ class _NotificationsAlertScreenState extends State<NotificationsAlertScreen> {
                             return Dismissible(
                                 direction: DismissDirection.endToStart,
                                 background: Container(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  alignment: Alignment.centerRight,
                                   color: Colors.red,
+                                  child: const Icon(
+                                    size: 32,
+                                    FontAwesomeIcons.trash,
+                                    color: Colors.white,
+                                  ),
                                 ),
                                 key: ValueKey<int>(e.notificacaoId),
                                 onDismissed: (direction) {
-                                  print(e.notificacaoId);
+                                  // vai invocar o méroto que marca como lida a notificação
                                 },
-                                child: NotificationCard(texto: e.notificacao));
+                                child: NotificationCard(
+                                  texto: e.notificacao,
+                                  icone: const Icon(
+                                    FontAwesomeIcons.bell,
+                                    color: Color.fromRGBO(77, 156, 250, 1),
+                                  ),
+                                ));
                           }).toList(),
                         ),
                         ListView(
                           children: listaAlertas!.map((e) {
-                            return ListTile(title: Text(e.alerta));
+                            return NotificationCard(
+                              texto: e.alerta,
+                              icone: const Icon(
+                                FontAwesomeIcons.lightbulb,
+                                color: Color.fromRGBO(77, 156, 250, 1),
+                              ),
+                            );
                           }).toList(),
                         ),
                       ],
