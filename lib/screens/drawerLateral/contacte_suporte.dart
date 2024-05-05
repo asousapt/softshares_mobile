@@ -55,69 +55,74 @@ class _ContactSupportState extends State<ContactSupport> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.contacteSuporte),
-      ),
-      body: Padding(
-        padding:
-            const EdgeInsets.only(right: 12, left: 12, top: 15, bottom: 20),
-        child: Container(
-          color: Theme.of(context).canvasColor,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) => validaSaidaSemEnviar(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.contacteSuporte),
+        ),
+        body: Padding(
+          padding:
+              const EdgeInsets.only(right: 12, left: 12, top: 15, bottom: 20),
           child: Container(
-            margin: const EdgeInsets.only(
-              left: 10,
-              right: 10,
-              top: 25,
-              bottom: 10,
-            ),
-            child: SingleChildScrollView(
-              child: Expanded(
-                child: Column(
-                  children: [
-                    TextField(
-                      keyboardType: TextInputType.text,
-                      controller: assuntoController,
-                      decoration: InputDecoration(
-                          label: Text(AppLocalizations.of(context)!.assunto)),
-                      onChanged: (value) {
-                        setState(() {
-                          assunto = assuntoController.text;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      textAlign: TextAlign.start,
-                      keyboardType: TextInputType.text,
-                      controller: mensagemController,
-                      maxLines: 19,
-                      decoration: InputDecoration(
-                          label: Text(AppLocalizations.of(context)!.mensagem)),
-                      onChanged: (value) {
-                        setState(() {
-                          mensagem = mensagemController.text;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            validaSaidaSemEnviar();
-                          },
-                          child: Text(AppLocalizations.of(context)!.cancelar),
-                        ),
-                        const SizedBox(width: 20),
-                        FilledButton(
-                          onPressed: () {},
-                          child: Text(AppLocalizations.of(context)!.enviar),
-                        ),
-                      ],
-                    )
-                  ],
+            color: Theme.of(context).canvasColor,
+            child: Container(
+              margin: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+                top: 25,
+                bottom: 10,
+              ),
+              child: SingleChildScrollView(
+                child: Expanded(
+                  child: Column(
+                    children: [
+                      TextField(
+                        keyboardType: TextInputType.text,
+                        controller: assuntoController,
+                        decoration: InputDecoration(
+                            label: Text(AppLocalizations.of(context)!.assunto)),
+                        onChanged: (value) {
+                          setState(() {
+                            assunto = assuntoController.text;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      TextField(
+                        textAlign: TextAlign.start,
+                        keyboardType: TextInputType.text,
+                        controller: mensagemController,
+                        maxLines: 19,
+                        decoration: InputDecoration(
+                            label:
+                                Text(AppLocalizations.of(context)!.mensagem)),
+                        onChanged: (value) {
+                          setState(() {
+                            mensagem = mensagemController.text;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              validaSaidaSemEnviar();
+                            },
+                            child: Text(AppLocalizations.of(context)!.cancelar),
+                          ),
+                          const SizedBox(width: 20),
+                          FilledButton(
+                            onPressed: () {},
+                            child: Text(AppLocalizations.of(context)!.enviar),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
