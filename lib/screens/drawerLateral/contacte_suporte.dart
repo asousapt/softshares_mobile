@@ -38,26 +38,25 @@ class _ContactSupportState extends State<ContactSupport> {
     return confirm ?? false;
   }
 
-  // faz a validação se pode ou não sair do ecra
-  void validaSaidaSemEnviar() {
-    if (assunto!.isNotEmpty || mensagem!.isNotEmpty) {
-      Future<bool> confirma = confirmExit(context);
-
-      confirma.then((value) {
-        if (value) {
-          Navigator.of(context).pop();
-        }
-      });
-    } else {
-      Navigator.of(context).pop();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) => validaSaidaSemEnviar(),
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          if (assunto!.isEmpty && mensagem!.isEmpty) {
+            Navigator.of(context).pop();
+          } else {
+            Future<bool> confirma = confirmExit(context);
+
+            confirma.then((value) {
+              if (value) {
+                Navigator.of(context).pop();
+              }
+            });
+          }
+        }
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.contacteSuporte),
@@ -110,7 +109,17 @@ class _ContactSupportState extends State<ContactSupport> {
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              validaSaidaSemEnviar();
+                              if (assunto!.isEmpty && mensagem!.isEmpty) {
+                                Navigator.of(context).pop();
+                              } else {
+                                Future<bool> confirma = confirmExit(context);
+
+                                confirma.then((value) {
+                                  if (value) {
+                                    Navigator.of(context).pop();
+                                  }
+                                });
+                              }
                             },
                             child: Text(AppLocalizations.of(context)!.cancelar),
                           ),

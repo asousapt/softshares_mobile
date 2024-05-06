@@ -105,11 +105,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             });
           }
         }
-
-        print(userIni!.pNome);
-        print(user!.pNome);
-        print("object");
-        print(didPop);
       },
       child: Scaffold(
         appBar: AppBar(

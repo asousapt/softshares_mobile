@@ -2,17 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/widgets/eventos/event_card_item.dart';
+import 'package:softshares_mobile/widgets/eventos/evento_card_eventos.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 
 class EventosMainScreen extends StatefulWidget {
-  const EventosMainScreen({Key? key}) : super(key: key);
+  const EventosMainScreen({super.key});
 
   @override
   State<EventosMainScreen> createState() => _EventosMainScreenState();
 }
 
 class _EventosMainScreenState extends State<EventosMainScreen> {
+  String tituloInscritos = "";
+  String tituloTotalEventos = "";
+
   List<Evento> listaEventos = [
     Evento(
       1,
@@ -120,6 +124,16 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
     super.initState();
   }
 
+// Foi necessario adicionar este bloco por causa das dependencias
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    tituloInscritos =
+        "${eventosInscrito.length.toString()} ${AppLocalizations.of(context)!.eventos}";
+    tituloTotalEventos =
+        "${listaEventos.length.toString()} ${AppLocalizations.of(context)!.eventos}";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,7 +156,8 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 15, left: 15),
+            padding:
+                const EdgeInsets.only(top: 15, left: 12, right: 12, bottom: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -154,9 +169,13 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text("3 Eventos"),
-                SizedBox(height: 10),
-                Container(
+                Text(
+                  tituloInscritos,
+                  style:
+                      const TextStyle(color: Color.fromRGBO(217, 215, 215, 1)),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
                   height: 240,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
@@ -164,7 +183,31 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
                       return EventCardItem(evento: e);
                     }).toList(),
                   ),
-                )
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "Eventos Futuros:",
+                  style: const TextStyle(
+                    color: Color.fromRGBO(217, 215, 215, 1),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  tituloTotalEventos,
+                  style: TextStyle(
+                    color: Color.fromRGBO(217, 215, 215, 1),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 270,
+                  child: ListView(
+                    children: listaEventos.map((e) {
+                      return EventItemCard(evento: e);
+                    }).toList(),
+                  ),
+                ),
               ],
             ),
           )
