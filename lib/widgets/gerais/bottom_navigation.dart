@@ -41,7 +41,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
             Navigator.pushNamed(context, '/home');
             break;
           case 3:
-            Navigator.pushNamed(context, '/home');
+            Navigator.pushNamed(context, '/eventos');
             break;
           case 4:
             Navigator.pushNamed(context, '/home');

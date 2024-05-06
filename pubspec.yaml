@@ -43,6 +43,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  transparent_image: ^2.0.1
 
 dev_dependencies:
   flutter_test:

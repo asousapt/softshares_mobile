@@ -1,5 +1,5 @@
 import 'package:softshares_mobile/screens/drawerLateral/contacte_suporte.dart';
-
+import 'package:softshares_mobile/screens/eventos/eventos_main.dart';
 import "screens/Login/registo.dart";
 import "screens/Login/login.dart";
 import "package:flutter/material.dart";
@@ -64,7 +64,8 @@ class _MyAppState extends State<MyApp> {
         "/perfil": (context) => ProfileScreen(utilizador: utilizador),
         '/home': (context) => const HomeScreen(),
         '/notificacoes': (context) => const NotificationsAlertScreen(),
-        '/suporte': (context) => const ContactSupport()
+        '/suporte': (context) => const ContactSupport(),
+        '/eventos': (context) => const EventosMainScreen()
       },
       locale: Locale(local),
       localizationsDelegates: const [
