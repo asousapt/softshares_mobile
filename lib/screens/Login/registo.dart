@@ -97,11 +97,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-<<<<<<< HEAD
                       const SizedBox(height: 10),
-=======
-                      const SizedBox(height: 20),
->>>>>>> 69715bde46c60b6164af815639d11280c8cda9ef
                       Text(
                         AppLocalizations.of(context)!.criarConta,
                         style: const TextStyle(
@@ -109,11 +105,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-<<<<<<< HEAD
                       const SizedBox(height: 10),
-=======
-                      const SizedBox(height: 18),
->>>>>>> 69715bde46c60b6164af815639d11280c8cda9ef
                       Text(
                         AppLocalizations.of(context)!.comecaAgora,
                         style: const TextStyle(fontSize: 14),
@@ -300,7 +292,6 @@ class _EcraRegistarState extends State<EcraRegistar> {
                                       ),
                                     ),
                                   ),
-<<<<<<< HEAD
                                 ),
                               ],
                             ),
@@ -323,13 +314,6 @@ class _EcraRegistarState extends State<EcraRegistar> {
                               ),
                             ),
                           ],
-=======
-                                ],
-                              ),
-                              const Divider(color: Colors.grey),
-                            ],
-                          ),
->>>>>>> 69715bde46c60b6164af815639d11280c8cda9ef
                         ),
                       ),
                     ],
