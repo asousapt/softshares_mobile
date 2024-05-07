@@ -39,4 +39,12 @@
   "criarConta" : "Crear una cuenta",
   "comecaAgora" : "Empieza ahora!"
   "reintroduz" : "Vuelva a ingresar su contraseña"
+  "alertas": "Alertas", 
+  "contacteSuporte": "Contactar Asistencia", 
+  "cancelar": "Cancelar", 
+  "enviar": "Enviar", 
+  "sairSuporte": "Salir de la Asistencia", 
+  "msgSairSuporte": "¿Quieres salir sin enviar un ticket de soporte?", 
+  "assunto": "Tema", 
+  "mensagem": "Mensaje"
 }
