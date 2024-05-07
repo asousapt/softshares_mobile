@@ -97,7 +97,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
                       Text(
                         AppLocalizations.of(context)!.criarConta,
                         style: const TextStyle(
@@ -105,12 +105,12 @@ class _EcraRegistarState extends State<EcraRegistar> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 10),
                       Text(
                         AppLocalizations.of(context)!.comecaAgora,
                         style: const TextStyle(fontSize: 14),
                       ),
-                      const SizedBox(height: 50),
+                      const SizedBox(height: 20),
                       Container(
                         margin: const EdgeInsets.only(
                             left: 8, right: 8, bottom: 30),
@@ -292,11 +292,28 @@ class _EcraRegistarState extends State<EcraRegistar> {
                                       ),
                                     ),
                                   ),
+                                ),
+                              ],
+                            ),
+                            const Divider(color: Colors.grey),
+                            // Secção do SSO
+                            ElevatedButton(
+                              onPressed: sub,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 40,
+                                    vertical: 10), // Adjust padding as needed
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(FontAwesomeIcons.facebook),
+                                  SizedBox(width: 4),
+                                  Text("Facebook"),
                                 ],
                               ),
-                              const Divider(color: Colors.grey),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
