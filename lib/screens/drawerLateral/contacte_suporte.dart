@@ -39,6 +39,13 @@ class _ContactSupportState extends State<ContactSupport> {
   }
 
   @override
+  void dispose() {
+    assuntoController.dispose();
+    mensagemController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,

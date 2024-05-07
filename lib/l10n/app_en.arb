@@ -46,5 +46,12 @@
   "sairSuporte": "Exit Support", 
   "msgSairSuporte": "Do you want to exit without send a support ticket?", 
   "assunto": "Subject", 
-  "mensagem": "Message"
+  "mensagem": "Message", 
+  "insiraEmaiValido": "Please enter a valid email address", 
+  "introduzapassword": "Please enter a password", 
+  "repetirPassword": "Confirm Password", 
+  "porfavorInsiraO": "Please insert the ", 
+  "porfavorInsiraA": "Please insert the ", 
+  "passwordsDiferentes": "The passwords doesn't match", 
+  "jaTemConta": "Do you have an account?"
 }
