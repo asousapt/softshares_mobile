@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/widgets/eventos/event_card_item.dart';
 import 'package:softshares_mobile/widgets/eventos/evento_card_eventos.dart';
@@ -137,6 +138,17 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color.fromRGBO(29, 90, 161, 1),
+        onPressed: () {
+          print("object");
+        },
+        child: const Icon(
+          FontAwesomeIcons.plus,
+          color: Color.fromRGBO(217, 215, 215, 1),
+        ),
+      ),
       drawer: const MainDrawer(),
       bottomNavigationBar: const BottomNavigation(seleccao: 3),
       appBar: AppBar(
@@ -152,66 +164,73 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
           )
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding:
-                const EdgeInsets.only(top: 15, left: 12, right: 12, bottom: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Eventos Inscritos:",
-                  style: const TextStyle(
-                    color: Color.fromRGBO(217, 215, 215, 1),
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 15,
+                left: 12,
+                right: 12,
+                bottom: 20,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Eventos Inscritos:",
+                    style: const TextStyle(
+                      color: Color.fromRGBO(217, 215, 215, 1),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(
-                  tituloInscritos,
-                  style:
-                      const TextStyle(color: Color.fromRGBO(217, 215, 215, 1)),
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  height: 240,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: eventosInscrito.map((e) {
-                      return EventCardItem(evento: e);
-                    }).toList(),
+                  Text(
+                    tituloInscritos,
+                    style: const TextStyle(
+                      color: Color.fromRGBO(217, 215, 215, 1),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "Eventos Futuros:",
-                  style: const TextStyle(
-                    color: Color.fromRGBO(217, 215, 215, 1),
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 240,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: eventosInscrito.map((e) {
+                        return EventCardItem(evento: e);
+                      }).toList(),
+                    ),
                   ),
-                ),
-                Text(
-                  tituloTotalEventos,
-                  style: TextStyle(
-                    color: Color.fromRGBO(217, 215, 215, 1),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Eventos Futuros:",
+                    style: const TextStyle(
+                      color: Color.fromRGBO(217, 215, 215, 1),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  height: 270,
-                  child: ListView(
-                    children: listaEventos.map((e) {
-                      return EventItemCard(evento: e);
-                    }).toList(),
+                  Text(
+                    tituloTotalEventos,
+                    style: const TextStyle(
+                      color: Color.fromRGBO(217, 215, 215, 1),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          )
-        ],
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 280,
+                    child: ListView(
+                      children: listaEventos.map((e) {
+                        return EventItemCard(evento: e);
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

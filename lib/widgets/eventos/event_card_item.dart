@@ -20,7 +20,7 @@ class EventCardItem extends StatelessWidget {
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(8),
-          child: Container(
+          child: SizedBox(
             width: 220,
             height: 240,
             child: Column(

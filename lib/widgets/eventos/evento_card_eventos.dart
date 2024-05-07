@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -21,28 +20,30 @@ class EventItemCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const FaIcon(
-                  FontAwesomeIcons.utensils,
-                  color: Color.fromRGBO(123, 123, 123, 1),
-                  size: 24,
-                ),
-                SizedBox(
-                  height: 40,
-                  child: Text(
-                    evento.titulo,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      color: Color.fromRGBO(0, 11, 35, 1),
+                Flexible(
+                  child: SizedBox(
+                    height: 50,
+                    child: Text(
+                      evento.titulo,
+                      maxLines: 2,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Color.fromRGBO(0, 11, 35, 1),
+                      ),
                     ),
                   ),
                 ),
                 const Spacer(),
-                IconButton(
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: FilledButton(
                     onPressed: () {},
-                    icon: Icon(
-                      Icons.abc,
+                    child: const Icon(
+                      FontAwesomeIcons.check,
                       size: 24,
-                    ))
+                    ),
+                  ),
+                ),
               ],
             ),
             const SizedBox(
