@@ -46,5 +46,13 @@
   "sairSuporte": "Sair do Suporte", 
   "msgSairSuporte": "Pretende sair sem contactar o suporte?", 
   "assunto": "Assunto", 
-  "mensagem": "Mensagem"
+  "mensagem": "Mensagem", 
+  "insiraEmaiValido": "Por favor introduza um email válido", 
+  "introduzapassword": "Por favor introduza uma palavra-passe", 
+  "register": "Registar", 
+  "repetirPassword": "Repetir Password", 
+  "porfavorInsiraO": "Por favor insira o ",
+  "porfavorInsiraA": "Por favor insira a ", 
+  "passwordsDiferentes": "As palavras-passe não são iguais", 
+  "jaTemConta": "Já tens uma conta?"
 }

@@ -46,5 +46,12 @@
   "sairSuporte": "Salir de la Asistencia", 
   "msgSairSuporte": "¿Quieres salir sin enviar un ticket de soporte?", 
   "assunto": "Tema", 
-  "mensagem": "Mensaje"
+  "mensagem": "Mensaje", 
+  "insiraEmaiValido": "Introduzca una dirección de correo electrónico válida", 
+  "introduzapassword": "Introduzca una contraseña", 
+  "repetirPassword": "Repetir contraseña", 
+  "porfavorInsiraO": "Introduzca el ", 
+  "porfavorInsiraA": "Introduzca la ", 
+  "passwordsDiferentes": "Las contraseñas no coinciden", 
+  "jaTemConta": "¿Tienes una cuenta?"
 }

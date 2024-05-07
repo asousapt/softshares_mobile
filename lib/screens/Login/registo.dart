@@ -24,41 +24,54 @@ class _EcraRegistarState extends State<EcraRegistar> {
   String uNome = '';
   String email = '';
   String pass = '';
-  late TextEditingController controlEmail;
-  late TextEditingController controlPass;
-  late TextEditingController controlPNome;
-  late TextEditingController controlUNome;
-  late TextEditingController controlPass2;
+  String pass2 = '';
+
+  late TextEditingController _controlEmail;
+  late TextEditingController _controlPass;
+  late TextEditingController _controlPNome;
+  late TextEditingController _controlUNome;
+  late TextEditingController _controlPass2;
   //Basededados bd = Basededados();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    controlEmail = TextEditingController();
-    controlPass = TextEditingController();
-    controlPNome = TextEditingController();
-    controlUNome = TextEditingController();
-    controlPass2 = TextEditingController();
+    _controlEmail = TextEditingController();
+    _controlPass = TextEditingController();
+    _controlPNome = TextEditingController();
+    _controlUNome = TextEditingController();
+    _controlPass2 = TextEditingController();
     getVersion();
   }
 
   @override
   void dispose() {
     //libertar recurso
-    controlPNome.dispose();
-    controlUNome.dispose();
-    controlPass2.dispose();
-    controlEmail.dispose();
-    controlPass.dispose();
+    _controlPNome.dispose();
+    _controlUNome.dispose();
+    _controlPass2.dispose();
+    _controlEmail.dispose();
+    _controlPass.dispose();
     super.dispose();
+  }
+
+  bool isValidEmail(String email) {
+    final RegExp emailRegex = RegExp(
+      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+      caseSensitive: false,
+      multiLine: false,
+    );
+
+    return emailRegex.hasMatch(email);
   }
 
   void sub() {
     setState(() {
-      pNome = controlPNome.text;
-      uNome = controlUNome.text;
-      email = controlEmail.text;
-      pass = controlPass.text;
+      pNome = _controlPNome.text;
+      uNome = _controlUNome.text;
+      email = _controlEmail.text;
+      pass = _controlPass.text;
     });
     //bd.inserirvalor(Email, Passricao);
   }
@@ -74,7 +87,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.only(left: 12, right: 12, top: 100),
+        padding: const EdgeInsets.only(left: 12, right: 12, top: 90),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -84,15 +97,23 @@ class _EcraRegistarState extends State<EcraRegistar> {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
+<<<<<<< HEAD
                       const SizedBox(height: 10),
+=======
+                      const SizedBox(height: 20),
+>>>>>>> 69715bde46c60b6164af815639d11280c8cda9ef
                       Text(
                         AppLocalizations.of(context)!.criarConta,
-                        style: TextStyle(
-                          fontSize: 42,
+                        style: const TextStyle(
+                          fontSize: 36,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+<<<<<<< HEAD
                       const SizedBox(height: 10),
+=======
+                      const SizedBox(height: 18),
+>>>>>>> 69715bde46c60b6164af815639d11280c8cda9ef
                       Text(
                         AppLocalizations.of(context)!.comecaAgora,
                         style: const TextStyle(fontSize: 14),
@@ -101,127 +122,185 @@ class _EcraRegistarState extends State<EcraRegistar> {
                       Container(
                         margin: const EdgeInsets.only(
                             left: 8, right: 8, bottom: 30),
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              controller: controlEmail,
-                              decoration: InputDecoration(
-                                labelText: AppLocalizations.of(context)!.primeiroNome,
-                                prefixIcon:
-                                    const Icon(Icons.account_circle_outlined),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: controlEmail,
-                              decoration: InputDecoration(
-                                labelText: AppLocalizations.of(context)!.ultimoNome,
-                                prefixIcon:
-                                    const Icon(Icons.account_circle_outlined),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: controlEmail,
-                              decoration: InputDecoration(
-                                labelText: "Email",
-                                prefixIcon:
-                                    const Icon(Icons.account_circle_outlined),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: controlPass,
-                              decoration: InputDecoration(
-                                labelText: AppLocalizations.of(context)!.password,
-                                prefixIcon: Icon(Icons.lock_outline_rounded),
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            TextFormField(
-                              controller: controlPass,
-                              decoration: InputDecoration(
-                                labelText: AppLocalizations.of(context)!.password,
-                                prefixIcon: Icon(Icons.lock_outline_rounded),
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            SizedBox(
-                              height: 50,
-                              width: double.infinity,
-                              child: FilledButton(
-                                onPressed: () {},
-                                child: Text("Registar"),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    print("escolhi PT");
-                                  },
-                                  child: CircleAvatar(
-                                    radius: 32,
-                                    backgroundColor: Colors
-                                        .transparent, // Make the background transparent
-                                    child: AspectRatio(
-                                      aspectRatio:
-                                          1.0, // Ensure aspect ratio is 1:1 to maintain the circular shape
-                                      child: Container(
-                                        padding: EdgeInsets.all(8),
-                                        child: CountryFlag.fromCountryCode(
-                                          'PT',
-                                          height: 48,
-                                          width: 48,
-                                          borderRadius: 48,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                controller: _controlPNome,
+                                decoration: InputDecoration(
+                                  labelText: AppLocalizations.of(context)!
+                                      .primeiroNome,
+                                  prefixIcon:
+                                      const Icon(Icons.account_circle_outlined),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    print("escolhi ES");
-                                  },
-                                  child: CircleAvatar(
-                                    radius: 32,
-                                    backgroundColor: Colors.transparent,
-                                    child: AspectRatio(
-                                      aspectRatio: 1.0,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8),
-                                        child: CountryFlag.fromCountryCode(
-                                          'ES',
-                                          height: 48,
-                                          width: 48,
-                                          borderRadius: 48,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "${AppLocalizations.of(context)!.porfavorInsiraO}${AppLocalizations.of(context)!.primeiroNome}";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                controller: _controlUNome,
+                                decoration: InputDecoration(
+                                  labelText:
+                                      AppLocalizations.of(context)!.ultimoNome,
+                                  prefixIcon:
+                                      const Icon(Icons.account_circle_outlined),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    print("escolhi GB");
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "${AppLocalizations.of(context)!.porfavorInsiraO}${AppLocalizations.of(context)!.ultimoNome}";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                controller: _controlEmail,
+                                decoration: const InputDecoration(
+                                  labelText: "Email",
+                                  prefixIcon:
+                                      Icon(Icons.account_circle_outlined),
+                                ),
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      !isValidEmail(value)) {
+                                    return AppLocalizations.of(context)!
+                                        .insiraEmaiValido;
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                obscureText: true,
+                                enableSuggestions: false,
+                                autocorrect: false,
+                                controller: _controlPass,
+                                decoration: InputDecoration(
+                                  labelText:
+                                      AppLocalizations.of(context)!.password,
+                                  prefixIcon:
+                                      const Icon(Icons.lock_outline_rounded),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.password}";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 5),
+                              TextFormField(
+                                obscureText: true,
+                                enableSuggestions: false,
+                                autocorrect: false,
+                                controller: _controlPass2,
+                                decoration: InputDecoration(
+                                  labelText: AppLocalizations.of(context)!
+                                      .repetirPassword,
+                                  prefixIcon:
+                                      const Icon(Icons.lock_outline_rounded),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.password}";
+                                  } else if (value != pass2) {
+                                    return AppLocalizations.of(context)!
+                                        .passwordsDiferentes;
+                                  }
+
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 3),
+                              SizedBox(
+                                height: 50,
+                                width: double.infinity,
+                                child: FilledButton(
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      Navigator.pushNamed(context, '/login');
+                                    }
                                   },
-                                  child: CircleAvatar(
-                                    radius: 32,
-                                    backgroundColor: Colors.transparent,
-                                    child: AspectRatio(
-                                      aspectRatio: 1.0,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8),
-                                        child: CountryFlag.fromCountryCode(
-                                          'GB',
-                                          height: 48,
-                                          width: 48,
-                                          borderRadius: 48,
+                                  child: Text(
+                                      AppLocalizations.of(context)!.register),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      widget.mudaIdioma('pt');
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 32,
+                                      backgroundColor: Colors
+                                          .transparent, // Make the background transparent
+                                      child: AspectRatio(
+                                        aspectRatio:
+                                            1.0, // Ensure aspect ratio is 1:1 to maintain the circular shape
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          child: CountryFlag.fromCountryCode(
+                                            'PT',
+                                            height: 48,
+                                            width: 48,
+                                            borderRadius: 48,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      widget.mudaIdioma('es');
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 32,
+                                      backgroundColor: Colors.transparent,
+                                      child: AspectRatio(
+                                        aspectRatio: 1.0,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          child: CountryFlag.fromCountryCode(
+                                            'ES',
+                                            height: 48,
+                                            width: 48,
+                                            borderRadius: 48,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      widget.mudaIdioma('en');
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 32,
+                                      backgroundColor: Colors.transparent,
+                                      child: AspectRatio(
+                                        aspectRatio: 1.0,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          child: CountryFlag.fromCountryCode(
+                                            'GB',
+                                            height: 48,
+                                            width: 48,
+                                            borderRadius: 48,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+<<<<<<< HEAD
                                 ),
                               ],
                             ),
@@ -244,6 +323,13 @@ class _EcraRegistarState extends State<EcraRegistar> {
                               ),
                             ),
                           ],
+=======
+                                ],
+                              ),
+                              const Divider(color: Colors.grey),
+                            ],
+                          ),
+>>>>>>> 69715bde46c60b6164af815639d11280c8cda9ef
                         ),
                       ),
                     ],
@@ -254,17 +340,16 @@ class _EcraRegistarState extends State<EcraRegistar> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Já tens uma conta?",
+                    AppLocalizations.of(context)!.jaTemConta,
                     style: const TextStyle(
                       fontSize: 16,
-                      color: const Color.fromRGBO(230, 230, 230, 1),
+                      color: Color.fromRGBO(230, 230, 230, 1),
                     ),
                   ),
                   TextButton(
-                    onPressed: () =>
-                        {Navigator.pushNamed(context, "/login")},
-                    child: const Text("Entrar",
-                        style: TextStyle(
+                    onPressed: () => {Navigator.pushNamed(context, "/login")},
+                    child: Text(AppLocalizations.of(context)!.login,
+                        style: const TextStyle(
                             color: Color(0xFF83B1FF),
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

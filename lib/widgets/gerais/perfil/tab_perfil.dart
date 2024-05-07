@@ -105,6 +105,16 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
   }
 
   @override
+  void dispose() {
+    _pnome.dispose();
+    _unome.dispose();
+    _email.dispose();
+    _passwd.dispose();
+    _sobre.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: 0,
