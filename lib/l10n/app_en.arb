@@ -35,5 +35,8 @@
   "logout": "Sign Out", 
   "paginaInicial": "Home", 
   "comunidade": "Softshares Community", 
-  "alertas": "Alerts"
+  "alertas": "Alerts",
+  "criarConta" : "Creat an account",
+  "comecaAgora" : "Start now!"
+  "reintroduz" : "Confirm password"
 }

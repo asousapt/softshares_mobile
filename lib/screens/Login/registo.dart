@@ -2,9 +2,15 @@ import "package:flutter/material.dart";
 import 'package:country_flags/country_flags.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EcraRegistar extends StatefulWidget {
-  const EcraRegistar({super.key});
+  EcraRegistar({
+    super.key,
+    required this.mudaIdioma,
+  });
+
+  final Function(String idioma) mudaIdioma;
 
   @override
   State<EcraRegistar> createState() {
@@ -79,8 +85,8 @@ class _EcraRegistarState extends State<EcraRegistar> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       const SizedBox(height: 40),
-                      const Text(
-                        'Criar uma conta',
+                      Text(
+                        AppLocalizations.of(context)!.criarConta,
                         style: TextStyle(
                           fontSize: 42,
                           fontWeight: FontWeight.bold,
@@ -88,7 +94,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        "Começa agora!",
+                        AppLocalizations.of(context)!.comecaAgora,
                         style: const TextStyle(fontSize: 14),
                       ),
                       const SizedBox(height: 50),
@@ -100,7 +106,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
                             TextFormField(
                               controller: controlEmail,
                               decoration: InputDecoration(
-                                labelText: "Primeiro Nome",
+                                labelText: AppLocalizations.of(context)!.primeiroNome,
                                 prefixIcon:
                                     const Icon(Icons.account_circle_outlined),
                               ),
@@ -109,7 +115,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
                             TextFormField(
                               controller: controlEmail,
                               decoration: InputDecoration(
-                                labelText: "",
+                                labelText: AppLocalizations.of(context)!.ultimoNome,
                                 prefixIcon:
                                     const Icon(Icons.account_circle_outlined),
                               ),
@@ -127,28 +133,17 @@ class _EcraRegistarState extends State<EcraRegistar> {
                             TextFormField(
                               controller: controlPass,
                               decoration: InputDecoration(
-                                labelText: "Palavra-passe",
+                                labelText: AppLocalizations.of(context)!.password,
                                 prefixIcon: Icon(Icons.lock_outline_rounded),
                               ),
                             ),
                             const SizedBox(height: 5),
-                            Row(
-                              children: [
-                                Text(
-                                  "Esqueci-me da palavra-passe",
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                                TextButton(
-                                  onPressed: () {},
-                                  child: Text(
-                                    "Clique aqui",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        decoration: TextDecoration.underline),
-                                  ),
-                                ),
-                              ],
+                            TextFormField(
+                              controller: controlPass,
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(context)!.password,
+                                prefixIcon: Icon(Icons.lock_outline_rounded),
+                              ),
                             ),
                             const SizedBox(height: 3),
                             SizedBox(
@@ -156,7 +151,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
                               width: double.infinity,
                               child: FilledButton(
                                 onPressed: () {},
-                                child: Text("Login"),
+                                child: Text("Registar"),
                               ),
                             ),
                             const SizedBox(height: 10),

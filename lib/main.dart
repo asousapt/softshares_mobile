@@ -58,7 +58,7 @@ class _MyAppState extends State<MyApp> {
       theme: SoftSharesTheme.lightTheme,
       routes: {
         "/login": (context) => EcraLogin(mudaIdioma: _mudaIdioma),
-        "/registar": (context) => const EcraRegistar(),
+        "/registar": (context) => EcraRegistar(mudaIdioma: _mudaIdioma),
         "/perfil": (context) => ProfileScreen(utilizador: utilizador),
         '/home': (context) => const HomeScreen(),
         '/notificacoes': (context) => const NotificationsAlertScreen()

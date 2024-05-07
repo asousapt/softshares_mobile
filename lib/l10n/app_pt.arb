@@ -35,5 +35,7 @@
   "paginaInicial": "Página Inicial", 
   "comunidade": "Comunidade Softshares", 
   "alertas": "Alertas",
-  
+  "criarConta" : "Criar uma conta",
+  "comecaAgora" : "Começa agora!"
+  "reintroduz" : "reintroduza a palavra-passe"
 }
