@@ -54,5 +54,8 @@
   "porfavorInsiraO": "Por favor insira o ",
   "porfavorInsiraA": "Por favor insira a ", 
   "passwordsDiferentes": "As palavras-passe não são iguais", 
-  "jaTemConta": "Já tens uma conta?"
+  "jaTemConta": "Já tens uma conta?", 
+  "eventosInscrito": "Eventos Inscritos", 
+  "eventosFuturos": "Eventos Futuros"
+
 }

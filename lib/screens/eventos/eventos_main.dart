@@ -179,7 +179,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Eventos Inscritos:",
+                    "${AppLocalizations.of(context)!.eventosInscrito}:",
                     style: const TextStyle(
                       color: Color.fromRGBO(217, 215, 215, 1),
                       fontSize: 18,
@@ -204,7 +204,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    "Eventos Futuros:",
+                    "${AppLocalizations.of(context)!.eventosFuturos}:",
                     style: const TextStyle(
                       color: Color.fromRGBO(217, 215, 215, 1),
                       fontSize: 18,

@@ -53,5 +53,7 @@
   "porfavorInsiraO": "Please insert the ", 
   "porfavorInsiraA": "Please insert the ", 
   "passwordsDiferentes": "The passwords doesn't match", 
-  "jaTemConta": "Do you have an account?"
+  "jaTemConta": "Do you have an account?", 
+  "eventosInscrito": "Enrolled Events", 
+  "eventosFuturos": "Future Events"
 }

@@ -53,5 +53,7 @@
   "porfavorInsiraO": "Introduzca el ", 
   "porfavorInsiraA": "Introduzca la ", 
   "passwordsDiferentes": "Las contraseñas no coinciden", 
-  "jaTemConta": "¿Tienes una cuenta?"
+  "jaTemConta": "¿Tienes una cuenta?", 
+  "eventosInscrito": "Eventos inscritos", 
+  "eventosFuturos": "Eventos Futuros"
 }
