@@ -20,6 +20,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
   String tituloTotalEventos = "";
   bool _isSearching = false;
   TextEditingController _searchController = TextEditingController();
+  List<Evento> listaEvFiltrada = [];
 
   List<Categoria> categorias = [
     Categoria(1, "Gastronomia", "cor1", "garfo"),
@@ -137,9 +138,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() {
-      // TODO: FALTA PROGRAMAR O FILTRO DE PESQUISA POR TEXTO
-    });
+    listaEvFiltrada = listaEventos;
   }
 
   @override
@@ -156,11 +155,14 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
     tituloInscritos =
         "${eventosInscrito.length.toString()} ${AppLocalizations.of(context)!.eventos}";
     tituloTotalEventos =
-        "${listaEventos.length.toString()} ${AppLocalizations.of(context)!.eventos}";
+        "${listaEvFiltrada.length.toString()} ${AppLocalizations.of(context)!.eventos}";
   }
 
   Widget _buildSearchField() {
     return TextField(
+      onChanged: (value) {
+        filtraPorTexto(value);
+      },
       controller: _searchController,
       autofocus: true,
       decoration: InputDecoration(
@@ -194,11 +196,46 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       PopupMenuButton<String>(
         icon: const Icon(Icons.filter_list),
         onSelected: (String value) {
-          print(value);
+          filtraPorCategoria(value);
         },
         itemBuilder: (BuildContext context) => getLista(categorias),
       ),
     ];
+  }
+
+  // faz a filtragem da lista consoante o que é digitado na caixa de pesquisa
+  void filtraPorTexto(String texto) {
+    texto = texto.toLowerCase();
+    setState(() {
+      listaEvFiltrada = listaEventos.where((element) {
+        String descricaoLower = element.descricao.toLowerCase();
+        String localizacaoLower = element.localizacao.toLowerCase();
+        String tituloLower = element.titulo.toLowerCase();
+        return descricaoLower.contains(texto) ||
+            localizacaoLower.contains(texto) ||
+            tituloLower.contains(texto);
+      }).toList();
+
+      // Atualiza o texto do titulo conforme o numero de eventos na lista
+      tituloTotalEventos =
+          "${listaEvFiltrada.length.toString()} ${AppLocalizations.of(context)!.eventos}";
+    });
+  }
+
+  //Filtra a lista consoante a categoria selecionada
+  void filtraPorCategoria(String categoria) {
+    int cat = int.parse(categoria);
+
+    setState(() {
+      if (cat == 0) {
+        listaEvFiltrada = listaEventos;
+      } else {
+        listaEvFiltrada =
+            listaEventos.where((element) => element.categoria == cat).toList();
+      }
+      tituloTotalEventos =
+          "${listaEvFiltrada.length.toString()} ${AppLocalizations.of(context)!.eventos}";
+    });
   }
 
   @override
@@ -280,7 +317,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
                   SizedBox(
                     height: 280,
                     child: ListView(
-                      children: listaEventos.map((e) {
+                      children: listaEvFiltrada.map((e) {
                         return EventItemCard(evento: e);
                       }).toList(),
                     ),
