@@ -55,5 +55,6 @@
   "passwordsDiferentes": "Las contraseñas no coinciden", 
   "jaTemConta": "¿Tienes una cuenta?", 
   "eventosInscrito": "Eventos inscritos", 
-  "eventosFuturos": "Eventos Futuros"
+  "eventosFuturos": "Eventos Futuros", 
+  "procurar": "Buscar"
 }

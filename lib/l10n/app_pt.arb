@@ -56,6 +56,7 @@
   "passwordsDiferentes": "As palavras-passe não são iguais", 
   "jaTemConta": "Já tens uma conta?", 
   "eventosInscrito": "Eventos Inscritos", 
-  "eventosFuturos": "Eventos Futuros"
+  "eventosFuturos": "Eventos Futuros", 
+  "procurar": "Procurar"
 
 }

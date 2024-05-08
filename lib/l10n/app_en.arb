@@ -55,5 +55,6 @@
   "passwordsDiferentes": "The passwords doesn't match", 
   "jaTemConta": "Do you have an account?", 
   "eventosInscrito": "Enrolled Events", 
-  "eventosFuturos": "Future Events"
+  "eventosFuturos": "Future Events", 
+  "procurar": "Search"
 }

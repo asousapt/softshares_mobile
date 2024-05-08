@@ -6,6 +6,7 @@ import 'package:softshares_mobile/widgets/eventos/event_card_item.dart';
 import 'package:softshares_mobile/widgets/eventos/evento_card_eventos.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
+import 'package:softshares_mobile/models/categoria.dart';
 
 class EventosMainScreen extends StatefulWidget {
   const EventosMainScreen({super.key});
@@ -17,6 +18,19 @@ class EventosMainScreen extends StatefulWidget {
 class _EventosMainScreenState extends State<EventosMainScreen> {
   String tituloInscritos = "";
   String tituloTotalEventos = "";
+  bool _isSearching = false;
+  TextEditingController _searchController = TextEditingController();
+
+  List<Categoria> categorias = [
+    Categoria(1, "Gastronomia", "cor1", "garfo"),
+    Categoria(2, "Desporto", "cor2", "futebol"),
+    Categoria(3, "Atividade Ar Livre", "cor3", "arvore"),
+    Categoria(4, "Alojamento", "cor3", "casa"),
+    Categoria(5, "Saúde", "cor3", "cruz"),
+    Categoria(6, "Ensino", "cor3", "escola"),
+    Categoria(7, "Infraestruturas", "cor3", "infra"),
+    Categoria(0, "Todas", "corTodas", "todos"),
+  ];
 
   List<Evento> listaEventos = [
     Evento(
@@ -123,6 +137,16 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
   @override
   void initState() {
     super.initState();
+    _searchController.addListener(() {
+      // TODO: FALTA PROGRAMAR O FILTRO DE PESQUISA POR TEXTO
+    });
+  }
+
+  @override
+  void dispose() {
+    // Dispose the search controller
+    _searchController.dispose();
+    super.dispose();
   }
 
 // Foi necessario adicionar este bloco por causa das dependencias
@@ -133,6 +157,48 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
         "${eventosInscrito.length.toString()} ${AppLocalizations.of(context)!.eventos}";
     tituloTotalEventos =
         "${listaEventos.length.toString()} ${AppLocalizations.of(context)!.eventos}";
+  }
+
+  Widget _buildSearchField() {
+    return TextField(
+      controller: _searchController,
+      autofocus: true,
+      decoration: InputDecoration(
+        hintText: "${AppLocalizations.of(context)!.procurar}...",
+        border: InputBorder.none,
+        suffixIcon: IconButton(
+          icon: const Icon(FontAwesomeIcons.eraser),
+          onPressed: () {
+            setState(() {
+              _searchController.clear();
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildAppBarActions() {
+    return [
+      IconButton(
+        onPressed: () {
+          setState(() {
+            _isSearching = !_isSearching;
+            if (!_isSearching) {
+              _searchController.clear();
+            }
+          });
+        },
+        icon: Icon(_isSearching ? Icons.close : Icons.search),
+      ),
+      PopupMenuButton<String>(
+        icon: const Icon(Icons.filter_list),
+        onSelected: (String value) {
+          print(value);
+        },
+        itemBuilder: (BuildContext context) => getLista(categorias),
+      ),
+    ];
   }
 
   @override
@@ -152,17 +218,10 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       drawer: const MainDrawer(),
       bottomNavigationBar: const BottomNavigation(seleccao: 3),
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.eventos),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.search),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.filter_list),
-          )
-        ],
+        title: _isSearching
+            ? _buildSearchField()
+            : Text(AppLocalizations.of(context)!.eventos),
+        actions: _buildAppBarActions(),
       ),
       body: SingleChildScrollView(
         child: Column(
