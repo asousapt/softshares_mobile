@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:softshares_mobile/models/eventoTC.dart';
+import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/widgets/eventos/calendario.dart';
 import 'package:softshares_mobile/widgets/eventos/event_list.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
@@ -17,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late final ValueNotifier<List<EventTC>> _selectedEvents;
+  late final ValueNotifier<List<Evento>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOff;
   DateTime _focusedDay = DateTime.now();
@@ -39,11 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  List<EventTC> _getEventsForDay(DateTime day) {
+  List<Evento> _getEventsForDay(DateTime day) {
     return kEvents[day] ?? [];
   }
 
-  List<EventTC> _getEventsForRange(DateTime start, DateTime end) {
+  List<Evento> _getEventsForRange(DateTime start, DateTime end) {
     final days = daysInRange(start, end);
 
     return [

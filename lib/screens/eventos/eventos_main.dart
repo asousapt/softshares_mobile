@@ -29,7 +29,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "Virtual",
       DateTime(2024, 06, 15, 10, 0), // June 15, 2024, 10:00 AM
       DateTime(2024, 06, 15, 18, 0), // June 17, 2024, 6:00 PM
-      "tech_conference_image.jpg",
+      [],
     ),
     Evento(
       2,
@@ -41,7 +41,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "Central Park, Nova York",
       DateTime(2024, 07, 20, 12, 0), // July 20, 2024, 12:00 PM
       DateTime(2024, 07, 22, 22, 0), // July 22, 2024, 10:00 PM
-      "music_festival_image.jpg",
+      [],
     ),
     Evento(
       3,
@@ -53,7 +53,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "San Francisco, Califórnia",
       DateTime(2024, 08, 10, 9, 0), // August 10, 2024, 9:00 AM
       DateTime(2024, 08, 12, 17, 0), // August 12, 2024, 5:00 PM
-      "startup_summit_image.jpg",
+      [],
     ),
     Evento(
       4,
@@ -65,7 +65,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "Centro de Convenções, São Paulo",
       DateTime(2024, 09, 5, 10, 0), // September 5, 2024, 10:00 AM
       DateTime(2024, 09, 10, 20, 0), // September 10, 2024, 8:00 PM
-      "feira_livros_image.jpg",
+      [],
     ),
     Evento(
       5,
@@ -77,7 +77,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "Galeria de Arte Moderna, Lisboa",
       DateTime(2024, 10, 15, 12, 0), // October 15, 2024, 12:00 PM
       DateTime(2024, 10, 20, 18, 0), // October 20, 2024, 6:00 PM
-      "exposicao_arte_image.jpg",
+      [],
     ),
     Evento(
       6,
@@ -89,7 +89,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "Online",
       DateTime(2024, 11, 8, 9, 0), // November 8, 2024, 9:00 AM
       DateTime(2024, 11, 10, 17, 0), // November 10, 2024, 5:00 PM
-      "saude_mental_conferencia_image.jpg",
+      [],
     ),
   ];
 
@@ -104,7 +104,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "Virtual",
       DateTime(2024, 06, 15, 10, 0), // June 15, 2024, 10:00 AM
       DateTime(2024, 06, 15, 18, 0), // June 17, 2024, 6:00 PM
-      "tech_conference_image.jpg",
+      [],
     ),
     Evento(
       2,
@@ -116,7 +116,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "Central Park, Nova York",
       DateTime(2024, 07, 20, 12, 0), // July 20, 2024, 12:00 PM
       DateTime(2024, 07, 22, 22, 0), // July 22, 2024, 10:00 PM
-      "music_festival_image.jpg",
+      [],
     ),
   ];
 
@@ -160,7 +160,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
           ),
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.filter),
+            icon: const Icon(Icons.filter_list),
           )
         ],
       ),

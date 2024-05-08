@@ -20,6 +20,7 @@ class NotificationsAlertScreen extends StatefulWidget {
 class _NotificationsAlertScreenState extends State<NotificationsAlertScreen> {
   List<Notificacao>? listaNotificacoes;
   List<Alerta>? listaAlertas;
+  String titulo = "";
 
   @override
   void initState() {
@@ -60,7 +61,8 @@ class _NotificationsAlertScreenState extends State<NotificationsAlertScreen> {
       drawer: const MainDrawer(),
       bottomNavigationBar: const BottomNavigation(seleccao: 0),
       appBar: AppBar(
-        title: Text("${AppLocalizations.of(context)!.notificacoes}/"),
+        title: Text(
+            "${AppLocalizations.of(context)!.notificacoes} / ${AppLocalizations.of(context)!.alertas}"),
       ),
       body: Padding(
         padding:

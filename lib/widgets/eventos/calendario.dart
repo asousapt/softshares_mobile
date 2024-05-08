@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:softshares_mobile/models/eventoTC.dart';
+import 'package:softshares_mobile/models/evento.dart';
 
 class TableCalendarWidget extends StatelessWidget {
   final DateTime selectedDay;
@@ -37,7 +37,7 @@ class TableCalendarWidget extends StatelessWidget {
           color: Theme.of(context).canvasColor,
           borderRadius: BorderRadius.circular(15)),
       margin: const EdgeInsets.only(left: 15, right: 12),
-      child: TableCalendar<EventTC>(
+      child: TableCalendar<Evento>(
         calendarBuilders: CalendarBuilders(
           markerBuilder: (context, date, events) {
             final List<Widget> markers = [];

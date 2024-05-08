@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:softshares_mobile/models/eventoTC.dart';
+import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/widgets/eventos/event_item.dart';
 
 class EventListView extends StatelessWidget {
-  final ValueNotifier<List<EventTC>> selectedEvents;
+  final ValueNotifier<List<Evento>> selectedEvents;
 
   const EventListView({
     required this.selectedEvents,
@@ -14,7 +14,7 @@ class EventListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      child: ValueListenableBuilder<List<EventTC>>(
+      child: ValueListenableBuilder<List<Evento>>(
         valueListenable: selectedEvents,
         builder: (context, value, _) {
           return ListView.builder(
