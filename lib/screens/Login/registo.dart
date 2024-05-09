@@ -86,268 +86,271 @@ class _EcraRegistarState extends State<EcraRegistar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-          padding: const EdgeInsets.only(left: 12, right: 12, top: 90),
-          child: SingleChildScrollView(
-            child: Column(children: [
+        body: Padding(
+      padding: const EdgeInsets.only(left: 12, right: 12, top: 90),
+      child: SingleChildScrollView(
+          child: Column(children: [
+        Container(
+          color: Theme.of(context).canvasColor,
+          child: Expanded(
+            child: Column(mainAxisSize: MainAxisSize.max, children: [
+              const SizedBox(height: 10),
+              Text(
+                AppLocalizations.of(context)!.criarConta,
+                style: const TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                AppLocalizations.of(context)!.comecaAgora,
+                style: const TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 10),
               Container(
-                color: Theme.of(context).canvasColor,
-                child: Expanded(
-                  child: Column(mainAxisSize: MainAxisSize.max, children: [
+                margin: const EdgeInsets.only(left: 8, right: 8, bottom: 30),
+                child: Form(
+                  key: _formKey,
+                  child: Column(children: [
+                    TextFormField(
+                      controller: _controlPNome,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.primeiroNome,
+                        prefixIcon: const Icon(Icons.account_circle_outlined),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "${AppLocalizations.of(context)!.porfavorInsiraO}${AppLocalizations.of(context)!.primeiroNome}";
+                        }
+                        return null;
+                      },
+                    ),
                     const SizedBox(height: 10),
-                    Text(
-                      AppLocalizations.of(context)!.criarConta,
-                      style: const TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
+                    TextFormField(
+                      controller: _controlUNome,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.ultimoNome,
+                        prefixIcon: const Icon(Icons.account_circle_outlined),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "${AppLocalizations.of(context)!.porfavorInsiraO}${AppLocalizations.of(context)!.ultimoNome}";
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: _controlEmail,
+                      decoration: const InputDecoration(
+                        labelText: "Email",
+                        prefixIcon: Icon(Icons.account_circle_outlined),
+                      ),
+                      validator: (value) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            !isValidEmail(value)) {
+                          return AppLocalizations.of(context)!.insiraEmaiValido;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      controller: _controlPass,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.password,
+                        prefixIcon: const Icon(Icons.lock_outline_rounded),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.password}";
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      controller: _controlPass2,
+                      decoration: InputDecoration(
+                        labelText:
+                            AppLocalizations.of(context)!.repetirPassword,
+                        prefixIcon: const Icon(Icons.lock_outline_rounded),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.password}";
+                        } else if (value != pass2) {
+                          return AppLocalizations.of(context)!
+                              .passwordsDiferentes;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 50,
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            Navigator.pushNamed(context, '/login');
+                          }
+                        },
+                        child: Text(AppLocalizations.of(context)!.register),
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Text(
-                      AppLocalizations.of(context)!.comecaAgora,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      margin:
-                          const EdgeInsets.only(left: 8, right: 8, bottom: 30),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              controller: _controlPNome,
-                              decoration: InputDecoration(
-                                labelText:
-                                    AppLocalizations.of(context)!.primeiroNome,
-                                prefixIcon:
-                                    const Icon(Icons.account_circle_outlined),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "${AppLocalizations.of(context)!.porfavorInsiraO}${AppLocalizations.of(context)!.primeiroNome}";
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: _controlUNome,
-                              decoration: InputDecoration(
-                                labelText:
-                                    AppLocalizations.of(context)!.ultimoNome,
-                                prefixIcon:
-                                    const Icon(Icons.account_circle_outlined),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "${AppLocalizations.of(context)!.porfavorInsiraO}${AppLocalizations.of(context)!.ultimoNome}";
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: _controlEmail,
-                              decoration: const InputDecoration(
-                                labelText: "Email",
-                                prefixIcon: Icon(Icons.account_circle_outlined),
-                              ),
-                              validator: (value) {
-                                if (value == null ||
-                                    value.isEmpty ||
-                                    !isValidEmail(value)) {
-                                  return AppLocalizations.of(context)!
-                                      .insiraEmaiValido;
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              obscureText: true,
-                              enableSuggestions: false,
-                              autocorrect: false,
-                              controller: _controlPass,
-                              decoration: InputDecoration(
-                                labelText:
-                                    AppLocalizations.of(context)!.password,
-                                prefixIcon:
-                                    const Icon(Icons.lock_outline_rounded),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.password}";
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 5),
-                            TextFormField(
-                              obscureText: true,
-                              enableSuggestions: false,
-                              autocorrect: false,
-                              controller: _controlPass2,
-                              decoration: InputDecoration(
-                                labelText: AppLocalizations.of(context)!
-                                    .repetirPassword,
-                                prefixIcon:
-                                    const Icon(Icons.lock_outline_rounded),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.password}";
-                                } else if (value != pass2) {
-                                  return AppLocalizations.of(context)!
-                                      .passwordsDiferentes;
-                                }
-
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 3),
-                            SizedBox(
-                              height: 50,
-                              width: double.infinity,
-                              child: FilledButton(
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    Navigator.pushNamed(context, '/login');
-                                  }
-                                },
-                                child: Text(
-                                    AppLocalizations.of(context)!.register),
+                    Row(mainAxisSize: MainAxisSize.min, children: [
+                      GestureDetector(
+                        onTap: () {
+                          widget.mudaIdioma('pt');
+                        },
+                        child: CircleAvatar(
+                          radius: 32,
+                          backgroundColor: Colors
+                              .transparent, // Make the background transparent
+                          child: AspectRatio(
+                            aspectRatio:
+                                1.0, // Ensure aspect ratio is 1:1 to maintain the circular shape
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              child: CountryFlag.fromCountryCode(
+                                'PT',
+                                height: 48,
+                                width: 48,
+                                borderRadius: 48,
                               ),
                             ),
-                            const SizedBox(height: 10),
-                            Row(mainAxisSize: MainAxisSize.min, children: [
-                              GestureDetector(
-                                onTap: () {
-                                  widget.mudaIdioma('pt');
-                                },
-                                child: CircleAvatar(
-                                  radius: 32,
-                                  backgroundColor: Colors
-                                      .transparent, // Make the background transparent
-                                  child: AspectRatio(
-                                    aspectRatio:
-                                        1.0, // Ensure aspect ratio is 1:1 to maintain the circular shape
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: CountryFlag.fromCountryCode(
-                                        'PT',
-                                        height: 48,
-                                        width: 48,
-                                        borderRadius: 48,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  widget.mudaIdioma('es');
-                                },
-                                child: CircleAvatar(
-                                  radius: 32,
-                                  backgroundColor: Colors.transparent,
-                                  child: AspectRatio(
-                                    aspectRatio: 1.0,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: CountryFlag.fromCountryCode(
-                                        'ES',
-                                        height: 48,
-                                        width: 48,
-                                        borderRadius: 48,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  widget.mudaIdioma('en');
-                                },
-                                child: CircleAvatar(
-                                  radius: 32,
-                                  backgroundColor: Colors.transparent,
-                                  child: AspectRatio(
-                                    aspectRatio: 1.0,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: CountryFlag.fromCountryCode(
-                                        'GB',
-                                        height: 48,
-                                        width: 48,
-                                        borderRadius: 48,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ]),
-                          const Divider(color: Colors.grey),
-                          // Secção do SSO
-                          ElevatedButton(
-                            onPressed: sub,
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 40,
-                                  vertical: 10), // Adjust padding as needed
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(FontAwesomeIcons.facebook),
-                                SizedBox(width: 4),
-                                Text("Facebook"),
-                              ],
-                            ),
-                          ),]
+                          ),
                         ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          widget.mudaIdioma('es');
+                        },
+                        child: CircleAvatar(
+                          radius: 32,
+                          backgroundColor: Colors.transparent,
+                          child: AspectRatio(
+                            aspectRatio: 1.0,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              child: CountryFlag.fromCountryCode(
+                                'ES',
+                                height: 48,
+                                width: 48,
+                                borderRadius: 48,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          widget.mudaIdioma('en');
+                        },
+                        child: CircleAvatar(
+                          radius: 32,
+                          backgroundColor: Colors.transparent,
+                          child: AspectRatio(
+                            aspectRatio: 1.0,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              child: CountryFlag.fromCountryCode(
+                                'GB',
+                                height: 48,
+                                width: 48,
+                                borderRadius: 48,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]),
+                    const Divider(color: Colors.grey),
+                    // Secção do SSO
+                    ElevatedButton(
+                      onPressed: sub,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 10), // Adjust padding as needed
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(FontAwesomeIcons.facebook),
+                          SizedBox(width: 4),
+                          Text("Facebook"),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: sub,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 40,
+                          vertical: 10,
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(FontAwesomeIcons.google),
+                          SizedBox(width: 4),
+                          Text("Google"),
+                        ],
                       ),
                     ),
                   ]),
                 ),
               ),
-              Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.jaTemConta,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Color.fromRGBO(230, 230, 230, 1),
-                ),
-              ),
-              TextButton(
-                onPressed: () => {Navigator.pushNamed(context, "/login")},
-                child: Text(AppLocalizations.of(context)!.login,
-                    style: const TextStyle(
-                        color: Color(0xFF83B1FF),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline)),
-              )
-            ],
+            ]),
           ),
-          Row(
-            children: [
-              const Icon(
-                Icons.copyright,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.jaTemConta,
+              style: const TextStyle(
+                fontSize: 16,
                 color: Color.fromRGBO(230, 230, 230, 1),
               ),
-              const SizedBox(width: 3),
-              Text(
-                "Softinsa v$version",
-                style: const TextStyle(color: Color.fromRGBO(230, 230, 230, 1)),
-              )
-            ],
-          )
-            ])
-          ),
-          
+            ),
+            TextButton(
+              onPressed: () => {Navigator.pushNamed(context, "/login")},
+              child: Text(AppLocalizations.of(context)!.login,
+                  style: const TextStyle(
+                      color: Color(0xFF83B1FF),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline)),
+            )
+          ],
+        ),
+        Row(
+          children: [
+            const Icon(
+              Icons.copyright,
+              color: Color.fromRGBO(230, 230, 230, 1),
+            ),
+            const SizedBox(width: 3),
+            Text(
+              "Softinsa v$version",
+              style: const TextStyle(color: Color.fromRGBO(230, 230, 230, 1)),
+            )
+          ],
+        )
+      ])),
     ));
   }
 }

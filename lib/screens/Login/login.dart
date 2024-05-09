@@ -209,7 +209,7 @@ class _EcraLoginState extends State<EcraLogin> {
                                     ),
                                   ),
                                   TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {Navigator.pushNamed(context, "/recuperarPass");},
                                     child: Text(
                                       AppLocalizations.of(context)!.clickHere,
                                       style: const TextStyle(
