@@ -245,7 +245,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromRGBO(29, 90, 161, 1),
         onPressed: () {
-          print("object");
+          Navigator.pushNamed(context, '/criarEvento');
         },
         child: const Icon(
           FontAwesomeIcons.plus,

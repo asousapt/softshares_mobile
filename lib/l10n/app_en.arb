@@ -56,5 +56,6 @@
   "jaTemConta": "Do you have an account?", 
   "eventosInscrito": "Enrolled Events", 
   "eventosFuturos": "Future Events", 
-  "procurar": "Search"
+  "procurar": "Search", 
+  "criarEvento": "Create Event"
 }
