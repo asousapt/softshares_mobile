@@ -1,3 +1,4 @@
+import 'package:softshares_mobile/screens/Login/recuperarPass.dart';
 import 'package:softshares_mobile/screens/drawerLateral/contacte_suporte.dart';
 import 'package:softshares_mobile/screens/eventos/criar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/eventos_main.dart';
@@ -67,7 +68,8 @@ class _MyAppState extends State<MyApp> {
         '/notificacoes': (context) => const NotificationsAlertScreen(),
         '/suporte': (context) => const ContactSupport(),
         '/eventos': (context) => const EventosMainScreen(),
-        '/criarEvento': (context) => const CriarEventoScreen()
+        '/criarEvento': (context) => const CriarEventoScreen(),
+        '/recuperarPass': (context) => EcraRecPass(mudaIdioma: _mudaIdioma),
       },
       locale: Locale(local),
       localizationsDelegates: const [

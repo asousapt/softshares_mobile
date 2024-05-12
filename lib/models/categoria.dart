@@ -49,9 +49,26 @@ class Categoria {
   }
 }
 
-List<PopupMenuEntry<String>> getLista(List<Categoria> categorias) {
+// Retorna uma lista de itesms do filtro de categoria
+List<PopupMenuEntry<String>> getCatLista(List<Categoria> categorias) {
   return categorias.map((e) {
     return PopupMenuItem<String>(
+      value: e.categoriaId.toString(),
+      child: Row(
+        children: [
+          e.getIcone(),
+          const SizedBox(width: 10),
+          Text(e.descricao),
+        ],
+      ),
+    );
+  }).toList();
+}
+
+// Retorna uma lista de items do dropdown de categoria
+List<DropdownMenuItem> getListaCatDropdown(List<Categoria> categorias) {
+  return categorias.map((e) {
+    return DropdownMenuItem(
       value: e.categoriaId.toString(),
       child: Row(
         children: [

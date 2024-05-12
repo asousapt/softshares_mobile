@@ -38,10 +38,39 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
   ];
 
   List<Subcategoria> subcategorias = [
-    Subcategoria(1, 'Subcategoria 1'),
-    Subcategoria(2, 'Subcategoria 2'),
-    Subcategoria(3, 'Subcategoria 3'),
-    Subcategoria(4, 'Subcategoria 4'),
+    // Subcategories for "Gastronomia" category
+    Subcategoria(1, 1, "Comida italiana"),
+    Subcategoria(2, 1, "Comida mexicana"),
+    Subcategoria(3, 1, "Comida japonesa"),
+
+    // Subcategories for "Desporto" category
+    Subcategoria(4, 2, "Futebol"),
+    Subcategoria(5, 2, "Basquetebol"),
+    Subcategoria(6, 2, "Ténis"),
+
+    // Subcategories for "Atividade Ar Livre" category
+    Subcategoria(7, 3, "Caminhada"),
+    Subcategoria(8, 3, "Ciclismo"),
+
+    // Subcategories for "Alojamento" category
+    Subcategoria(9, 4, "Hotel"),
+    Subcategoria(10, 4, "Hostel"),
+    Subcategoria(11, 4, "Apartamento"),
+
+    // Subcategories for "Saúde" category
+    Subcategoria(12, 5, "Médico geral"),
+    Subcategoria(13, 5, "Dentista"),
+    Subcategoria(14, 5, "Fisioterapia"),
+
+    // Subcategories for "Ensino" category
+    Subcategoria(15, 6, "Escola primária"),
+    Subcategoria(16, 6, "Escola secundária"),
+    Subcategoria(17, 6, "Universidade"),
+
+    // Subcategories for "Infraestruturas" category
+    Subcategoria(18, 7, "Transporte público"),
+    Subcategoria(19, 7, "Estradas"),
+    Subcategoria(20, 7, "Rede de água e saneamento"),
   ];
 
   List<Departamento> departamentos = [

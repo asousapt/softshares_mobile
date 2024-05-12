@@ -198,7 +198,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
         onSelected: (String value) {
           filtraPorCategoria(value);
         },
-        itemBuilder: (BuildContext context) => getLista(categorias),
+        itemBuilder: (BuildContext context) => getCatLista(categorias),
       ),
     ];
   }

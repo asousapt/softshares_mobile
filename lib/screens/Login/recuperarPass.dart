@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:country_flags/country_flags.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class EcraLogin extends StatefulWidget {
-  const EcraLogin({
+class EcraRecPass extends StatefulWidget {
+  const EcraRecPass({
     super.key,
     required this.mudaIdioma,
   });
@@ -15,12 +14,12 @@ class EcraLogin extends StatefulWidget {
   final Function(String idioma) mudaIdioma;
 
   @override
-  State<EcraLogin> createState() {
-    return _EcraLoginState();
+  State<EcraRecPass> createState() {
+    return _EcraRecPassState();
   }
 }
 
-class _EcraLoginState extends State<EcraLogin> {
+class _EcraRecPassState extends State<EcraRecPass> {
   String version = 'Loading...';
   String email = '';
   String pass = '';
