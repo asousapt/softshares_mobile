@@ -57,5 +57,22 @@
   "eventosInscrito": "Eventos inscritos", 
   "eventosFuturos": "Eventos Futuros", 
   "procurar": "Buscar", 
-  "criarEvento": "Crear Evento"
+  "criarEvento": "Crear Evento", 
+  "detalhesEvento": "Detalles del Evento", 
+  "titulo": "Título", 
+  "localizacao": "Location", 
+  "dataHoraIni": "Fecha y hora de inicio",
+  "dataHoraFim": "Fecha y hora de fin", 
+  "categoria": "Categoria", 
+  "subCategoria": "Subcategoría", 
+  "nmrMaxParticipantes": "Número máximo de participantes", 
+  "nmrMaxConvidados": "Número máximo de invitados", 
+  "descricao": "Descripción", 
+  "dataInicioAntHoje": "La fecha de inicio no puede ser anterior a hoy",
+  "dataFimAntHoje": "La fecha de fin no puede ser anterior a hoy", 
+  "dataFimAntInicio": "La fecha de fim no puede ser anterior a la fecha de inicio",
+  "horaFimAntInicio": "La hora de fim no puede ser anterior a la hora de inicio", 
+  "dataLimiteInscricao": "Fecha límite de inscripción", 
+  "dataLimiteSupInicio": "La fecha límite de inscripción es posterior a la fecha de inicio", 
+  "dataLimiteAntHoje": "La fecha límite de inscripción es anterior a la fecha atual"
 }

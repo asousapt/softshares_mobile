@@ -57,5 +57,22 @@
   "eventosInscrito": "Enrolled Events", 
   "eventosFuturos": "Future Events", 
   "procurar": "Search", 
-  "criarEvento": "Create Event"
+  "criarEvento": "Create Event", 
+  "detalhesEvento": "Event Details",
+  "titulo": "Title", 
+  "localizacao": "Location", 
+  "dataHoraIni": "Start date and time", 
+  "dataHoraFim": "End date and time", 
+  "categoria": "Category", 
+  "subCategoria": "Sub-categoria", 
+  "nmrMaxParticipantes": "Maximum number of participants", 
+  "nmrMaxConvidados": "Maximum number of guests", 
+  "descricao": "Description", 
+  "dataInicioAntHoje": "Start date can't be prior than today",
+  "dataFimAntHoje": "End date can't be prior than today",
+  "dataFimAntInicio": "End date can't be prior than the start date", 
+  "horaFimAntInicio": "End time can't be prior than the start time", 
+  "dataLimiteInscricao": "Registration deadline", 
+  "dataLimiteSupInicio": "Registration deadline is after Start date", 
+  "dataLimiteAntHoje": "Registration deadline can't be before today"
 }

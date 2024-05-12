@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/subcategoria.dart';
 import '../../time_utils.dart';
+import 'package:softshares_mobile/widgets/gerais/dialog.dart';
 
 class CriarEventoScreen extends StatefulWidget {
-  const CriarEventoScreen({Key? key}) : super(key: key);
+  const CriarEventoScreen({super.key});
 
   @override
   State<CriarEventoScreen> createState() {
@@ -17,6 +17,7 @@ class CriarEventoScreen extends StatefulWidget {
 
 class _CriarEventoScreen extends State<CriarEventoScreen> {
   final _tituloController = TextEditingController();
+  final _localizacaoController = TextEditingController();
   final _dateIni = TextEditingController();
   final _timeIni = TextEditingController();
   final _dateFim = TextEditingController();
@@ -24,12 +25,15 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
   final _nmrMaxParticipantes = TextEditingController();
   final _nmrConvidados = TextEditingController();
   final _descricao = TextEditingController();
+  final _dataLimiteInscricao = TextEditingController();
   String? _categoriaId;
   String? _subCategoriaId;
   int? nmrMaxParticipantes;
   bool? permiteConvidados;
   int? nmrConvidados;
   String? descricao;
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 // Lista de categorias a substituir por dados vindos da BD ou chamada API
   List<Categoria> categorias = [
@@ -96,6 +100,21 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     descricao = "";
   }
 
+  @override
+  void dispose() {
+    _tituloController.dispose();
+    _localizacaoController.dispose();
+    _dateIni.dispose();
+    _timeIni.dispose();
+    _dateFim.dispose();
+    _timeFim.dispose();
+    _nmrMaxParticipantes.dispose();
+    _nmrConvidados.dispose();
+    _descricao.dispose();
+    _dataLimiteInscricao.dispose();
+    super.dispose();
+  }
+
   Future<void> _selectStartTime(BuildContext context) async {
     await displayTimePicker(context, _timeIni, timeOfDay);
   }
@@ -124,267 +143,520 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     );
   }
 
+  Future<void> _selectDeadLineDate(BuildContext context) async {
+    await displayDatePicker(
+      context,
+      _dataLimiteInscricao,
+      selected,
+      initial,
+      last,
+    );
+  }
+
+  // faz a validação das datas
+  String? validaDatas(String campo) {
+    DateTime dataInicio = DateTime.parse(_dateIni.text);
+    DateTime dataFim = DateTime.parse(_dateFim.text);
+    TimeOfDay horaInicio = parseTimeOfDay(_timeIni.text);
+    TimeOfDay horaFim = parseTimeOfDay(_timeFim.text);
+    DateTime agora = DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0, 0);
+
+    // Verifica se a data de início é anterior à data atual
+    if (dataInicio.isBefore(agora)) {
+      switch (campo) {
+        case "dataInicio":
+          print(dataInicio);
+          return AppLocalizations.of(context)!.dataInicioAntHoje;
+        case "horaInicio":
+          return "";
+
+        default:
+          return "";
+      }
+    }
+
+    // Verifica se a data de fim é anterior à data atual
+    if (dataFim.isBefore(agora)) {
+      switch (campo) {
+        case "dataFim":
+          return AppLocalizations.of(context)!.dataFimAntHoje;
+        case "horaFim":
+          return "";
+      }
+    }
+
+    // Verifica se a data de fim é anterior à data de início
+    if (dataFim.isBefore(dataInicio)) {
+      switch (campo) {
+        case "dataFim":
+          return AppLocalizations.of(context)!.dataFimAntInicio;
+        case "horaFim":
+          return "";
+      }
+    }
+
+    // verifica os campos das horas de início e fim
+    if (dataInicio.isAtSameMomentAs(dataFim)) {
+      if (horaFim.hour < horaInicio.hour ||
+          (horaFim.hour == horaInicio.hour &&
+              horaFim.minute < horaInicio.minute)) {
+        switch (campo) {
+          case "dataFim":
+            return AppLocalizations.of(context)!.horaFimAntInicio;
+          case "horaFim":
+            return "";
+        }
+      }
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Criar evento"),
-        //title: Text(AppLocalizations.of(context).criarEvento),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          left: 12,
-          right: 12,
-          top: 15,
-          bottom: 20,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          if (_tituloController.text.isNotEmpty ||
+              _localizacaoController.text.isNotEmpty ||
+              _dateIni.text.isNotEmpty ||
+              _timeIni.text.isNotEmpty ||
+              _dateFim.text.isNotEmpty ||
+              _timeFim.text.isNotEmpty ||
+              _dataLimiteInscricao.text.isNotEmpty ||
+              _categoriaId!.isNotEmpty ||
+              _subCategoriaId!.isNotEmpty ||
+              _nmrMaxParticipantes.text.isNotEmpty ||
+              _descricao.text.isNotEmpty) {
+            Future<bool> confirma = confirmExit(
+              context,
+              AppLocalizations.of(context)!.sairSemGuardar,
+              AppLocalizations.of(context)!.dadosSeraoPerdidos,
+            );
+
+            confirma.then((value) {
+              if (value) {
+                Navigator.of(context).pop();
+              }
+            });
+          } else {
+            Navigator.of(context).pop();
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            AppLocalizations.of(context)!.criarEvento,
+          ),
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Container(
-                color: Theme.of(context).canvasColor,
-                margin: const EdgeInsets.all(10),
-                child: Form(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "detalhes do Evento",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 15),
-                        TextFormField(
-                          maxLength: 160,
-                          controller: _tituloController,
-                          decoration: InputDecoration(
-                            label: Text("titulo"),
+        body: Padding(
+          padding: const EdgeInsets.only(
+            left: 12,
+            right: 12,
+            top: 15,
+            bottom: 20,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                  color: Theme.of(context).canvasColor,
+                  margin: const EdgeInsets.all(10),
+                  child: Form(
+                    key: _formKey,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.detalhesEvento,
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "preencha o titulo";
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                readOnly: true,
-                                decoration: const InputDecoration(
-                                  labelText: 'Data e hora de início',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(20),
-                                    ),
-                                  ),
-                                ),
-                                controller: _dateIni,
-                              ),
+                          const SizedBox(height: 15),
+                          TextFormField(
+                            maxLength: 160,
+                            controller: _tituloController,
+                            decoration: InputDecoration(
+                              label: Text(AppLocalizations.of(context)!.titulo),
                             ),
-                            IconButton(
-                              onPressed: () {
-                                _selectStartDate(context);
-                              },
-                              icon: const Icon(FontAwesomeIcons.calendar),
-                            ),
-                            Expanded(
-                              child: TextFormField(
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(20),
-                                    ),
-                                  ),
-                                ),
-                                controller: _timeIni,
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                _selectStartTime(context);
-                              },
-                              icon: const Icon(FontAwesomeIcons.clock),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                readOnly: true,
-                                decoration: const InputDecoration(
-                                  labelText: 'Data e hora de fim',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(20),
-                                    ),
-                                  ),
-                                ),
-                                controller: _dateFim,
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                _selectEndDate(context);
-                              },
-                              icon: const Icon(FontAwesomeIcons.calendar),
-                            ),
-                            Expanded(
-                              child: TextFormField(
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(20),
-                                    ),
-                                  ),
-                                ),
-                                controller: _timeFim,
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                _selectEndTime(context);
-                              },
-                              icon: const Icon(FontAwesomeIcons.clock),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        // Selecção de categoria
-                        DropdownButton(
-                          padding: const EdgeInsets.only(left: 10, right: 10),
-                          borderRadius: BorderRadius.circular(20),
-                          hint: Text("Categoria"),
-                          isExpanded: true,
-                          value: _categoriaId.toString(),
-                          items: getListaCatDropdown(categorias),
-                          onChanged: (value) {
-                            setState(
-                              () {
-                                _categoriaId = value;
-                                _subCategoriaId = subcategorias
-                                    .where((e) =>
-                                        e.categoriaId == int.parse(value))
-                                    .first
-                                    .subcategoriaId
-                                    .toString();
-                              },
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 5),
-                        //selecção de subcategoria
-                        DropdownButton(
-                          padding: const EdgeInsets.only(left: 10, right: 10),
-                          borderRadius: BorderRadius.circular(20),
-                          hint: Text("Sub-categoria"),
-                          isExpanded: true,
-                          value: _subCategoriaId.toString(),
-                          items: getListaSubCatDropdown(
-                              subcategorias, int.parse(_categoriaId!)),
-                          onChanged: (value) {
-                            setState(
-                              () {
-                                _subCategoriaId = value;
-                              },
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 5),
-                        TextFormField(
-                          keyboardType: TextInputType.number,
-                          controller: _nmrMaxParticipantes,
-                          decoration: InputDecoration(
-                            label: Text("Número máximo de participantes"),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "${AppLocalizations.of(context)!.porfavorInsiraO} ${AppLocalizations.of(context)!.titulo}";
+                              }
+                              return null;
+                            },
                           ),
-                          onChanged: (value) {
-                            setState(
-                              () {
-                                nmrMaxParticipantes = int.parse(value);
-                              },
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 5),
-                        // Secção de convidados permitidos
-                        Row(
-                          children: [
-                            Checkbox(
-                              tristate: false,
-                              value: permiteConvidados,
-                              onChanged: (value) {
-                                setState(() {
-                                  permiteConvidados = value;
-                                });
-                              },
+                          TextFormField(
+                            maxLength: 160,
+                            controller: _localizacaoController,
+                            decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  //TODO: Implementar a selecção de localização do mapa
+                                },
+                                icon: const Icon(FontAwesomeIcons.locationDot),
+                              ),
+                              label: Text(
+                                  AppLocalizations.of(context)!.localizacao),
                             ),
-                            Expanded(
-                              child: TextFormField(
-                                keyboardType: TextInputType.number,
-                                controller: _nmrConvidados,
-                                enabled: permiteConvidados,
-                                decoration: InputDecoration(
-                                  label: Text("Número de convidados"),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "${AppLocalizations.of(context)!.porfavorInsiraA} ${AppLocalizations.of(context)!.localizacao}";
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    labelStyle: TextStyle(
+                                        overflow: TextOverflow.visible),
+                                    errorStyle: const TextStyle(
+                                        overflow: TextOverflow.visible),
+                                    labelText: AppLocalizations.of(context)!
+                                        .dataHoraIni,
+                                    border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20),
+                                      ),
+                                    ),
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        _selectStartDate(context);
+                                      },
+                                      icon:
+                                          const Icon(FontAwesomeIcons.calendar),
+                                    ),
+                                  ),
+                                  controller: _dateIni,
+                                  validator: (value) {
+                                    if (value == null ||
+                                        value.isEmpty ||
+                                        _timeIni.text.isEmpty) {
+                                      return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataHoraIni}";
+                                    }
+                                    return validaDatas("dataInicio");
+                                  },
                                 ),
-                                validator: (value) {
-                                  if (permiteConvidados == true &&
-                                      (value == null || value.isEmpty)) {
-                                    return "preencha o número de convidados";
-                                  }
-                                  return null;
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: TextFormField(
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20),
+                                      ),
+                                    ),
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        _selectStartTime(context);
+                                      },
+                                      icon: const Icon(FontAwesomeIcons.clock),
+                                    ),
+                                  ),
+                                  controller: _timeIni,
+                                  validator: (value) {
+                                    if (value == null ||
+                                        value.isEmpty ||
+                                        _dateIni.text.isEmpty) {
+                                      return "";
+                                    }
+
+                                    return validaDatas("horaInicio");
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    labelText: AppLocalizations.of(context)!
+                                        .dataHoraFim,
+                                    border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20),
+                                      ),
+                                    ),
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        _selectEndDate(context);
+                                      },
+                                      icon:
+                                          const Icon(FontAwesomeIcons.calendar),
+                                    ),
+                                  ),
+                                  controller: _dateFim,
+                                  validator: (value) {
+                                    if (value == null ||
+                                        value.isEmpty ||
+                                        _timeFim.text.isEmpty) {
+                                      return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataHoraFim}";
+                                    }
+
+                                    return validaDatas("dataFim");
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: TextFormField(
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20),
+                                      ),
+                                    ),
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        _selectEndTime(context);
+                                      },
+                                      icon: const Icon(FontAwesomeIcons.clock),
+                                    ),
+                                  ),
+                                  controller: _timeFim,
+                                  validator: (value) {
+                                    if (value == null ||
+                                        value.isEmpty ||
+                                        _dateFim.text.isEmpty) {
+                                      return "";
+                                    }
+
+                                    return validaDatas("horaFim");
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          TextFormField(
+                            controller: _dataLimiteInscricao,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!
+                                  .dataLimiteInscricao,
+                              border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
+                                ),
+                              ),
+                              suffixIcon: IconButton(
+                                icon: const Icon(FontAwesomeIcons.calendar),
+                                onPressed: () {
+                                  _selectDeadLineDate(context);
                                 },
                               ),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        TextFormField(
-                          maxLines: 2,
-                          controller: _descricao,
-                          decoration: InputDecoration(
-                            label: Text("Descrição"),
+                            validator: (value) {
+                              DateTime hoje = DateTime(
+                                  DateTime.now().year,
+                                  DateTime.now().month,
+                                  DateTime.now().day,
+                                  0,
+                                  0,
+                                  0);
+                              if (value == null || value.isEmpty) {
+                                return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataLimiteInscricao}";
+                              }
+
+                              if (DateTime.parse(value).isBefore(hoje)) {
+                                return AppLocalizations.of(context)!
+                                    .dataLimiteAntHoje;
+                              }
+
+                              if (DateTime.parse(value)
+                                  .isAfter(DateTime.parse(_dateIni.text))) {
+                                return AppLocalizations.of(context)!
+                                    .dataLimiteSupInicio;
+                              }
+                              return null;
+                            },
                           ),
-                          onChanged: (value) {
-                            setState(() {
-                              descricao = value;
-                            });
-                          },
-                          validator: (value) => value!.isEmpty
-                              ? "preencha a descrição do evento"
-                              : null,
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {},
-                              child:
-                                  Text(AppLocalizations.of(context)!.cancelar),
+                          const SizedBox(height: 5),
+                          // Selecção de categoria
+                          DropdownButton(
+                            padding: const EdgeInsets.only(left: 10, right: 10),
+                            borderRadius: BorderRadius.circular(20),
+                            hint: Text(AppLocalizations.of(context)!.categoria),
+                            isExpanded: true,
+                            value: _categoriaId.toString(),
+                            items: getListaCatDropdown(categorias),
+                            onChanged: (value) {
+                              setState(
+                                () {
+                                  _categoriaId = value;
+                                  _subCategoriaId = subcategorias
+                                      .where((e) =>
+                                          e.categoriaId == int.parse(value))
+                                      .first
+                                      .subcategoriaId
+                                      .toString();
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 5),
+                          //selecção de subcategoria
+                          DropdownButton(
+                            padding: const EdgeInsets.only(left: 10, right: 10),
+                            borderRadius: BorderRadius.circular(20),
+                            hint: Text(
+                                AppLocalizations.of(context)!.subCategoria),
+                            isExpanded: true,
+                            value: _subCategoriaId.toString(),
+                            items: getListaSubCatDropdown(
+                                subcategorias, int.parse(_categoriaId!)),
+                            onChanged: (value) {
+                              setState(
+                                () {
+                                  _subCategoriaId = value;
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 5),
+                          TextFormField(
+                            keyboardType: TextInputType.number,
+                            controller: _nmrMaxParticipantes,
+                            decoration: InputDecoration(
+                              label: Text(AppLocalizations.of(context)!
+                                  .nmrMaxParticipantes),
                             ),
-                            const SizedBox(width: 20),
-                            FilledButton(
-                              onPressed: () {},
-                              child: Text(AppLocalizations.of(context)!.enviar),
+                            onChanged: (value) {
+                              setState(
+                                () {
+                                  nmrMaxParticipantes = int.parse(value);
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          // Secção de convidados permitidos
+                          Row(
+                            children: [
+                              Checkbox(
+                                tristate: false,
+                                value: permiteConvidados,
+                                onChanged: (value) {
+                                  setState(() {
+                                    permiteConvidados = value;
+                                  });
+                                },
+                              ),
+                              Expanded(
+                                child: TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  controller: _nmrConvidados,
+                                  enabled: permiteConvidados,
+                                  decoration: InputDecoration(
+                                    label: Text(AppLocalizations.of(context)!
+                                        .nmrMaxConvidados),
+                                  ),
+                                  validator: (value) {
+                                    if (permiteConvidados == true &&
+                                        (value == null || value.isEmpty)) {
+                                      return "${AppLocalizations.of(context)!.porfavorInsiraO}${AppLocalizations.of(context)!.nmrMaxConvidados}";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            maxLines: 2,
+                            controller: _descricao,
+                            decoration: InputDecoration(
+                              label:
+                                  Text(AppLocalizations.of(context)!.descricao),
                             ),
-                          ],
-                        )
-                      ],
+                            onChanged: (value) {
+                              setState(() {
+                                descricao = value;
+                              });
+                            },
+                            validator: (value) => value!.isEmpty
+                                ? "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.descricao}"
+                                : null,
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  if (_tituloController.text.isNotEmpty ||
+                                      _localizacaoController.text.isNotEmpty ||
+                                      _dateIni.text.isNotEmpty ||
+                                      _timeIni.text.isNotEmpty ||
+                                      _dateFim.text.isNotEmpty ||
+                                      _timeFim.text.isNotEmpty ||
+                                      _dataLimiteInscricao.text.isNotEmpty ||
+                                      _categoriaId!.isNotEmpty ||
+                                      _subCategoriaId!.isNotEmpty ||
+                                      _nmrMaxParticipantes.text.isNotEmpty ||
+                                      _descricao.text.isNotEmpty) {
+                                    Future<bool> confirma = confirmExit(
+                                      context,
+                                      AppLocalizations.of(context)!
+                                          .sairSemGuardar,
+                                      AppLocalizations.of(context)!
+                                          .dadosSeraoPerdidos,
+                                    );
+
+                                    confirma.then((value) {
+                                      if (value) {
+                                        Navigator.of(context).pop();
+                                      }
+                                    });
+                                  } else {
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                                child: Text(
+                                    AppLocalizations.of(context)!.cancelar),
+                              ),
+                              const SizedBox(width: 20),
+                              FilledButton(
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    //TODO: Implementar a lógica de envio de dados
+                                  }
+                                },
+                                child:
+                                    Text(AppLocalizations.of(context)!.enviar),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),

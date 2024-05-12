@@ -34,3 +34,11 @@ Future<void> displayDatePicker(
     controller.text = date.toLocal().toString().split(" ")[0];
   }
 }
+
+// Dada uma string devolve um objeto TimeOfDay
+TimeOfDay parseTimeOfDay(String timeString) {
+  final List<String> parts = timeString.split(':');
+  final int hour = int.parse(parts[0]);
+  final int minute = int.parse(parts[1]);
+  return TimeOfDay(hour: hour, minute: minute);
+}

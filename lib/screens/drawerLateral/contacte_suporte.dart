@@ -27,17 +27,6 @@ class _ContactSupportState extends State<ContactSupport> {
     mensagem = "";
   }
 
-  Future<bool> confirmExit(BuildContext context) async {
-    bool? confirm = await showDialog(
-      context: context,
-      builder: (context) => ConfirmDialog(
-        titulo: AppLocalizations.of(context)!.sairSuporte,
-        msg: AppLocalizations.of(context)!.msgSairSuporte,
-      ),
-    );
-    return confirm ?? false;
-  }
-
   @override
   void dispose() {
     assuntoController.dispose();
@@ -54,7 +43,11 @@ class _ContactSupportState extends State<ContactSupport> {
           if (assunto!.isEmpty && mensagem!.isEmpty) {
             Navigator.of(context).pop();
           } else {
-            Future<bool> confirma = confirmExit(context);
+            Future<bool> confirma = confirmExit(
+              context,
+              AppLocalizations.of(context)!.sairSuporte,
+              AppLocalizations.of(context)!.msgSairSuporte,
+            );
 
             confirma.then((value) {
               if (value) {
@@ -119,7 +112,11 @@ class _ContactSupportState extends State<ContactSupport> {
                               if (assunto!.isEmpty && mensagem!.isEmpty) {
                                 Navigator.of(context).pop();
                               } else {
-                                Future<bool> confirma = confirmExit(context);
+                                Future<bool> confirma = confirmExit(
+                                  context,
+                                  AppLocalizations.of(context)!.sairSuporte,
+                                  AppLocalizations.of(context)!.msgSairSuporte,
+                                );
 
                                 confirma.then((value) {
                                   if (value) {
