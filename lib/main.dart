@@ -1,5 +1,7 @@
+import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/screens/Login/recuperarPass.dart';
 import 'package:softshares_mobile/screens/drawerLateral/contacte_suporte.dart';
+import 'package:softshares_mobile/screens/eventos/consultar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/criar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/eventos_main.dart';
 import "screens/Login/registo.dart";
@@ -70,6 +72,16 @@ class _MyAppState extends State<MyApp> {
         '/eventos': (context) => const EventosMainScreen(),
         '/criarEvento': (context) => const CriarEventoScreen(),
         '/recuperarPass': (context) => EcraRecPass(mudaIdioma: _mudaIdioma),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/consultarEvento') {
+          final arguments = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) =>
+                ConsultEventScreen(evento: arguments as Evento),
+          );
+        }
+        return null;
       },
       locale: Locale(local),
       localizationsDelegates: const [

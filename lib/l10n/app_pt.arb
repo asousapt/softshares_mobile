@@ -75,5 +75,6 @@
   "horaFimAntInicio": "A hora de fim não pode ser inferior à hora de inicio", 
   "dataLimiteInscricao": "Data limite de inscrição", 
   "dataLimiteSupInicio": "Data de limite de inscrição é posterior à de início", 
-  "dataLimiteAntHoje": "Data de limite de inscrição não pode ser inferior à data atual"
+  "dataLimiteAntHoje": "Data de limite de inscrição não pode ser inferior à data atual", 
+  "evento": "Evento"
 }

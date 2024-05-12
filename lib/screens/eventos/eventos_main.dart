@@ -358,7 +358,14 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
                     height: 280,
                     child: ListView(
                       children: listaEvFiltrada.map((e) {
-                        return EventItemCard(evento: e);
+                        return InkWell(
+                          enableFeedback: true,
+                          child: EventItemCard(evento: e),
+                          onTap: () {
+                            Navigator.pushNamed(context, '/consultarEvento',
+                                arguments: e);
+                          },
+                        );
                       }).toList(),
                     ),
                   ),

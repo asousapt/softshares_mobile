@@ -37,7 +37,9 @@ class EventItemCard extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: FilledButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // TODO: Implementar ação de inscrição
+                    },
                     child: const Icon(
                       FontAwesomeIcons.check,
                       size: 24,
@@ -68,15 +70,16 @@ class EventItemCard extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(left: 12),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "linha 1",
+                        evento.dataFormatada('pt'),
                         style: const TextStyle(
                           color: Color.fromRGBO(123, 123, 123, 1),
                         ),
                       ),
                       Text(
-                        "linha 2",
+                        evento.horaFormatada("pt"),
                         style: const TextStyle(
                           color: Color.fromRGBO(123, 123, 123, 1),
                         ),

@@ -74,5 +74,6 @@
   "horaFimAntInicio": "End time can't be prior than the start time", 
   "dataLimiteInscricao": "Registration deadline", 
   "dataLimiteSupInicio": "Registration deadline is after Start date", 
-  "dataLimiteAntHoje": "Registration deadline can't be before today"
+  "dataLimiteAntHoje": "Registration deadline can't be before today", 
+  "evento": "Event"
 }
