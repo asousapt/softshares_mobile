@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:softshares_mobile/models/categoria.dart';
 
 class EventItem extends StatelessWidget {
-  const EventItem({
-    Key? key,
+  EventItem({
+    super.key,
     required this.evento,
-  }) : super(key: key);
+  });
 
   final Evento evento;
+
+  List<Categoria> categorias = [
+    Categoria(1, "Gastronomia", "cor1", "garfo"),
+    Categoria(2, "Desporto", "cor2", "futebol"),
+    Categoria(3, "Atividade Ar Livre", "cor3", "arvore"),
+    Categoria(4, "Alojamento", "cor3", "casa"),
+    Categoria(5, "Saúde", "cor3", "cruz"),
+    Categoria(6, "Ensino", "cor3", "escola"),
+    Categoria(7, "Infraestruturas", "cor3", "infra"),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +37,11 @@ class EventItem extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const FaIcon(
-                    FontAwesomeIcons.utensils,
-                    color: Color.fromRGBO(123, 123, 123, 1),
-                    size: 24,
-                  ),
+                  categorias
+                      .firstWhere(
+                        (element) => element.categoriaId == evento.categoria,
+                      )
+                      .getIcone(),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(

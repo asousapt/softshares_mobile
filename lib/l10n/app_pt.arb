@@ -76,5 +76,6 @@
   "dataLimiteInscricao": "Data limite de inscrição", 
   "dataLimiteSupInicio": "Data de limite de inscrição é posterior à de início", 
   "dataLimiteAntHoje": "Data de limite de inscrição não pode ser inferior à data atual", 
-  "evento": "Evento"
+  "evento": "Evento", 
+  "inscrever": "Inscrever"
 }

@@ -75,5 +75,6 @@
   "dataLimiteInscricao": "Registration deadline", 
   "dataLimiteSupInicio": "Registration deadline is after Start date", 
   "dataLimiteAntHoje": "Registration deadline can't be before today", 
-  "evento": "Event"
+  "evento": "Event", 
+  "inscrever": "Register"
 }
