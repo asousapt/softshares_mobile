@@ -184,18 +184,21 @@ class _EcraLoginState extends State<EcraLogin> {
                                 ],
                               ),
 
-                              SizedBox(
-                                height: 50,
-                                width: double.infinity,
-                                child: FilledButton(
-                                  onPressed: () {
-                                    /*if (_formKey.currentState!.validate()) {
+                              Container(
+                                padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+                                child: SizedBox(
+                                  height: 70,
+                                  width: double.infinity,
+                                  child: FilledButton(
+                                    onPressed: () {
+                                      /*if (_formKey.currentState!.validate()) {
+                                        Navigator.pushNamed(context, '/home');
+                                      }*/
                                       Navigator.pushNamed(context, '/home');
-                                    }*/
-                                    Navigator.pushNamed(context, '/home');
-                                  },
-                                  child:
-                                      Text(AppLocalizations.of(context)!.login),
+                                    },
+                                    child:
+                                        Text(AppLocalizations.of(context)!.login),
+                                  ),
                                 ),
                               ),
                               // Esqueceu a password
