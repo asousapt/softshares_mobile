@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class EventItemCard extends StatelessWidget {
-  const EventItemCard({
-    super.key,
-    required this.evento,
-  });
+  const EventItemCard(
+      {super.key, required this.evento, required this.categorias});
 
   final Evento evento;
+  final List<Categoria> categorias;
 
   @override
   Widget build(BuildContext context) {
@@ -36,15 +36,11 @@ class EventItemCard extends StatelessWidget {
                 const Spacer(),
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
-                  child: FilledButton(
-                    onPressed: () {
-                      // TODO: Implementar ação de inscrição
-                    },
-                    child: const Icon(
-                      FontAwesomeIcons.check,
-                      size: 24,
-                    ),
-                  ),
+                  child: categorias
+                      .firstWhere(
+                        (element) => element.categoriaId == evento.categoria,
+                      )
+                      .getIcone(),
                 ),
               ],
             ),

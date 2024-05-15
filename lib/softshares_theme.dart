@@ -56,5 +56,13 @@ class SoftSharesTheme {
     dialogTheme: const DialogTheme(
       backgroundColor: Color.fromRGBO(230, 230, 230, 1),
     ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black),
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+    ),
   );
 }

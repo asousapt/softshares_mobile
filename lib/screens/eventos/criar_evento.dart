@@ -497,7 +497,6 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                           // Selecção de categoria
                           DropdownButton(
                             padding: const EdgeInsets.only(left: 10, right: 10),
-                            borderRadius: BorderRadius.circular(20),
                             hint: Text(AppLocalizations.of(context)!.categoria),
                             isExpanded: true,
                             value: _categoriaId.toString(),
