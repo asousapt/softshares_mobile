@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../widgets/gerais/logo.dart';
+import 'confirmar_id.dart';
 
 class EcraRecPass extends StatefulWidget {
   const EcraRecPass({
@@ -121,7 +122,7 @@ class _EcraRecPassState extends State<EcraRecPass> {
                                   width: double.infinity,
                                   child: FilledButton(
                                     onPressed: () {
-                                      Navigator.pushNamed(context, '/home');
+                                      Navigator.pushNamed(context, '/confirmarID');
                                     },
                                     child: Text(AppLocalizations.of(context)!
                                         .continuar),
