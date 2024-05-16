@@ -76,12 +76,13 @@
   "dataLimiteSupInicio": "La fecha límite de inscripción es posterior a la fecha de inicio", 
   "dataLimiteAntHoje": "La fecha límite de inscripción es anterior a la fecha atual", 
   "evento": "Evento", 
-  "inscrever": "Registrarse",
+  "inscrever": "Registrarme",
   "recuperarPass": "Recupera \ntu contraseña",
   "continuar": "Continuar",
   "confirmar": "Confirmar",
   "confirmarID": "Confirma tu identidad",
   "codigo" : "Código",
   "nova":"Nueva",
-  "repor": "Restablecer la"
+  "repor": "Restablecer la", 
+  "cancelarInscriao": "Cancelar inscripción"
 }

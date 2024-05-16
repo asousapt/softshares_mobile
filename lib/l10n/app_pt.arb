@@ -77,12 +77,13 @@
   "dataLimiteSupInicio": "Data de limite de inscrição é posterior à de início", 
   "dataLimiteAntHoje": "Data de limite de inscrição não pode ser inferior à data atual", 
   "evento": "Evento", 
-  "inscrever": "Inscrever",
+  "inscrever": "Inscrever-me",
   "recuperarPass": "Recuperar a \nPalavra-Passe",
   "continuar": "Continuar",
   "confirmar": "Confirmar",
   "confirmarID": "Confirme a sua identidade",
   "codigo" : "Código",
   "nova":"Nova",
-  "repor": "Repor a"
+  "repor": "Repor a", 
+  "cancelarInscriao": "Cancelar Inscrição"
 }

@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:country_flags/country_flags.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -76,42 +74,54 @@ class _EcraLoginState extends State<EcraLogin> {
 
   @override
   Widget build(BuildContext context) {
+    double altura = MediaQuery.of(context).size.height;
+    double largura = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(left: 12, right: 12, top: 90),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                height: (MediaQuery.of(context).size.height) * 0.8,
-                color: Theme.of(context).canvasColor,
-                child: Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      const SizedBox(height: 30),
-                      const Text(
-                        'SoftShares',
-                        style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
+      body: SafeArea(
+        top: true,
+        right: true,
+        bottom: true,
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: largura * 0.03,
+            right: largura * 0.03,
+            top: altura * 0.01,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  height: altura * 0.85,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).canvasColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: largura * 0.03),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        SizedBox(height: altura * 0.05),
+                        const Text(
+                          'SoftShares',
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        AppLocalizations.of(context)!.bemVindo,
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        AppLocalizations.of(context)!.doLogin,
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      const SizedBox(height: 20),
-                      Container(
-                        margin: const EdgeInsets.only(
-                            left: 8, right: 8, bottom: 30),
-                        child: Form(
+                        SizedBox(height: altura * 0.02),
+                        Text(
+                          AppLocalizations.of(context)!.bemVindo,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        SizedBox(height: altura * 0.002),
+                        Text(
+                          AppLocalizations.of(context)!.doLogin,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        SizedBox(height: altura * 0.03),
+                        Form(
                           key: _formKey,
                           child: Column(
                             children: [
@@ -133,7 +143,7 @@ class _EcraLoginState extends State<EcraLogin> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 10),
+                              SizedBox(height: altura * 0.01),
                               TextFormField(
                                 keyboardType: TextInputType.visiblePassword,
                                 obscureText: passwordVisible,
@@ -166,11 +176,13 @@ class _EcraLoginState extends State<EcraLogin> {
                               ),
                               Row(
                                 children: [
-                                  Text(
-                                      AppLocalizations.of(context)!
-                                          .keepMeLoggedIn,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                  Flexible(
+                                    child: Text(
+                                        AppLocalizations.of(context)!
+                                            .keepMeLoggedIn,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                  ),
                                   Checkbox(
                                       value: isChecked,
                                       onChanged: (bool? value) {
@@ -186,7 +198,7 @@ class _EcraLoginState extends State<EcraLogin> {
                               ),
 
                               SizedBox(
-                                height: 50,
+                                height: altura * 0.065,
                                 width: double.infinity,
                                 child: FilledButton(
                                   onPressed: () {
@@ -224,104 +236,108 @@ class _EcraLoginState extends State<EcraLogin> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 5),
+                              SizedBox(height: altura * 0.002),
                               //Secção das bandeiras
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      widget.mudaIdioma('pt');
-                                    },
-                                    child: CircleAvatar(
-                                      radius: 32,
-                                      backgroundColor: Colors
-                                          .transparent, // Make the background transparent
-                                      child: AspectRatio(
-                                        aspectRatio:
-                                            1.0, // Ensure aspect ratio is 1:1 to maintain the circular shape
-                                        child: Container(
-                                          padding: const EdgeInsets.all(8),
-                                          child: CountryFlag.fromCountryCode(
-                                            'PT',
-                                            height: 48,
-                                            width: 48,
-                                            borderRadius: 48,
+                              SizedBox(
+                                height: altura * 0.07,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        widget.mudaIdioma('pt');
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 32,
+                                        backgroundColor: Colors.transparent,
+                                        child: AspectRatio(
+                                          aspectRatio: 1.0,
+                                          child: Container(
+                                            padding:
+                                                EdgeInsets.all(altura * 0.01),
+                                            child: CountryFlag.fromCountryCode(
+                                              'PT',
+                                              height: largura * 0.03,
+                                              width: largura * 0.03,
+                                              borderRadius: 48,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      widget.mudaIdioma('es');
-                                    },
-                                    child: CircleAvatar(
-                                      radius: 32,
-                                      backgroundColor: Colors.transparent,
-                                      child: AspectRatio(
-                                        aspectRatio: 1.0,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(8),
-                                          child: CountryFlag.fromCountryCode(
-                                            'ES',
-                                            height: 48,
-                                            width: 48,
-                                            borderRadius: 48,
+                                    GestureDetector(
+                                      onTap: () {
+                                        widget.mudaIdioma('es');
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 32,
+                                        backgroundColor: Colors.transparent,
+                                        child: AspectRatio(
+                                          aspectRatio: 1.0,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(8),
+                                            child: CountryFlag.fromCountryCode(
+                                              'ES',
+                                              height: largura * 0.03,
+                                              width: largura * 0.03,
+                                              borderRadius: 48,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      widget.mudaIdioma('en');
-                                    },
-                                    child: CircleAvatar(
-                                      radius: 32,
-                                      backgroundColor: Colors.transparent,
-                                      child: AspectRatio(
-                                        aspectRatio: 1.0,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(8),
-                                          child: CountryFlag.fromCountryCode(
-                                            'GB',
-                                            height: 48,
-                                            width: 48,
-                                            borderRadius: 48,
+                                    GestureDetector(
+                                      onTap: () {
+                                        widget.mudaIdioma('en');
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 32,
+                                        backgroundColor: Colors.transparent,
+                                        child: AspectRatio(
+                                          aspectRatio: 1.0,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(8),
+                                            child: CountryFlag.fromCountryCode(
+                                              'GB',
+                                              height: largura * 0.03,
+                                              width: largura * 0.03,
+                                              borderRadius: 48,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                               const Divider(color: Colors.grey),
-                              const SizedBox(height: 10),
+                              SizedBox(
+                                height: altura * 0.01,
+                              ),
                               // Secção do SSO
                               ElevatedButton(
                                 onPressed: sub,
                                 style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 40,
-                                      vertical: 20), // Adjust padding as needed
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: largura * 0.1,
+                                      vertical: altura * 0.02),
                                 ),
-                                child: const Row(
+                                child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(FontAwesomeIcons.facebook),
-                                    SizedBox(width: 4),
-                                    Text("Facebook"),
+                                    const Icon(FontAwesomeIcons.facebook),
+                                    SizedBox(width: largura * 0.02),
+                                    const Text("Facebook"),
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              SizedBox(height: altura * 0.01),
                               ElevatedButton(
                                 onPressed: sub,
                                 style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 40,
-                                    vertical: 20,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: largura * 0.1,
+                                    vertical: altura * 0.02,
                                   ),
                                 ),
                                 child: const Row(
@@ -336,50 +352,56 @@ class _EcraLoginState extends State<EcraLogin> {
                             ],
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: altura * 0.04,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          AppLocalizations.of(context)!.noAccount,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Color.fromRGBO(230, 230, 230, 1),
+                          ),
+                        ),
                       ),
+                      TextButton(
+                        onPressed: () =>
+                            {Navigator.pushNamed(context, "/registar")},
+                        child: Text(AppLocalizations.of(context)!.register,
+                            style: const TextStyle(
+                                color: Color(0xFF83B1FF),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline)),
+                      )
                     ],
                   ),
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(
-                    child: Text(
-                      AppLocalizations.of(context)!.noAccount,
-                      style: const TextStyle(
-                        fontSize: 16,
+                SizedBox(
+                  height: altura * 0.04,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.copyright,
                         color: Color.fromRGBO(230, 230, 230, 1),
                       ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () =>
-                        {Navigator.pushNamed(context, "/registar")},
-                    child: Text(AppLocalizations.of(context)!.register,
+                      SizedBox(width: largura * 0.01),
+                      Text(
+                        "Softinsa v$version",
                         style: const TextStyle(
-                            color: Color(0xFF83B1FF),
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline)),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.copyright,
-                    color: Color.fromRGBO(230, 230, 230, 1),
+                            color: Color.fromRGBO(230, 230, 230, 1)),
+                      )
+                    ],
                   ),
-                  const SizedBox(width: 3),
-                  Text(
-                    "Softinsa v$version",
-                    style: const TextStyle(
-                        color: Color.fromRGBO(230, 230, 230, 1)),
-                  )
-                ],
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),

@@ -95,7 +95,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       2,
       2,
       false,
-      [1],
+      [],
     ),
     Evento(
       4,
@@ -332,80 +332,84 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
             : Text(AppLocalizations.of(context)!.eventos),
         actions: _buildAppBarActions(),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 15,
-                left: 12,
-                right: 12,
-                bottom: 20,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "${AppLocalizations.of(context)!.eventosInscrito}:",
-                    style: const TextStyle(
-                      color: Color.fromRGBO(217, 215, 215, 1),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+      body: SafeArea(
+        top: true,
+        bottom: true,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 15,
+                  left: 12,
+                  right: 12,
+                  bottom: 20,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${AppLocalizations.of(context)!.eventosInscrito}:",
+                      style: const TextStyle(
+                        color: Color.fromRGBO(217, 215, 215, 1),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  Text(
-                    tituloInscritos,
-                    style: const TextStyle(
-                      color: Color.fromRGBO(217, 215, 215, 1),
+                    Text(
+                      tituloInscritos,
+                      style: const TextStyle(
+                        color: Color.fromRGBO(217, 215, 215, 1),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 240,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: eventosInscrito.map((e) {
-                        return EventCardItem(evento: e);
-                      }).toList(),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 240,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: eventosInscrito.map((e) {
+                          return EventCardItem(evento: e);
+                        }).toList(),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "${AppLocalizations.of(context)!.eventosFuturos}:",
-                    style: const TextStyle(
-                      color: Color.fromRGBO(217, 215, 215, 1),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(height: 10),
+                    Text(
+                      "${AppLocalizations.of(context)!.eventosFuturos}:",
+                      style: const TextStyle(
+                        color: Color.fromRGBO(217, 215, 215, 1),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  Text(
-                    tituloTotalEventos,
-                    style: const TextStyle(
-                      color: Color.fromRGBO(217, 215, 215, 1),
+                    Text(
+                      tituloTotalEventos,
+                      style: const TextStyle(
+                        color: Color.fromRGBO(217, 215, 215, 1),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 280,
-                    child: ListView(
-                      children: listaEvFiltrada.map((e) {
-                        return InkWell(
-                          enableFeedback: true,
-                          child:
-                              EventItemCard(evento: e, categorias: categorias),
-                          onTap: () {
-                            Navigator.pushNamed(context, '/consultarEvento',
-                                arguments: e);
-                          },
-                        );
-                      }).toList(),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 280,
+                      child: ListView(
+                        children: listaEvFiltrada.map((e) {
+                          return InkWell(
+                            enableFeedback: true,
+                            child: EventItemCard(
+                                evento: e, categorias: categorias),
+                            onTap: () {
+                              Navigator.pushNamed(context, '/consultarEvento',
+                                  arguments: e);
+                            },
+                          );
+                        }).toList(),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            )
-          ],
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
