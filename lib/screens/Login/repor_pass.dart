@@ -3,8 +3,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../widgets/gerais/logo.dart';
 
-class EcraRecPass extends StatefulWidget {
-  const EcraRecPass({
+class EcraReporPass extends StatefulWidget {
+  const EcraReporPass({
     super.key,
     required this.mudaIdioma,
   });
@@ -12,48 +12,41 @@ class EcraRecPass extends StatefulWidget {
   final Function(String idioma) mudaIdioma;
 
   @override
-  State<EcraRecPass> createState() {
-    return _EcraRecPassState();
+  State<EcraReporPass> createState() {
+    return _EcraReporPassState();
   }
 }
 
-class _EcraRecPassState extends State<EcraRecPass> {
+class _EcraReporPassState extends State<EcraReporPass> {
   String version = 'Loading...';
-  String email = '';
-  late TextEditingController controlEmail;
+  String codigo = '';
+  late TextEditingController controlCodigo;
   bool passwordVisible = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  bool isValidEmail(String email) {
-    final RegExp emailRegex = RegExp(
-      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-      caseSensitive: false,
-      multiLine: false,
-    );
-
-    return emailRegex.hasMatch(email);
+  bool isValidcodigo(String codigo) {
+    //Por acrescentar
+    return true;
   }
 
   @override
   void initState() {
     super.initState();
-    controlEmail = TextEditingController();
+    controlCodigo = TextEditingController();
     getVersion();
-    passwordVisible = true;
   }
 
   @override
   void dispose() {
     //libertar recurso
-    controlEmail.dispose();
+    controlCodigo.dispose();
     super.dispose();
   }
 
   void sub() {
     setState(() {
-      email = controlEmail.text;
+      codigo = controlCodigo.text;
     });
-    //bd.inserirvalor(Email, Passricao);
   }
 
   Future<void> getVersion() async {
@@ -81,7 +74,7 @@ class _EcraRecPassState extends State<EcraRecPass> {
                     children: [
                       const SizedBox(height: 30),
                       Text(
-                        AppLocalizations.of(context)!.recuperarPass,
+                        AppLocalizations.of(context)!.repor+' '+AppLocalizations.of(context)!.password,
                         style: TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
@@ -98,19 +91,36 @@ class _EcraRecPassState extends State<EcraRecPass> {
                           child: Column(
                             children: [
                               TextFormField(
-                                keyboardType: TextInputType.emailAddress,
-                                controller: controlEmail,
-                                decoration: const InputDecoration(
-                                  labelText: "Email",
+                                controller: controlCodigo,
+                                decoration: InputDecoration(
+                                  labelText: (AppLocalizations.of(context)!.nova + ' '+AppLocalizations.of(context)!.password),
                                   prefixIcon:
-                                      Icon(Icons.account_circle_outlined),
+                                      Icon(Icons.lock_outline_rounded),
                                 ),
                                 validator: (value) {
                                   if (value == null ||
                                       value.isEmpty ||
-                                      !isValidEmail(value)) {
-                                    return AppLocalizations.of(context)!
-                                        .insiraEmaiValido;
+                                      !isValidcodigo(value)) {
+                                    //return AppLocalizations.of(context)!.insiraEmaiValido;
+                                    //fazer outra coisa
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              TextFormField(
+                                controller: controlCodigo,
+                                decoration: InputDecoration(
+                                  labelText: (AppLocalizations.of(context)!.confirmar  + ' ' + AppLocalizations.of(context)!.password),
+                                  prefixIcon:
+                                      Icon(Icons.lock_outline_rounded),
+                                ),
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      !isValidcodigo(value)) {
+                                    //return AppLocalizations.of(context)!.insiraEmaiValido;
+                                    //fazer outra coisa
                                   }
                                   return null;
                                 },
@@ -122,10 +132,10 @@ class _EcraRecPassState extends State<EcraRecPass> {
                                   width: double.infinity,
                                   child: FilledButton(
                                     onPressed: () {
-                                      Navigator.pushNamed(context, '/confirmarID');
+                                      Navigator.pushNamed(context, '/home');
                                     },
                                     child: Text(AppLocalizations.of(context)!
-                                        .continuar),
+                                        .confirmar),
                                   ),
                                 ),
                               ),

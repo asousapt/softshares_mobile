@@ -15,6 +15,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/screens/drawerLateral/notifications_alert.dart';
 import 'screens/Login/confirmar_id.dart';
+import 'screens/Login/repor_pass.dart';
 
 void main() {
   runApp(const MyApp());
@@ -74,6 +75,7 @@ class _MyAppState extends State<MyApp> {
         '/criarEvento': (context) => const CriarEventoScreen(),
         '/recuperarPass': (context) => EcraRecPass(mudaIdioma: _mudaIdioma),
         '/confirmarID': (context) => EcraConfID(mudaIdioma: _mudaIdioma),
+        '/reporPass': (context) => EcraReporPass(mudaIdioma: _mudaIdioma)
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/consultarEvento') {

@@ -83,6 +83,7 @@ class _EcraLoginState extends State<EcraLogin> {
           child: Column(
             children: [
               Container(
+                height: (MediaQuery.of(context).size.height) * 0.8,
                 color: Theme.of(context).canvasColor,
                 child: Expanded(
                   child: Column(
@@ -296,13 +297,14 @@ class _EcraLoginState extends State<EcraLogin> {
                                 ],
                               ),
                               const Divider(color: Colors.grey),
+                              const SizedBox(height: 10),
                               // Secção do SSO
                               ElevatedButton(
                                 onPressed: sub,
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 40,
-                                      vertical: 10), // Adjust padding as needed
+                                      vertical: 20), // Adjust padding as needed
                                 ),
                                 child: const Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -313,13 +315,13 @@ class _EcraLoginState extends State<EcraLogin> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 10),
                               ElevatedButton(
                                 onPressed: sub,
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 40,
-                                    vertical: 10,
+                                    vertical: 20,
                                   ),
                                 ),
                                 child: const Row(

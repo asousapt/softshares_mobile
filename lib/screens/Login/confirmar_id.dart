@@ -79,6 +79,7 @@ class _EcraConfIDState extends State<EcraConfID> {
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                       SizedBox(
                           height: (MediaQuery.of(context).size.height) * 0.20),
@@ -91,8 +92,8 @@ class _EcraConfIDState extends State<EcraConfID> {
                             children: [
                               TextFormField(
                                 controller: controlCodigo,
-                                decoration: const InputDecoration(
-                                  labelText: "codigo",
+                                decoration: InputDecoration(
+                                  labelText: AppLocalizations.of(context)!.codigo,
                                   prefixIcon:
                                       Icon(Icons.lock_outline_rounded),
                                 ),
@@ -113,7 +114,7 @@ class _EcraConfIDState extends State<EcraConfID> {
                                   width: double.infinity,
                                   child: FilledButton(
                                     onPressed: () {
-                                      Navigator.pushNamed(context, '/home');
+                                      Navigator.pushNamed(context, '/reporPass');
                                     },
                                     child: Text(AppLocalizations.of(context)!
                                         .confirmar),

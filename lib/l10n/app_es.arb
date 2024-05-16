@@ -80,5 +80,8 @@
   "recuperarPass": "Recupera \ntu contraseña",
   "continuar": "Continuar",
   "confirmar": "Confirmar",
-  "confirmarID": "Confirma tu identidad"
+  "confirmarID": "Confirma tu identidad",
+  "codigo" : "Código",
+  "nova":"Nueva",
+  "repor": "Restablecer la"
 }

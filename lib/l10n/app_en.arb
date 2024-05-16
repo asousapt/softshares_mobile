@@ -80,5 +80,8 @@
   "recuperarPass": "Recover \nyour password",
   "continuar": "Continue",
   "confirmar": "Confirm",
-  "confirmarID" : "Confirm your ID"
+  "confirmarID" : "Confirm your ID",
+  "codigo":"Code",
+  "nova":"New",
+  "repor": "Reset"
 }

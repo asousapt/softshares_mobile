@@ -81,5 +81,8 @@
   "recuperarPass": "Recuperar a \nPalavra-Passe",
   "continuar": "Continuar",
   "confirmar": "Confirmar",
-  "confirmarID": "Confirme a sua identidade"
+  "confirmarID": "Confirme a sua identidade",
+  "codigo" : "Código",
+  "nova":"Nova",
+  "repor": "Repor a"
 }
