@@ -185,21 +185,18 @@ class _EcraLoginState extends State<EcraLogin> {
                                 ],
                               ),
 
-                              Container(
-                                padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-                                child: SizedBox(
-                                  height: 70,
-                                  width: double.infinity,
-                                  child: FilledButton(
-                                    onPressed: () {
-                                      /*if (_formKey.currentState!.validate()) {
-                                        Navigator.pushNamed(context, '/home');
-                                      }*/
+                              SizedBox(
+                                height: 50,
+                                width: double.infinity,
+                                child: FilledButton(
+                                  onPressed: () {
+                                    /*if (_formKey.currentState!.validate()) {
                                       Navigator.pushNamed(context, '/home');
-                                    },
-                                    child:
-                                        Text(AppLocalizations.of(context)!.login),
-                                  ),
+                                    }*/
+                                    Navigator.pushNamed(context, '/home');
+                                  },
+                                  child:
+                                      Text(AppLocalizations.of(context)!.login),
                                 ),
                               ),
                               // Esqueceu a password
@@ -213,7 +210,10 @@ class _EcraLoginState extends State<EcraLogin> {
                                     ),
                                   ),
                                   TextButton(
-                                    onPressed: () {Navigator.pushNamed(context, "/recuperarPass");},
+                                    onPressed: () {
+                                      Navigator.pushNamed(
+                                          context, "/recuperarPass");
+                                    },
                                     child: Text(
                                       AppLocalizations.of(context)!.clickHere,
                                       style: const TextStyle(

@@ -18,6 +18,10 @@ class Evento {
   final DateTime dataFim;
   final DateTime dataLimiteInsc;
   final List<String> imagem;
+  final int utilizadorCriou;
+  final int cidadeid;
+  final bool cancelado;
+  final List<int> utilizadoresInscritos;
 
   const Evento(
     this.eventoId,
@@ -35,6 +39,10 @@ class Evento {
     this.dataFim,
     this.dataLimiteInsc,
     this.imagem,
+    this.utilizadorCriou,
+    this.cidadeid,
+    this.cancelado,
+    this.utilizadoresInscritos,
   );
 
   String dataFormatada(String local) {
@@ -82,6 +90,10 @@ final Map<DateTime, List<Evento>> _kEventSource = {
       DateTime(2024, 06, 15, 18, 0), // June 15, 2024, 6:00 PM
       DateTime(2024, 06, 14), // Example for dataLimiteInsc
       [],
+      1,
+      1,
+      false,
+      [1, 2, 3, 4, 5],
     ),
   ],
   DateTime(2024, 7, 20): [
@@ -100,6 +112,10 @@ final Map<DateTime, List<Evento>> _kEventSource = {
       DateTime(2024, 07, 20, 12, 0), // July 20, 2024, 12:00 PM
       DateTime(2024, 07, 22, 22, 0), // July 22, 2024, 10:00 PM
       DateTime(2024, 07, 19), // Example for dataLimiteInsc
+      [],
+      2,
+      2,
+      true,
       [],
     ),
   ],
@@ -120,6 +136,10 @@ final Map<DateTime, List<Evento>> _kEventSource = {
       DateTime(2024, 08, 12, 17, 0), // August 12, 2024, 5:00 PM
       DateTime(2024, 08, 9), // Example for dataLimiteInsc
       [],
+      2,
+      2,
+      false,
+      [1],
     ),
   ],
   DateTime(2024, 9, 5): [
@@ -138,6 +158,10 @@ final Map<DateTime, List<Evento>> _kEventSource = {
       DateTime(2024, 09, 5, 10, 0), // September 5, 2024, 10:00 AM
       DateTime(2024, 09, 10, 20, 0), // September 10, 2024, 8:00 PM
       DateTime(2024, 09, 4), // Example for dataLimiteInsc
+      [],
+      2,
+      2,
+      false,
       [],
     ),
   ],
@@ -158,6 +182,10 @@ final Map<DateTime, List<Evento>> _kEventSource = {
       DateTime(2024, 10, 20, 18, 0), // October 20, 2024, 6:00 PM
       DateTime(2024, 10, 14), // Example for dataLimiteInsc
       [],
+      2,
+      3,
+      false,
+      [],
     ),
   ],
   DateTime(2024, 11, 8): [
@@ -177,6 +205,10 @@ final Map<DateTime, List<Evento>> _kEventSource = {
       DateTime(2024, 11, 10, 17, 0), // November 10, 2024, 5:00 PM
       DateTime(2024, 11, 7), // Example for dataLimiteInsc
       [],
+      2,
+      2,
+      false,
+      [1],
     ),
   ],
 };

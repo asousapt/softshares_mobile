@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/evento.dart';
@@ -32,18 +31,29 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
     Categoria(7, "Infraestruturas", "cor3", "infra"),
   ];
 
+  int utilizadorId = 1;
+
   @override
   void initState() {
     evento = widget.evento;
     super.initState();
   }
 
+  // funcao que verifica se o utilizador pode inscrever-se no evento
   bool podeInscrever(Evento evento) {
     DateTime hoje = DateTime(
       DateTime.now().year,
       DateTime.now().month,
       DateTime.now().day,
     );
+
+    if (evento.utilizadorCriou == utilizadorId) {
+      return false;
+    }
+
+    if (evento.utilizadoresInscritos.contains(utilizadorId)) {
+      return false;
+    }
 
     if (evento.dataLimiteInsc.isBefore(hoje)) {
       return false;
@@ -62,6 +72,35 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
     return true;
   }
 
+  bool podeCancelar(Evento evento) {
+    DateTime hoje = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+
+    if (evento.utilizadorCriou == utilizadorId) {
+      return false;
+    }
+
+    if (evento.dataLimiteInsc.isBefore(hoje)) {
+      return false;
+    }
+
+    if ((evento.dataLimiteInsc.isAfter(hoje) ||
+        evento.dataLimiteInsc.isAtSameMomentAs(hoje))) {
+      if (evento.numeroMaxPart == 0) {
+        return true;
+      } else if (evento.numeroInscritos < evento.numeroMaxPart) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
+  //Widget inscreveOuCancela() {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,124 +117,154 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
           bottom: 20,
         ),
         child: Container(
-          color: Theme.of(context).canvasColor,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    child: categorias
-                        .firstWhere(
-                          (element) => element.categoriaId == evento!.categoria,
-                        )
-                        .getIcone(),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(FontAwesomeIcons.message),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Text(
-                evento!.titulo,
-                style:
-                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 75,
-                child: Text(
-                  evento!.descricao,
-                  style: const TextStyle(
-                      fontSize: 16, color: Color.fromRGBO(143, 143, 143, 1)),
-                ),
-              ),
-              const SizedBox(height: 10),
-              FadeInImage(
-                fit: BoxFit.cover,
-                height: 200,
-                width: double.infinity,
-                placeholder: MemoryImage(kTransparentImage),
-                image: NetworkImage(
-                    "https://pplware.sapo.pt/wp-content/uploads/2022/02/s_22_plus_1.jpg "),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Icon(
-                    FontAwesomeIcons.calendar,
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 12),
-                    child: Text(
-                      evento!.dataFormatada("pt"),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Icon(
-                    FontAwesomeIcons.clock,
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 12),
-                    child: Text(
-                      evento!.horaFormatada("pt"),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Icon(
-                    FontAwesomeIcons.userGroup,
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 12),
-                    child: evento!.numeroMaxPart == 0
-                        ? Text(
-                            "${evento!.numeroInscritos.toString()}/-",
+          decoration: BoxDecoration(
+            color: Theme.of(context).canvasColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Container(
+            margin: const EdgeInsets.all(15),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.transparent,
+                      child: categorias
+                          .firstWhere(
+                            (element) =>
+                                element.categoriaId == evento!.categoria,
                           )
-                        : Text(
-                            "${evento!.numeroInscritos.toString()}/${evento!.numeroMaxPart.toString()}",
-                          ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Icon(
-                    FontAwesomeIcons.locationDot,
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 12),
-                    child: Text(evento!.localizacao),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              // Botao de inscrever no evento
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: podeInscrever(evento!)
-                      ? () {
-                          print("inscrever");
-                        }
-                      : null,
-                  child: Text(AppLocalizations.of(context)!.inscrever),
+                          .getIcone(),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(FontAwesomeIcons.message),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 10),
-            ],
+                const SizedBox(height: 10),
+                Text(
+                  evento!.titulo,
+                  style: const TextStyle(
+                      fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 75,
+                  child: Text(
+                    evento!.descricao,
+                    style: const TextStyle(
+                        fontSize: 16, color: Color.fromRGBO(143, 143, 143, 1)),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                FadeInImage(
+                  fit: BoxFit.cover,
+                  height: 200,
+                  width: double.infinity,
+                  placeholder: MemoryImage(kTransparentImage),
+                  image: NetworkImage(
+                      "https://pplware.sapo.pt/wp-content/uploads/2022/02/s_22_plus_1.jpg "),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Icon(
+                      FontAwesomeIcons.calendar,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 12),
+                      child: Text(
+                        evento!.dataFormatada("pt"),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Icon(
+                      FontAwesomeIcons.clock,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 12),
+                      child: Text(
+                        evento!.horaFormatada("pt"),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Icon(
+                      FontAwesomeIcons.userGroup,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 12),
+                      child: evento!.numeroMaxPart == 0
+                          ? Text(
+                              "${evento!.numeroInscritos.toString()}/-",
+                            )
+                          : Text(
+                              "${evento!.numeroInscritos.toString()}/${evento!.numeroMaxPart.toString()}",
+                            ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Icon(
+                      FontAwesomeIcons.locationDot,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 12),
+                      child: Text(evento!.localizacao),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                // Botao de inscrever no evento
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: podeInscrever(evento!)
+                        ? () {
+                            print("inscrever");
+                          }
+                        : null,
+                    child: Text(AppLocalizations.of(context)!.inscrever),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () {},
+                        child: Text("X onvidados"),
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(FontAwesomeIcons.plus),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(FontAwesomeIcons.minus),
+                        ),
+                      ],
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),

@@ -48,8 +48,12 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "",
       DateTime(2024, 06, 15, 10, 0), // June 15, 2024, 10:00 AM
       DateTime(2024, 06, 15, 18, 0), // June 15, 2024, 6:00 PM
-      DateTime(2024, 06, 14), // June 14, 2024 (example for dataLimiteInsc)
+      DateTime(2024, 06, 14), // Example for dataLimiteInsc
       [],
+      1,
+      1,
+      false,
+      [1, 2, 3, 4, 5],
     ),
     Evento(
       2,
@@ -65,7 +69,11 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "",
       DateTime(2024, 07, 20, 12, 0), // July 20, 2024, 12:00 PM
       DateTime(2024, 07, 22, 22, 0), // July 22, 2024, 10:00 PM
-      DateTime(2024, 07, 19), // July 19, 2024 (example for dataLimiteInsc)
+      DateTime(2024, 07, 19), // Example for dataLimiteInsc
+      [],
+      2,
+      2,
+      true,
       [],
     ),
     Evento(
@@ -82,8 +90,12 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "",
       DateTime(2024, 08, 10, 9, 0), // August 10, 2024, 9:00 AM
       DateTime(2024, 08, 12, 17, 0), // August 12, 2024, 5:00 PM
-      DateTime(2024, 08, 9), // August 9, 2024 (example for dataLimiteInsc)
+      DateTime(2024, 08, 9), // Example for dataLimiteInsc
       [],
+      2,
+      2,
+      false,
+      [1],
     ),
     Evento(
       4,
@@ -99,7 +111,11 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "",
       DateTime(2024, 09, 5, 10, 0), // September 5, 2024, 10:00 AM
       DateTime(2024, 09, 10, 20, 0), // September 10, 2024, 8:00 PM
-      DateTime(2024, 09, 4), // September 4, 2024 (example for dataLimiteInsc)
+      DateTime(2024, 09, 4), // Example for dataLimiteInsc
+      [],
+      2,
+      2,
+      false,
       [],
     ),
     Evento(
@@ -116,7 +132,11 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "",
       DateTime(2024, 10, 15, 12, 0), // October 15, 2024, 12:00 PM
       DateTime(2024, 10, 20, 18, 0), // October 20, 2024, 6:00 PM
-      DateTime(2024, 10, 14), // October 14, 2024 (example for dataLimiteInsc)
+      DateTime(2024, 10, 14), // Example for dataLimiteInsc
+      [],
+      2,
+      3,
+      false,
       [],
     ),
     Evento(
@@ -133,8 +153,12 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       "",
       DateTime(2024, 11, 8, 9, 0), // November 8, 2024, 9:00 AM
       DateTime(2024, 11, 10, 17, 0), // November 10, 2024, 5:00 PM
-      DateTime(2024, 11, 7), // November 7, 2024 (example for dataLimiteInsc)
+      DateTime(2024, 11, 7), // Example for dataLimiteInsc
       [],
+      2,
+      2,
+      false,
+      [1],
     ),
   ];
 
@@ -155,6 +179,10 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       DateTime(2024, 06, 17, 18, 0), // June 17, 2024, 6:00 PM
       DateTime(2024, 06, 14), // Example for dataLimiteInsc
       [],
+      1,
+      1,
+      false,
+      [1, 2, 3, 4, 5],
     ),
     Evento(
       2,
@@ -171,6 +199,10 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       DateTime(2024, 07, 20, 12, 0), // July 20, 2024, 12:00 PM
       DateTime(2024, 07, 22, 22, 0), // July 22, 2024, 10:00 PM
       DateTime(2024, 07, 19), // Example for dataLimiteInsc
+      [],
+      2,
+      2,
+      true,
       [],
     ),
   ];
@@ -360,7 +392,8 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
                       children: listaEvFiltrada.map((e) {
                         return InkWell(
                           enableFeedback: true,
-                          child: EventItemCard(evento: e),
+                          child:
+                              EventItemCard(evento: e, categorias: categorias),
                           onTap: () {
                             Navigator.pushNamed(context, '/consultarEvento',
                                 arguments: e);

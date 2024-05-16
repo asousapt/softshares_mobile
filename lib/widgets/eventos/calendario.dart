@@ -78,6 +78,7 @@ class TableCalendarWidget extends StatelessWidget {
         rangeStartDay: rangeStart,
         rangeEndDay: rangeEnd,
         calendarFormat: calendarFormat,
+        onDayLongPressed: (selectedDay, focusedDay) {},
         headerStyle:
             const HeaderStyle(formatButtonVisible: false, titleCentered: true),
         rangeSelectionMode: rangeSelectionMode,
