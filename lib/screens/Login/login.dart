@@ -193,7 +193,7 @@ class _EcraLoginState extends State<EcraLogin> {
                                     /*if (_formKey.currentState!.validate()) {
                                       Navigator.pushNamed(context, '/home');
                                     }*/
-                                    Navigator.pushNamed(context, '/home');
+                                    Navigator.pushNamed(context, '/escolherPolo');
                                   },
                                   child:
                                       Text(AppLocalizations.of(context)!.login),
