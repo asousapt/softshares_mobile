@@ -76,12 +76,13 @@
   "dataLimiteSupInicio": "Registration deadline is after Start date", 
   "dataLimiteAntHoje": "Registration deadline can't be before today", 
   "evento": "Event", 
-  "inscrever": "Register",
+  "inscrever": "Register me",
   "recuperarPass": "Recover \nyour password",
   "continuar": "Continue",
   "confirmar": "Confirm",
   "confirmarID" : "Confirm your ID",
   "codigo":"Code",
   "nova":"New",
-  "repor": "Reset"
+  "repor": "Reset", 
+  "cancelarInscriao": "Cancel Registration"
 }
