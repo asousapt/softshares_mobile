@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:softshares_mobile/l10n/app_localizations_extension.dart';
 import 'package:softshares_mobile/models/categoria.dart';
+import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/subcategoria.dart';
+import 'package:softshares_mobile/screens/formularios_dinamicos/formulario_cfg.dart';
 import '../../time_utils.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
 
@@ -32,6 +35,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
   bool? permiteConvidados;
   int? nmrConvidados;
   String? descricao;
+  List<Formulario> forms = [];
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -98,6 +102,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     permiteConvidados = false;
     nmrConvidados = 0;
     descricao = "";
+    forms = [];
   }
 
   @override
@@ -115,14 +120,17 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     super.dispose();
   }
 
+  // chama o date picker para a selecção da hora de inicio
   Future<void> _selectStartTime(BuildContext context) async {
     await displayTimePicker(context, _timeIni, timeOfDay);
   }
 
+  // chama o date picker para a selecção da hora de fim
   Future<void> _selectEndTime(BuildContext context) async {
     await displayTimePicker(context, _timeFim, timeOfDay);
   }
 
+  // chama o date picker para a selecção da data de início
   Future<void> _selectStartDate(BuildContext context) async {
     await displayDatePicker(
       context,
@@ -133,6 +141,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     );
   }
 
+  // chama o date picker para a selecção da data de fim
   Future<void> _selectEndDate(BuildContext context) async {
     await displayDatePicker(
       context,
@@ -143,6 +152,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     );
   }
 
+  // chama o date picker para a selecção da data limite de inscrição
   Future<void> _selectDeadLineDate(BuildContext context) async {
     await displayDatePicker(
       context,
@@ -166,7 +176,6 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     if (dataInicio.isBefore(agora)) {
       switch (campo) {
         case "dataInicio":
-          print(dataInicio);
           return AppLocalizations.of(context)!.dataInicioAntHoje;
         case "horaInicio":
           return "";
@@ -213,8 +222,39 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     return null;
   }
 
+  /* Seçao de adicionar formulario à lista */
+
+  bool _adicionaFormulario(Formulario formulario) {
+    if (forms.isEmpty) {
+      setState(() {
+        forms.add(formulario);
+      });
+      return true;
+    } else if (forms.length == 1) {
+      if (forms[0].tipoFormulario == formulario.tipoFormulario) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.naoPodeAdicionarForm),
+          ),
+        );
+        return false;
+      } else {
+        setState(() {
+          forms.add(formulario);
+        });
+        return true;
+      }
+    }
+    return true;
+  }
+
+  /* Fim Seçao de adicionar formulario à lista */
+
   @override
   Widget build(BuildContext context) {
+    double largura = MediaQuery.of(context).size.width;
+    double altura = MediaQuery.of(context).size.height;
+
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) {
@@ -252,409 +292,460 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
             AppLocalizations.of(context)!.criarEvento,
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(
-            left: 12,
-            right: 12,
-            top: 15,
-            bottom: 20,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Container(
-                  color: Theme.of(context).canvasColor,
-                  margin: const EdgeInsets.all(10),
-                  child: Form(
-                    key: _formKey,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.detalhesEvento,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 15),
-                          TextFormField(
-                            maxLength: 160,
-                            controller: _tituloController,
-                            decoration: InputDecoration(
-                              label: Text(AppLocalizations.of(context)!.titulo),
+        body: SafeArea(
+          top: true,
+          bottom: true,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: largura * 0.02, vertical: altura * 0.02),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).canvasColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    margin: const EdgeInsets.all(10),
+                    child: Form(
+                      key: _formKey,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppLocalizations.of(context)!.detalhesEvento,
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "${AppLocalizations.of(context)!.porfavorInsiraO} ${AppLocalizations.of(context)!.titulo}";
-                              }
-                              return null;
-                            },
-                          ),
-                          TextFormField(
-                            maxLength: 160,
-                            controller: _localizacaoController,
-                            decoration: InputDecoration(
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  //TODO: Implementar a selecção de localização do mapa
-                                },
-                                icon: const Icon(FontAwesomeIcons.locationDot),
+                            SizedBox(height: altura * 0.02),
+                            TextFormField(
+                              maxLength: 160,
+                              controller: _tituloController,
+                              decoration: InputDecoration(
+                                label:
+                                    Text(AppLocalizations.of(context)!.titulo),
                               ),
-                              label: Text(
-                                  AppLocalizations.of(context)!.localizacao),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "${AppLocalizations.of(context)!.porfavorInsiraO} ${AppLocalizations.of(context)!.titulo}";
+                                }
+                                return null;
+                              },
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "${AppLocalizations.of(context)!.porfavorInsiraA} ${AppLocalizations.of(context)!.localizacao}";
-                              }
-                              return null;
-                            },
-                          ),
+                            TextFormField(
+                              maxLength: 160,
+                              controller: _localizacaoController,
+                              decoration: InputDecoration(
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    //TODO: Implementar a selecção de localização do mapa
+                                  },
+                                  icon:
+                                      const Icon(FontAwesomeIcons.locationDot),
+                                ),
+                                label: Text(
+                                    AppLocalizations.of(context)!.localizacao),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "${AppLocalizations.of(context)!.porfavorInsiraA} ${AppLocalizations.of(context)!.localizacao}";
+                                }
+                                return null;
+                              },
+                            ),
 
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  readOnly: true,
-                                  decoration: InputDecoration(
-                                    labelStyle: TextStyle(
-                                        overflow: TextOverflow.visible),
-                                    errorStyle: const TextStyle(
-                                        overflow: TextOverflow.visible),
-                                    labelText: AppLocalizations.of(context)!
-                                        .dataHoraIni,
-                                    border: const OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(20),
+                            SizedBox(height: altura * 0.02),
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    readOnly: true,
+                                    decoration: InputDecoration(
+                                      labelStyle: const TextStyle(
+                                          overflow: TextOverflow.visible),
+                                      errorStyle: const TextStyle(
+                                          overflow: TextOverflow.visible),
+                                      labelText: AppLocalizations.of(context)!
+                                          .dataHoraIni,
+                                      border: const OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                      ),
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
+                                          _selectStartDate(context);
+                                        },
+                                        icon: const Icon(
+                                            FontAwesomeIcons.calendar),
                                       ),
                                     ),
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        _selectStartDate(context);
-                                      },
-                                      icon:
-                                          const Icon(FontAwesomeIcons.calendar),
-                                    ),
-                                  ),
-                                  controller: _dateIni,
-                                  validator: (value) {
-                                    if (value == null ||
-                                        value.isEmpty ||
-                                        _timeIni.text.isEmpty) {
-                                      return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataHoraIni}";
-                                    }
-                                    return validaDatas("dataInicio");
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: TextFormField(
-                                  readOnly: true,
-                                  decoration: InputDecoration(
-                                    border: const OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(20),
-                                      ),
-                                    ),
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        _selectStartTime(context);
-                                      },
-                                      icon: const Icon(FontAwesomeIcons.clock),
-                                    ),
-                                  ),
-                                  controller: _timeIni,
-                                  validator: (value) {
-                                    if (value == null ||
-                                        value.isEmpty ||
-                                        _dateIni.text.isEmpty) {
-                                      return "";
-                                    }
-
-                                    return validaDatas("horaInicio");
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  readOnly: true,
-                                  decoration: InputDecoration(
-                                    labelText: AppLocalizations.of(context)!
-                                        .dataHoraFim,
-                                    border: const OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(20),
-                                      ),
-                                    ),
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        _selectEndDate(context);
-                                      },
-                                      icon:
-                                          const Icon(FontAwesomeIcons.calendar),
-                                    ),
-                                  ),
-                                  controller: _dateFim,
-                                  validator: (value) {
-                                    if (value == null ||
-                                        value.isEmpty ||
-                                        _timeFim.text.isEmpty) {
-                                      return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataHoraFim}";
-                                    }
-
-                                    return validaDatas("dataFim");
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: TextFormField(
-                                  readOnly: true,
-                                  decoration: InputDecoration(
-                                    border: const OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(20),
-                                      ),
-                                    ),
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        _selectEndTime(context);
-                                      },
-                                      icon: const Icon(FontAwesomeIcons.clock),
-                                    ),
-                                  ),
-                                  controller: _timeFim,
-                                  validator: (value) {
-                                    if (value == null ||
-                                        value.isEmpty ||
-                                        _dateFim.text.isEmpty) {
-                                      return "";
-                                    }
-
-                                    return validaDatas("horaFim");
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          TextFormField(
-                            controller: _dataLimiteInscricao,
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              labelText: AppLocalizations.of(context)!
-                                  .dataLimiteInscricao,
-                              border: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                              ),
-                              suffixIcon: IconButton(
-                                icon: const Icon(FontAwesomeIcons.calendar),
-                                onPressed: () {
-                                  _selectDeadLineDate(context);
-                                },
-                              ),
-                            ),
-                            validator: (value) {
-                              DateTime hoje = DateTime(
-                                  DateTime.now().year,
-                                  DateTime.now().month,
-                                  DateTime.now().day,
-                                  0,
-                                  0,
-                                  0);
-                              if (value == null || value.isEmpty) {
-                                return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataLimiteInscricao}";
-                              }
-
-                              if (DateTime.parse(value).isBefore(hoje)) {
-                                return AppLocalizations.of(context)!
-                                    .dataLimiteAntHoje;
-                              }
-
-                              if (DateTime.parse(value)
-                                  .isAfter(DateTime.parse(_dateIni.text))) {
-                                return AppLocalizations.of(context)!
-                                    .dataLimiteSupInicio;
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 5),
-                          // Selecção de categoria
-                          DropdownButton(
-                            padding: const EdgeInsets.only(left: 10, right: 10),
-                            hint: Text(AppLocalizations.of(context)!.categoria),
-                            isExpanded: true,
-                            value: _categoriaId.toString(),
-                            items: getListaCatDropdown(categorias),
-                            onChanged: (value) {
-                              setState(
-                                () {
-                                  _categoriaId = value;
-                                  _subCategoriaId = subcategorias
-                                      .where((e) =>
-                                          e.categoriaId == int.parse(value))
-                                      .first
-                                      .subcategoriaId
-                                      .toString();
-                                },
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 5),
-                          //selecção de subcategoria
-                          DropdownButton(
-                            padding: const EdgeInsets.only(left: 10, right: 10),
-                            borderRadius: BorderRadius.circular(20),
-                            hint: Text(
-                                AppLocalizations.of(context)!.subCategoria),
-                            isExpanded: true,
-                            value: _subCategoriaId.toString(),
-                            items: getListaSubCatDropdown(
-                                subcategorias, int.parse(_categoriaId!)),
-                            onChanged: (value) {
-                              setState(
-                                () {
-                                  _subCategoriaId = value;
-                                },
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 5),
-                          TextFormField(
-                            keyboardType: TextInputType.number,
-                            controller: _nmrMaxParticipantes,
-                            decoration: InputDecoration(
-                              label: Text(AppLocalizations.of(context)!
-                                  .nmrMaxParticipantes),
-                            ),
-                            onChanged: (value) {
-                              setState(
-                                () {
-                                  nmrMaxParticipantes = int.parse(value);
-                                },
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 10),
-                          // Secção de convidados permitidos
-                          Row(
-                            children: [
-                              Checkbox(
-                                tristate: false,
-                                value: permiteConvidados,
-                                onChanged: (value) {
-                                  setState(() {
-                                    permiteConvidados = value;
-                                  });
-                                },
-                              ),
-                              Expanded(
-                                child: TextFormField(
-                                  keyboardType: TextInputType.number,
-                                  controller: _nmrConvidados,
-                                  enabled: permiteConvidados,
-                                  decoration: InputDecoration(
-                                    label: Text(AppLocalizations.of(context)!
-                                        .nmrMaxConvidados),
-                                  ),
-                                  validator: (value) {
-                                    if (permiteConvidados == true &&
-                                        (value == null || value.isEmpty)) {
-                                      return "${AppLocalizations.of(context)!.porfavorInsiraO}${AppLocalizations.of(context)!.nmrMaxConvidados}";
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          TextFormField(
-                            maxLines: 2,
-                            controller: _descricao,
-                            decoration: InputDecoration(
-                              label:
-                                  Text(AppLocalizations.of(context)!.descricao),
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                descricao = value;
-                              });
-                            },
-                            validator: (value) => value!.isEmpty
-                                ? "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.descricao}"
-                                : null,
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  if (_tituloController.text.isNotEmpty ||
-                                      _localizacaoController.text.isNotEmpty ||
-                                      _dateIni.text.isNotEmpty ||
-                                      _timeIni.text.isNotEmpty ||
-                                      _dateFim.text.isNotEmpty ||
-                                      _timeFim.text.isNotEmpty ||
-                                      _dataLimiteInscricao.text.isNotEmpty ||
-                                      _categoriaId!.isNotEmpty ||
-                                      _subCategoriaId!.isNotEmpty ||
-                                      _nmrMaxParticipantes.text.isNotEmpty ||
-                                      _descricao.text.isNotEmpty) {
-                                    Future<bool> confirma = confirmExit(
-                                      context,
-                                      AppLocalizations.of(context)!
-                                          .sairSemGuardar,
-                                      AppLocalizations.of(context)!
-                                          .dadosSeraoPerdidos,
-                                    );
-
-                                    confirma.then((value) {
-                                      if (value) {
-                                        Navigator.of(context).pop();
+                                    controller: _dateIni,
+                                    validator: (value) {
+                                      if (value == null ||
+                                          value.isEmpty ||
+                                          _timeIni.text.isEmpty) {
+                                        return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataHoraIni}";
                                       }
+                                      return validaDatas("dataInicio");
+                                    },
+                                  ),
+                                ),
+                                SizedBox(width: largura * 0.02),
+                                Expanded(
+                                  child: TextFormField(
+                                    readOnly: true,
+                                    decoration: InputDecoration(
+                                      border: const OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                      ),
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
+                                          _selectStartTime(context);
+                                        },
+                                        icon:
+                                            const Icon(FontAwesomeIcons.clock),
+                                      ),
+                                    ),
+                                    controller: _timeIni,
+                                    validator: (value) {
+                                      if (value == null ||
+                                          value.isEmpty ||
+                                          _dateIni.text.isEmpty) {
+                                        return "";
+                                      }
+
+                                      return validaDatas("horaInicio");
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: altura * 0.02),
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    readOnly: true,
+                                    decoration: InputDecoration(
+                                      labelText: AppLocalizations.of(context)!
+                                          .dataHoraFim,
+                                      border: const OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                      ),
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
+                                          _selectEndDate(context);
+                                        },
+                                        icon: const Icon(
+                                            FontAwesomeIcons.calendar),
+                                      ),
+                                    ),
+                                    controller: _dateFim,
+                                    validator: (value) {
+                                      if (value == null ||
+                                          value.isEmpty ||
+                                          _timeFim.text.isEmpty) {
+                                        return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataHoraFim}";
+                                      }
+
+                                      return validaDatas("dataFim");
+                                    },
+                                  ),
+                                ),
+                                SizedBox(width: largura * 0.02),
+                                Expanded(
+                                  child: TextFormField(
+                                    readOnly: true,
+                                    decoration: InputDecoration(
+                                      border: const OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                      ),
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
+                                          _selectEndTime(context);
+                                        },
+                                        icon:
+                                            const Icon(FontAwesomeIcons.clock),
+                                      ),
+                                    ),
+                                    controller: _timeFim,
+                                    validator: (value) {
+                                      if (value == null ||
+                                          value.isEmpty ||
+                                          _dateFim.text.isEmpty) {
+                                        return "";
+                                      }
+
+                                      return validaDatas("horaFim");
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: altura * 0.02),
+                            TextFormField(
+                              controller: _dataLimiteInscricao,
+                              readOnly: true,
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(context)!
+                                    .dataLimiteInscricao,
+                                border: const OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: const Icon(FontAwesomeIcons.calendar),
+                                  onPressed: () {
+                                    _selectDeadLineDate(context);
+                                  },
+                                ),
+                              ),
+                              validator: (value) {
+                                DateTime hoje = DateTime(
+                                    DateTime.now().year,
+                                    DateTime.now().month,
+                                    DateTime.now().day,
+                                    0,
+                                    0,
+                                    0);
+                                if (value == null || value.isEmpty) {
+                                  return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataLimiteInscricao}";
+                                }
+
+                                if (DateTime.parse(value).isBefore(hoje)) {
+                                  return AppLocalizations.of(context)!
+                                      .dataLimiteAntHoje;
+                                }
+
+                                if (DateTime.parse(value)
+                                    .isAfter(DateTime.parse(_dateIni.text))) {
+                                  return AppLocalizations.of(context)!
+                                      .dataLimiteSupInicio;
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: altura * 0.02),
+                            // Selecção de categoria
+                            DropdownButtonFormField(
+                              padding:
+                                  const EdgeInsets.only(left: 10, right: 10),
+                              hint:
+                                  Text(AppLocalizations.of(context)!.categoria),
+                              isExpanded: true,
+                              value: _categoriaId.toString(),
+                              items: getListaCatDropdown(categorias),
+                              onChanged: (value) {
+                                setState(
+                                  () {
+                                    _categoriaId = value;
+                                    _subCategoriaId = subcategorias
+                                        .where((e) =>
+                                            e.categoriaId == int.parse(value))
+                                        .first
+                                        .subcategoriaId
+                                        .toString();
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: altura * 0.02),
+                            //selecção de subcategoria
+                            DropdownButton(
+                              padding:
+                                  const EdgeInsets.only(left: 10, right: 10),
+                              borderRadius: BorderRadius.circular(20),
+                              hint: Text(
+                                  AppLocalizations.of(context)!.subCategoria),
+                              isExpanded: true,
+                              value: _subCategoriaId.toString(),
+                              items: getListaSubCatDropdown(
+                                  subcategorias, int.parse(_categoriaId!)),
+                              onChanged: (value) {
+                                setState(
+                                  () {
+                                    _subCategoriaId = value;
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: altura * 0.02),
+                            TextFormField(
+                              keyboardType: TextInputType.number,
+                              controller: _nmrMaxParticipantes,
+                              decoration: InputDecoration(
+                                label: Text(AppLocalizations.of(context)!
+                                    .nmrMaxParticipantes),
+                              ),
+                              onChanged: (value) {
+                                setState(
+                                  () {
+                                    nmrMaxParticipantes = int.parse(value);
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: altura * 0.02),
+                            // Secção de convidados permitidos
+                            Row(
+                              children: [
+                                Checkbox(
+                                  tristate: false,
+                                  value: permiteConvidados,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      permiteConvidados = value;
                                     });
-                                  } else {
-                                    Navigator.of(context).pop();
-                                  }
-                                },
-                                child: Text(
-                                    AppLocalizations.of(context)!.cancelar),
+                                  },
+                                ),
+                                Expanded(
+                                  child: TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    controller: _nmrConvidados,
+                                    enabled: permiteConvidados,
+                                    decoration: InputDecoration(
+                                      label: Text(AppLocalizations.of(context)!
+                                          .nmrMaxConvidados),
+                                    ),
+                                    validator: (value) {
+                                      if (permiteConvidados == true &&
+                                          (value == null || value.isEmpty)) {
+                                        return "${AppLocalizations.of(context)!.porfavorInsiraO}${AppLocalizations.of(context)!.nmrMaxConvidados}";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: altura * 0.02),
+                            TextFormField(
+                              maxLines: 2,
+                              controller: _descricao,
+                              decoration: InputDecoration(
+                                label: Text(
+                                    AppLocalizations.of(context)!.descricao),
                               ),
-                              const SizedBox(width: 20),
-                              FilledButton(
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    //TODO: Implementar a lógica de envio de dados
-                                  }
-                                },
-                                child:
-                                    Text(AppLocalizations.of(context)!.enviar),
-                              ),
-                            ],
-                          )
-                        ],
+                              onChanged: (value) {
+                                setState(() {
+                                  descricao = value;
+                                });
+                              },
+                              validator: (value) => value!.isEmpty
+                                  ? "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.descricao}"
+                                  : null,
+                            ),
+                            SizedBox(height: altura * 0.02),
+                            // LISTA DE FORMULARIOS
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    if (_tituloController.text.isNotEmpty ||
+                                        _localizacaoController
+                                            .text.isNotEmpty ||
+                                        _dateIni.text.isNotEmpty ||
+                                        _timeIni.text.isNotEmpty ||
+                                        _dateFim.text.isNotEmpty ||
+                                        _timeFim.text.isNotEmpty ||
+                                        _dataLimiteInscricao.text.isNotEmpty ||
+                                        _categoriaId!.isNotEmpty ||
+                                        _subCategoriaId!.isNotEmpty ||
+                                        _nmrMaxParticipantes.text.isNotEmpty ||
+                                        _descricao.text.isNotEmpty) {
+                                      Future<bool> confirma = confirmExit(
+                                        context,
+                                        AppLocalizations.of(context)!
+                                            .sairSemGuardar,
+                                        AppLocalizations.of(context)!
+                                            .dadosSeraoPerdidos,
+                                      );
+
+                                      confirma.then((value) {
+                                        if (value) {
+                                          Navigator.of(context).pop();
+                                        }
+                                      });
+                                    } else {
+                                      Navigator.of(context).pop();
+                                    }
+                                  },
+                                  child: Text(
+                                      AppLocalizations.of(context)!.cancelar),
+                                ),
+                                SizedBox(width: largura * 0.02),
+                                FilledButton(
+                                  onPressed: () {
+                                    String mensagem = "";
+
+                                    if (forms.isEmpty) {
+                                      mensagem = AppLocalizations.of(context)!
+                                          .criarEventoSemForms;
+                                    } else if (forms.length == 1) {
+                                      mensagem = AppLocalizations.of(context)!
+                                          .maisForms;
+                                    }
+
+                                    if (forms.isEmpty || forms.length == 1) {
+                                      Future<bool> confirma = confirmExit(
+                                        context,
+                                        AppLocalizations.of(context)!
+                                            .criarEvento,
+                                        mensagem,
+                                      );
+
+                                      confirma.then((value) => {
+                                            if (value)
+                                              {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ConfiguracaoFormularioScreen(
+                                                      adicionaFormulario:
+                                                          _adicionaFormulario,
+                                                    ),
+                                                  ),
+                                                )
+                                              }
+                                            else
+                                              {
+                                                // TODO: IMPLEMENTAR ENVIO
+                                              }
+                                          });
+                                    } else {
+                                      // TODO: IMPLEMENTAR ENVIO
+                                      for (var form in forms) {
+                                        print(form.tipoFormulario);
+                                      }
+                                    }
+                                  },
+                                  child: Text(
+                                      AppLocalizations.of(context)!.guardar),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
