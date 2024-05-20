@@ -111,5 +111,9 @@
   "posicao": "Posición", 
   "maisForms": "¿Desea añadir más formularios?", 
   "naoPodeAdicionarForm": "No se pueden añadir 2 formularios del mismo tipo", 
-  "formularios": "Formularios"
+  "formularios": "Formularios", 
+  "infoEvento": "Detalles del evento", 
+  "gestaoEvento": "Gestión de evento", 
+  "semInscricoes": "No hay inscripciones todavía", 
+  "utilizadoresInscritos": "Usuarios registrados"
 }
