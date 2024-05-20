@@ -309,10 +309,11 @@ class _NovaPerguntaScreenState extends State<NovaPerguntaScreen> {
                                 return;
                               }
                             default:
-                              return;
+                              break;
                           }
                           final ordem =
                               widget.pergunta?.ordem ?? widget.tamanhoLista + 1;
+
                           widget.onAddPergunta(Pergunta(
                             pergunta: _perguntaController.text,
                             tipoDados: tipoDados,
