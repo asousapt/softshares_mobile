@@ -225,27 +225,41 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
   /* Seçao de adicionar formulario à lista */
 
   bool _adicionaFormulario(Formulario formulario) {
-    if (forms.isEmpty) {
+    // verifica se o formulário já existe na lista
+    final index = forms.indexWhere((form) => form.formId == formulario.formId);
+    print(index);
+
+    if (index != -1) {
+      // A editar um formulário existente
       setState(() {
-        forms.add(formulario);
+        forms[index] = formulario;
       });
       return true;
-    } else if (forms.length == 1) {
-      if (forms[0].tipoFormulario == formulario.tipoFormulario) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.naoPodeAdicionarForm),
-          ),
-        );
-        return false;
-      } else {
+    } else {
+      // Adicionar um novo formulário
+      if (forms.isEmpty) {
         setState(() {
           forms.add(formulario);
         });
         return true;
+      } else if (forms.length == 1) {
+        // Verifica se o formulário a adicionar é do mesmo tipo que o existente
+        if (forms[0].tipoFormulario == formulario.tipoFormulario) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.naoPodeAdicionarForm),
+            ),
+          );
+          return false;
+        } else {
+          setState(() {
+            forms.add(formulario);
+          });
+          return true;
+        }
       }
+      return true;
     }
-    return true;
   }
 
   /* Fim Seçao de adicionar formulario à lista */
@@ -651,6 +665,58 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                             ),
                             SizedBox(height: altura * 0.02),
                             // LISTA DE FORMULARIOS
+                            forms.isNotEmpty
+                                ? Text(
+                                    AppLocalizations.of(context)!.formularios,
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                : const SizedBox(height: 0),
+                            forms.isNotEmpty
+                                ? Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                    child: ListView(
+                                      shrinkWrap: true,
+                                      children: [
+                                        for (var form in forms)
+                                          ListTile(
+                                            title: Text(form.titulo),
+                                            subtitle: Text(
+                                                AppLocalizations.of(context)!
+                                                    .getEnumValue(
+                                                        form.tipoFormulario)),
+                                            trailing: IconButton(
+                                              icon: const Icon(Icons.delete),
+                                              onPressed: () {
+                                                setState(() {
+                                                  forms.remove(form);
+                                                });
+                                              },
+                                            ),
+                                            onTap: () {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ConfiguracaoFormularioScreen(
+                                                    adicionaFormulario:
+                                                        _adicionaFormulario,
+                                                    formulario: form,
+                                                    formId: form.formId,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox(height: 0),
+                            SizedBox(height: altura * 0.02),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -718,6 +784,10 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                                         ConfiguracaoFormularioScreen(
                                                       adicionaFormulario:
                                                           _adicionaFormulario,
+                                                      formId: forms.isEmpty
+                                                          ? 1
+                                                          : forms.last.formId +
+                                                              1,
                                                     ),
                                                   ),
                                                 )
@@ -730,7 +800,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                     } else {
                                       // TODO: IMPLEMENTAR ENVIO
                                       for (var form in forms) {
-                                        print(form.tipoFormulario);
+                                        print(form.titulo);
                                       }
                                     }
                                   },
@@ -743,7 +813,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

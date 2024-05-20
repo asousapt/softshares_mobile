@@ -11,9 +11,13 @@ class ConfiguracaoFormularioScreen extends StatefulWidget {
   const ConfiguracaoFormularioScreen({
     super.key,
     required this.adicionaFormulario,
+    this.formulario,
+    required this.formId,
   });
 
   final bool Function(Formulario form) adicionaFormulario;
+  final Formulario? formulario;
+  final int formId;
 
   @override
   State<ConfiguracaoFormularioScreen> createState() {
@@ -30,9 +34,13 @@ class _ConfiguracaoFormularioScreenState
 
   @override
   void initState() {
-    titulo = '';
-    tipoFormulario = null;
     super.initState();
+    if (widget.formulario != null) {
+      // Initialize with existing form data
+      _tituloController.text = widget.formulario!.titulo;
+      tipoFormulario = widget.formulario!.tipoFormulario;
+      perguntas = List<Pergunta>.from(widget.formulario!.perguntas);
+    }
   }
 
   @override
@@ -162,10 +170,11 @@ class _ConfiguracaoFormularioScreenState
                     SizedBox(height: altura * 0.01),
                     IconButton(
                       style: ButtonStyle(
-                          iconColor: MaterialStateProperty.all(
-                              Theme.of(context).canvasColor),
-                          backgroundColor: MaterialStateProperty.all(
-                              Theme.of(context).primaryColor)),
+                        iconColor: MaterialStateProperty.all(
+                            Theme.of(context).canvasColor),
+                        backgroundColor: MaterialStateProperty.all(
+                            Theme.of(context).primaryColor),
+                      ),
                       onPressed: () => _navegaParaNovaPerguntaScreen(),
                       icon: const Icon(FontAwesomeIcons.plus),
                     ),
@@ -184,9 +193,10 @@ class _ConfiguracaoFormularioScreenState
                           onPressed: () {
                             // Guarda o formulário
                             Formulario formulario = Formulario(
-                              titulo: titulo,
+                              titulo: _tituloController.text,
                               tipoFormulario: tipoFormulario!,
                               perguntas: perguntas,
+                              formId: widget.formId,
                             );
 
                             // Adiciona o formulário à lista de formulários

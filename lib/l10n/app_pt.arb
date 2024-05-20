@@ -111,5 +111,6 @@
   "listaOpcoesVazia": "A lista de opções está vazia", 
   "posicao": "Ordem", 
   "maisForms": "Deseja adicionar mais formulários?", 
-  "naoPodeAdicionarForm": "Não pode adicionar 2 formulários do mesmo tipo"
+  "naoPodeAdicionarForm": "Não pode adicionar 2 formulários do mesmo tipo", 
+  "formularios": "Formulários"
 }
