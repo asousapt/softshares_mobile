@@ -63,13 +63,11 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
 
     if ((evento.dataLimiteInsc.isAfter(hoje) ||
         evento.dataLimiteInsc.isAtSameMomentAs(hoje))) {
-      print("passei aqui");
       if (evento.numeroMaxPart == 0) {
         return true;
       } else if (evento.numeroInscritos < evento.numeroMaxPart) {
         return true;
       } else {
-        print("Evento cheio");
         return false;
       }
     }
@@ -77,7 +75,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
   }
 
   // Verifica se o utilizador pode cancelar a inscricao no evento
-  bool podeCancelar(Evento evento) {
+  bool podeCancelarInscricao(Evento evento) {
     DateTime hoje = DateTime(
       DateTime.now().year,
       DateTime.now().month,
@@ -103,17 +101,28 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
       return false;
     }
 
-    return false;
+    return true;
   }
 
-  Widget? inscreveOuCancela(Evento evento, double altura) {
-    bool podeCancelarf = podeCancelar(evento);
-    bool podeInscreverf = podeInscrever(evento);
+  // Verifica se o evento pode ser cancelado pelo seu criador
+  bool podeCancelarEvento(Evento evento) {
     DateTime hoje = DateTime(
       DateTime.now().year,
       DateTime.now().month,
       DateTime.now().day,
     );
+
+    if (evento.dataLimiteInsc.isAfter(hoje) &&
+        evento.utilizadorCriou == utilizadorId) {
+      return true;
+    }
+    return false;
+  }
+
+  Widget? inscreveOuCancela(Evento evento, double altura) {
+    bool podeCancelarf = podeCancelarInscricao(evento);
+    bool podeInscreverf = podeInscrever(evento);
+    bool podeCancelarEventof = podeCancelarEvento(evento);
 
     if (podeCancelarf == true && podeInscreverf == false) {
       return SizedBox(
@@ -123,7 +132,6 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
               backgroundColor: MaterialStateProperty.all(Colors.red)),
           onPressed: () {
             // ToDO: cancelar inscricao
-            print("Cancelar inscricao");
           },
           child: Text(
             AppLocalizations.of(context)!.cancelarInscriao,
@@ -139,20 +147,19 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
         height: altura * 0.065,
         child: FilledButton(
           onPressed: () {
-            print("inscrever-me");
+            // TODO implementar a inscricao no evento
           },
           child: Text(AppLocalizations.of(context)!.inscrever),
         ),
       );
-    } else if (evento.dataLimiteInsc.isAfter(hoje) &&
-        evento.utilizadorCriou == utilizadorId) {
+    } else if (podeCancelarEventof) {
       return SizedBox(
         height: altura * 0.065,
         child: FilledButton(
           style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(Colors.red)),
           onPressed: () {
-            print("Cancelar evento");
+            // TODO: Implementar o cancelamento do evento
           },
           child: Text(
               "${AppLocalizations.of(context)!.cancelar} ${AppLocalizations.of(context)!.evento}"),
