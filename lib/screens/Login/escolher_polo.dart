@@ -29,7 +29,7 @@ class __EcraEscolherPoloState extends State<EcraEscolherPolo> {
   Widget build(BuildContext context) {
     itemCount = polos.length;
     return Scaffold(
-        appBar: AppBar(title: const Text('Selecione um Polo')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.seleccionarPolo)),
         body: Padding(
           padding: EdgeInsets.only(
               left: MediaQuery.of(context).size.height * 0.01,
@@ -37,10 +37,10 @@ class __EcraEscolherPoloState extends State<EcraEscolherPolo> {
               top: MediaQuery.of(context).size.height * 0.01),
           child: SingleChildScrollView(
               child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).canvasColor,
-                  borderRadius: BorderRadius.circular(10)),
-                  height: (MediaQuery.of(context).size.height) * 0.8,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).canvasColor,
+                      borderRadius: BorderRadius.circular(10)),
+                  height: (MediaQuery.of(context).size.height) * 0.85,
                   child: Column(
                     children: [
                       Expanded(
