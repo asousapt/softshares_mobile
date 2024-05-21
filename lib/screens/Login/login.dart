@@ -196,7 +196,7 @@ class _EcraLoginState extends State<EcraLogin> {
                                       }),
                                 ],
                               ),
-
+                              SizedBox(height: largura * 0.03,),
                               SizedBox(
                                 height: altura * 0.065,
                                 width: double.infinity,
@@ -205,12 +205,14 @@ class _EcraLoginState extends State<EcraLogin> {
                                     /*if (_formKey.currentState!.validate()) {
                                       Navigator.pushNamed(context, '/home');
                                     }*/
-                                    Navigator.pushNamed(context, '/escolherPolo');
+                                    Navigator.pushNamed(
+                                        context, '/escolherPolo');
                                   },
                                   child:
                                       Text(AppLocalizations.of(context)!.login),
                                 ),
                               ),
+                              SizedBox(height: largura * 0.03,),
                               // Esqueceu a password
                               Row(
                                 children: [
