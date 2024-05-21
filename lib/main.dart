@@ -4,6 +4,7 @@ import 'package:softshares_mobile/screens/drawerLateral/contacte_suporte.dart';
 import 'package:softshares_mobile/screens/eventos/consultar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/criar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/eventos_main.dart';
+import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
 import "screens/Login/registo.dart";
 import "screens/Login/login.dart";
 import "package:flutter/material.dart";
@@ -78,6 +79,8 @@ class _MyAppState extends State<MyApp> {
         '/confirmarID': (context) => EcraConfID(mudaIdioma: _mudaIdioma),
         '/reporPass': (context) => EcraReporPass(mudaIdioma: _mudaIdioma),
         '/escolherPolo': (context) => EcraEscolherPolo(mudaIdioma: _mudaIdioma),
+        '/responderForm': (context) =>
+            const RespostaFormScreen(formularioId: 0),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/consultarEvento') {
