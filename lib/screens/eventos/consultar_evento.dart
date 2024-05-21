@@ -446,6 +446,25 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                                       ),
                                                     ),
                                                   ),
+                                                  trailing: IconButton(
+                                                    onPressed: () {
+                                                      // TODO: Fazer navagacao paraa pagina da resposta deste utilizador
+                                                    },
+                                                    icon: Icon(
+                                                      color: Theme.of(context)
+                                                          .canvasColor,
+                                                      FontAwesomeIcons
+                                                          .clipboard,
+                                                    ),
+                                                    style: ButtonStyle(
+                                                      backgroundColor:
+                                                          MaterialStateProperty
+                                                              .all(
+                                                        Theme.of(context)
+                                                            .primaryColor,
+                                                      ),
+                                                    ),
+                                                  ),
                                                 );
                                               },
                                             );
