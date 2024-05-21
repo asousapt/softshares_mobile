@@ -115,5 +115,7 @@
   "infoEvento": "Detalles del evento", 
   "gestaoEvento": "Gestión de evento", 
   "semInscricoes": "No hay inscripciones todavía", 
-  "utilizadoresInscritos": "Usuarios registrados"
+  "utilizadoresInscritos": "Usuarios registrados", 
+  "naoHaDados": "Sin datos para mostrar", 
+  "ocorreuErro": "Ha ocurrido un error"
 }

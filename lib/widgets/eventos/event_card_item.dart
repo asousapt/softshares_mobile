@@ -13,69 +13,72 @@ class EventCardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        print(evento.eventoId);
-      },
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: SizedBox(
-            width: 220,
-            height: 240,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 50,
-                  child: Text(
-                    evento.titulo,
-                    maxLines: 2,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+    double largura = MediaQuery.of(context).size.width;
+    double altura = MediaQuery.of(context).size.height;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: SizedBox(
+          width: largura * 0.45,
+          height: altura * 0.3,
+          child: Column(
+            children: [
+              SizedBox(
+                height: altura * 0.05,
+                child: Text(
+                  evento.titulo,
+                  maxLines: 2,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 10),
-                FadeInImage(
-                  fit: BoxFit.cover,
-                  height: 100,
-                  width: double.infinity,
-                  placeholder: MemoryImage(kTransparentImage),
-                  image: NetworkImage(
-                      "https://pplware.sapo.pt/wp-content/uploads/2022/02/s_22_plus_1.jpg "),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const FaIcon(
-                      FontAwesomeIcons.calendar,
-                      color: Color.fromRGBO(123, 123, 123, 1),
+              ),
+              SizedBox(
+                height: altura * 0.012,
+              ),
+              FadeInImage(
+                fit: BoxFit.cover,
+                height: altura * 0.1,
+                width: double.infinity,
+                placeholder: MemoryImage(kTransparentImage),
+                image: NetworkImage(
+                    "https://pplware.sapo.pt/wp-content/uploads/2022/02/s_22_plus_1.jpg "),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const FaIcon(
+                    FontAwesomeIcons.calendar,
+                    color: Color.fromRGBO(123, 123, 123, 1),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(left: largura * 0.02),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          evento.dataFormatada("pt"),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromRGBO(123, 123, 123, 1),
+                          ),
+                        ),
+                        Text(
+                          evento.horaFormatada("pt"),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Color.fromRGBO(123, 123, 123, 1),
+                          ),
+                        ),
+                      ],
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(left: 12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            evento.dataFormatada("pt"),
-                            style: const TextStyle(
-                              color: Color.fromRGBO(123, 123, 123, 1),
-                            ),
-                          ),
-                          Text(
-                            evento.horaFormatada("pt"),
-                            style: const TextStyle(
-                              color: Color.fromRGBO(123, 123, 123, 1),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
+                  )
+                ],
+              )
+            ],
           ),
         ),
       ),
