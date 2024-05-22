@@ -118,5 +118,6 @@
   "semInscricoes": "Não há inscrições", 
   "utilizadoresInscritos": "Utilizadores Inscritos", 
   "naoHaDados": "Não existem dados", 
-  "ocorreuErro": "Ocorreu um erro"
+  "ocorreuErro": "Ocorreu um erro", 
+  "respostaFormulario": "Resposta ao Formulário"
 }

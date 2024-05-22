@@ -4,6 +4,8 @@ import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
+import 'package:softshares_mobile/screens/formularios_dinamicos/resposta_individual.dart';
+import 'package:softshares_mobile/screens/formularios_dinamicos/tabela_respostas.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/custom_tab.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -449,6 +451,17 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                                   trailing: IconButton(
                                                     onPressed: () {
                                                       // TODO: Fazer navagacao paraa pagina da resposta deste utilizador
+
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              RespostaIndividualScreen(
+                                                            formularioId: 1,
+                                                            utilizador: index,
+                                                          ),
+                                                        ),
+                                                      );
                                                     },
                                                     icon: Icon(
                                                       color: Theme.of(context)
@@ -469,6 +482,22 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                               },
                                             );
                                           }
+                                        },
+                                      ),
+                                    ),
+                                    Center(
+                                      child: FilledButton(
+                                        child: Text("Ver todas as respostas"),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TabelaRespostasScreen(
+                                                formularioId: 1,
+                                              ),
+                                            ),
+                                          );
                                         },
                                       ),
                                     ),

@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/pergunta_formulario.dart';
 import 'package:softshares_mobile/models/evento.dart';
-import 'package:softshares_mobile/models/resposta_form.dart';
+import 'package:softshares_mobile/models/formularios_dinamicos/resposta_form.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
 
 class RespostaFormScreen extends StatefulWidget {
