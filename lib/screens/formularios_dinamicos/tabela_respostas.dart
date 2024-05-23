@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:softshares_mobile/l10n/app_localizations_extension.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/pergunta_formulario.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/resposta_form.dart';
@@ -93,7 +94,8 @@ class _TabelaRespostasScreenState extends State<TabelaRespostasScreen> {
       perguntas = fetchedFormulario.perguntas;
       _isLoading = false;
       tituloForm = fetchedFormulario.titulo;
-      tipoForm = "Inscrição";
+      tipoForm = AppLocalizations.of(context)!
+          .getEnumValue(fetchedFormulario.tipoFormulario);
     });
   }
 
@@ -117,7 +119,7 @@ class _TabelaRespostasScreenState extends State<TabelaRespostasScreen> {
     double largura = MediaQuery.of(context).size.width;
     double altura = MediaQuery.of(context).size.height;
 
-    // Create a set to track unique user IDs
+    // Obtem a lista de utilizadores que responderam ao formulario
     Set<int> userIds = {};
     List<Utilizador?> uniqueUsers = [];
 
@@ -130,7 +132,9 @@ class _TabelaRespostasScreenState extends State<TabelaRespostasScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Tabela de Respostas')),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.respostaFormulario),
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(
             vertical: altura * 0.02, horizontal: largura * 0.02),
@@ -139,36 +143,94 @@ class _TabelaRespostasScreenState extends State<TabelaRespostasScreen> {
                 child: CircularProgressIndicator(
                 backgroundColor: Theme.of(context).canvasColor,
               ))
-            : SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: DataTable(
-                    columns: [
-                      DataColumn(label: Text('Pergunta')),
-                      ...uniqueUsers.map((user) {
-                        return DataColumn(
-                            label: Text(user?.getNomeCompleto() ?? ''));
-                      }).toList(),
+            : Container(
+                height: altura * 0.9,
+                color: Theme.of(context).canvasColor,
+                child: Container(
+                  margin: EdgeInsets.symmetric(
+                      vertical: largura * 0.02, horizontal: altura * 0.02),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        tituloForm ?? '',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        tipoForm ?? '',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: altura * 0.02),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: DataTable(
+                            columns: [
+                              DataColumn(
+                                  label: Text(
+                                      AppLocalizations.of(context)!.pergunta)),
+                              ...uniqueUsers.map(
+                                (user) {
+                                  return DataColumn(
+                                    label: Text(
+                                      user?.getNomeCompleto() ?? '',
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                            rows: perguntas.map((pergunta) {
+                              return DataRow(
+                                cells: [
+                                  DataCell(Text(
+                                    pergunta.pergunta,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  )),
+                                  ...uniqueUsers.map(
+                                    (user) {
+                                      String? respostaTexto;
+                                      var resposta = respostas.firstWhere(
+                                        (r) =>
+                                            r.utilizador?.utilizadorId ==
+                                                user?.utilizadorId &&
+                                            r.perguntaId == pergunta.detalheId,
+                                        orElse: () => RespostaDetalhe(
+                                            perguntaId: 0,
+                                            resposta: '',
+                                            utilizador: null),
+                                      );
+                                      respostaTexto = resposta.resposta;
+                                      return DataCell(
+                                          Text(respostaTexto ?? ''));
+                                    },
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: altura * 0.02),
+                      Center(
+                          child: FilledButton(
+                              onPressed: () {
+                                // TDOD: Exportar respostas
+                              },
+                              child: Text('Exportar'))),
                     ],
-                    rows: perguntas.map((pergunta) {
-                      return DataRow(cells: [
-                        DataCell(Text(pergunta.pergunta)),
-                        ...uniqueUsers.map((user) {
-                          String? respostaTexto;
-                          var resposta = respostas.firstWhere(
-                            (r) =>
-                                r.utilizador?.utilizadorId ==
-                                    user?.utilizadorId &&
-                                r.perguntaId == pergunta.detalheId,
-                            orElse: () => RespostaDetalhe(
-                                perguntaId: 0, resposta: '', utilizador: null),
-                          );
-                          respostaTexto = resposta.resposta;
-                          return DataCell(Text(respostaTexto ?? ''));
-                        }).toList(),
-                      ]);
-                    }).toList(),
                   ),
                 ),
               ),
