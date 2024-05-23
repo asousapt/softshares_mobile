@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 Future<void> displayTimePicker(
   BuildContext context,
@@ -41,4 +42,12 @@ TimeOfDay parseTimeOfDay(String timeString) {
   final int hour = int.parse(parts[0]);
   final int minute = int.parse(parts[1]);
   return TimeOfDay(hour: hour, minute: minute);
+}
+
+String dataFormatada(String local, DateTime data) {
+  String dataF = "";
+
+  dataF =
+      "${DateFormat.yMd(local).format(data)} - ${DateFormat.jm(local).format(data)}";
+  return dataF;
 }
