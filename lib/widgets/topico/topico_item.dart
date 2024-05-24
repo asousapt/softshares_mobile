@@ -29,6 +29,7 @@ class TopicoCardItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
+              overflow: TextOverflow.ellipsis,
               topico.titulo,
               maxLines: 2,
               style: const TextStyle(
@@ -65,7 +66,7 @@ class TopicoCardItem extends StatelessWidget {
                     ),
                   ],
                 ),
-                Spacer(),
+                const Spacer(),
                 categorias
                     .firstWhere(
                       (element) => element.categoriaId == topico.categoria,
@@ -75,6 +76,7 @@ class TopicoCardItem extends StatelessWidget {
             ),
             SizedBox(height: altura * 0.01),
             Text(
+              overflow: TextOverflow.ellipsis,
               topico.mensagem,
               maxLines: 3,
               style: const TextStyle(

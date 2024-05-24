@@ -18,7 +18,7 @@ class TopicosListaScreen extends StatefulWidget {
 }
 
 class _TopicosListaScreenState extends State<TopicosListaScreen> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
   bool _isLoading = false;
   List<Topico> listaEvFiltrada = [];
@@ -67,6 +67,42 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
       ),
       Topico(
         topicoId: 3,
+        categoria: 3,
+        subcategoria: 203,
+        utilizadorId: Utilizador(3, 'Alice', 'Johnson',
+            'alice.johnson@example.com', 'Some info', 3, [1, 2], 3, 3),
+        titulo: 'Third Topic',
+        mensagem: 'This is the message for the third topic.',
+        dataCriacao: DateTime.now().subtract(Duration(days: 1)),
+        idiomaId: 1,
+        imagem: [],
+      ),
+      Topico(
+        topicoId: 4,
+        categoria: 3,
+        subcategoria: 203,
+        utilizadorId: Utilizador(3, 'Alice', 'Johnson',
+            'alice.johnson@example.com', 'Some info', 3, [1, 2], 3, 3),
+        titulo: 'Third Topic',
+        mensagem: 'This is the message for the third topic.',
+        dataCriacao: DateTime.now().subtract(Duration(days: 1)),
+        idiomaId: 1,
+        imagem: [],
+      ),
+      Topico(
+        topicoId: 5,
+        categoria: 3,
+        subcategoria: 203,
+        utilizadorId: Utilizador(3, 'Alice', 'Johnson',
+            'alice.johnson@example.com', 'Some info', 3, [1, 2], 3, 3),
+        titulo: 'Third Topic',
+        mensagem: 'This is the message for the third topic.',
+        dataCriacao: DateTime.now().subtract(Duration(days: 1)),
+        idiomaId: 1,
+        imagem: [],
+      ),
+      Topico(
+        topicoId: 6,
         categoria: 3,
         subcategoria: 203,
         utilizadorId: Utilizador(3, 'Alice', 'Johnson',
@@ -211,9 +247,11 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
         ),
       ),
       drawer: const MainDrawer(),
-      bottomNavigationBar: BottomNavigation(seleccao: 2),
+      bottomNavigationBar: const BottomNavigation(seleccao: 2),
       appBar: AppBar(
-        title: _isSearching ? _buildSearchField() : Text("Forum"),
+        title: _isSearching
+            ? _buildSearchField()
+            : Text(AppLocalizations.of(context)!.threads),
         actions: _buildAppBarActions(),
       ),
       body: SafeArea(
@@ -223,11 +261,14 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
           padding: EdgeInsets.symmetric(
               horizontal: largura * 0.02, vertical: altura * 0.02),
           child: Container(
-            color: Theme.of(context).canvasColor,
-            height: altura * 0.8,
+            decoration: BoxDecoration(
+              //  color: Theme.of(context).canvasColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            height: altura * 0.9,
             child: Container(
               margin: EdgeInsets.symmetric(
-                  horizontal: largura * 0.02, vertical: altura * 0.02),
+                  horizontal: largura * 0.01, vertical: altura * 0.02),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
@@ -235,7 +276,7 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
                   children: [
                     Container(
                       color: containerColorTopicos,
-                      height: altura * 0.7,
+                      height: altura * 0.8,
                       child: listaEvFiltrada.isEmpty
                           ? _isLoading
                               ? const Center(child: CircularProgressIndicator())
