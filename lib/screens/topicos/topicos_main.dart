@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/topico.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/screens/topicos/topico_details.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -292,7 +293,18 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
                                     topico: e,
                                     categorias: categorias,
                                   ),
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            TopicoDetailsScreen(
+                                          topico: e,
+                                          categorias: categorias,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               }).toList(),
                             ),
