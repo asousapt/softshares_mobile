@@ -5,6 +5,7 @@ import 'package:softshares_mobile/screens/eventos/consultar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/criar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/eventos_main.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
+import 'package:softshares_mobile/screens/mensagensGrupos/mensagens_main.dart';
 import 'package:softshares_mobile/screens/topicos/criar_topico.dart';
 import 'package:softshares_mobile/screens/topicos/topico_details.dart';
 import 'package:softshares_mobile/screens/topicos/topicos_main.dart';
@@ -86,7 +87,8 @@ class _MyAppState extends State<MyApp> {
             const RespostaFormScreen(formularioId: 0),
         '/forum': (context) => const TopicosListaScreen(),
         '/vertopico': (context) => const TopicoDetailsScreen(),
-        'criarTopico': (context) => const CriarTopicoScreen(),
+        '/criarTopico': (context) => const CriarTopicoScreen(),
+        '/mensagens': (context) => const MensagensMainScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/consultarEvento') {

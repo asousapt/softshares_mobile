@@ -49,7 +49,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
             break;
           case 4:
             // Mensagens
-            Navigator.pushNamed(context, '/home');
+            Navigator.pushNamed(context, '/mensagens');
             break;
           default:
             // Home
