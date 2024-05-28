@@ -32,21 +32,27 @@ class _BottomNavigationState extends State<BottomNavigation> {
         // FALTA MUDAR AS ROTAS DOS BOTAOES DE 1 a 4
         switch (value) {
           case 0:
+            // Home
             Navigator.pushNamed(context, '/home');
             break;
           case 1:
+            // POI
             Navigator.pushNamed(context, '/home');
             break;
           case 2:
-            Navigator.pushNamed(context, '/home');
+            // Tópicos
+            Navigator.pushNamed(context, '/forum');
             break;
           case 3:
+            // Eventos
             Navigator.pushNamed(context, '/eventos');
             break;
           case 4:
-            Navigator.pushNamed(context, '/home');
+            // Mensagens
+            Navigator.pushNamed(context, '/mensagens');
             break;
           default:
+            // Home
             Navigator.pushNamed(context, '/home');
             break;
         }

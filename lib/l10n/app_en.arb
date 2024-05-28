@@ -117,5 +117,7 @@
   "semInscricoes": "No registrations yet", 
   "utilizadoresInscritos": "Registered Users", 
   "naoHaDados": "No data to display", 
-  "ocorreuErro": "An error has occurred"
+  "ocorreuErro": "An error has occurred", 
+  "respostaFormulario": "Form Answers", 
+  "novoTopico": "New Thread"
 }

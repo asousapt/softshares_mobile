@@ -3,6 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
+import 'package:softshares_mobile/screens/formularios_dinamicos/resposta_individual.dart';
+import 'package:softshares_mobile/screens/formularios_dinamicos/tabela_respostas.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/custom_tab.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -150,6 +153,15 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
         child: FilledButton(
           onPressed: () {
             // TODO implementar a inscricao no evento
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RespostaFormScreen(
+                  formularioId: 1,
+                ),
+              ),
+            );
           },
           child: Text(AppLocalizations.of(context)!.inscrever),
         ),
@@ -170,6 +182,10 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
     } else {
       return null;
     }
+  }
+
+  Future<List<int>> getUtilizadoresInscritos() async {
+    return evento!.utilizadoresInscritos;
   }
 
   @override
@@ -387,33 +403,99 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                     ),
                                     SizedBox(height: altura * 0.02),
                                     Expanded(
-                                      child: ListView.builder(
-                                        itemCount: evento!
-                                            .utilizadoresInscritos.length,
-                                        itemBuilder: (context, index) {
-                                          return ListTile(
-                                            title: Text(
-                                              "Utilizador ${evento!.utilizadoresInscritos[index]}",
-                                            ),
-                                            // TODO: Alterar a imagem do utilizador
-                                            leading: CircleAvatar(
-                                              child: Container(
-                                                decoration: const BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  image: DecorationImage(
-                                                    image: NetworkImage(
-                                                        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"),
-                                                  ),
-                                                ),
+                                      child: FutureBuilder(
+                                        future: getUtilizadoresInscritos(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return Center(
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .ocorreuErro,
                                               ),
-                                            ),
-                                            trailing: IconButton(
-                                              icon: const Icon(FontAwesomeIcons
-                                                  .chevronRight),
-                                              onPressed: () {
-                                                // Navega para o ecrã dos detalhes da inscrição do utilizador
-                                                //TODO: Implementar a navegação e ecrã de detalhes da inscrição
+                                            );
+                                          } else if (snapshot.data!.isEmpty) {
+                                            return Center(
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .semInscricoes,
+                                              ),
+                                            );
+                                          } else {
+                                            return ListView.builder(
+                                              itemCount: evento!
+                                                  .utilizadoresInscritos.length,
+                                              itemBuilder: (context, index) {
+                                                return ListTile(
+                                                  title: Text(
+                                                    "Utilizador ${evento!.utilizadoresInscritos[index]}",
+                                                  ),
+                                                  // TODO: Alterar a imagem do utilizador
+                                                  leading: CircleAvatar(
+                                                    child: Container(
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        image: DecorationImage(
+                                                          image: NetworkImage(
+                                                              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  trailing: IconButton(
+                                                    onPressed: () {
+                                                      // TODO: Fazer navagacao paraa pagina da resposta deste utilizador
+
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              RespostaIndividualScreen(
+                                                            formularioId: 1,
+                                                            utilizador: index,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                    icon: Icon(
+                                                      color: Theme.of(context)
+                                                          .canvasColor,
+                                                      FontAwesomeIcons
+                                                          .clipboard,
+                                                    ),
+                                                    style: ButtonStyle(
+                                                      backgroundColor:
+                                                          MaterialStateProperty
+                                                              .all(
+                                                        Theme.of(context)
+                                                            .primaryColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
                                               },
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    Center(
+                                      child: FilledButton(
+                                        child: Text("Ver todas as respostas"),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TabelaRespostasScreen(
+                                                formularioId: 1,
+                                              ),
                                             ),
                                           );
                                         },
