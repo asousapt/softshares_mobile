@@ -35,7 +35,7 @@ class MainDrawer extends StatelessWidget {
             title: Text(AppLocalizations.of(context)!.suporte),
           ),
           ListTile(
-            onTap: () {},
+            onTap: () {Navigator.pushNamed(context, "/escolherPolo");},
             contentPadding: const EdgeInsets.only(left: 15, top: 10),
             leading: const Icon(FontAwesomeIcons.city),
             title: Text(AppLocalizations.of(context)!.seleccionarPolo),
@@ -47,7 +47,7 @@ class MainDrawer extends StatelessWidget {
             title: Text(AppLocalizations.of(context)!.definicoes),
           ),
           ListTile(
-            onTap: () {},
+            onTap: () {Navigator.pushNamed(context, "/login");},
             contentPadding: const EdgeInsets.only(left: 15, top: 10),
             leading: const Icon(FontAwesomeIcons.rightFromBracket),
             title: Text(AppLocalizations.of(context)!.logout),
