@@ -119,5 +119,6 @@
   "utilizadoresInscritos": "Utilizadores Inscritos", 
   "naoHaDados": "Não existem dados", 
   "ocorreuErro": "Ocorreu um erro", 
-  "respostaFormulario": "Resposta ao Formulário"
+  "respostaFormulario": "Resposta ao Formulário", 
+  "novoTopico": "Novo Tópico"
 }

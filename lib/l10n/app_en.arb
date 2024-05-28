@@ -118,5 +118,6 @@
   "utilizadoresInscritos": "Registered Users", 
   "naoHaDados": "No data to display", 
   "ocorreuErro": "An error has occurred", 
-  "respostaFormulario": "Form Answers"
+  "respostaFormulario": "Form Answers", 
+  "novoTopico": "New Thread"
 }

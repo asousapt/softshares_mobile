@@ -240,7 +240,7 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
-          Navigator.pushNamed(context, '/criarTopico');
+          Navigator.pushNamed(context, 'criarTopico');
         },
         child: const Icon(
           FontAwesomeIcons.plus,
@@ -261,16 +261,16 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
         child: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: largura * 0.02, vertical: altura * 0.02),
-          child: Container(
-            decoration: BoxDecoration(
-              //  color: Theme.of(context).canvasColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            height: altura * 0.9,
+          child: SingleChildScrollView(
             child: Container(
-              margin: EdgeInsets.symmetric(
-                  horizontal: largura * 0.01, vertical: altura * 0.02),
-              child: SingleChildScrollView(
+              decoration: BoxDecoration(
+                //  color: Theme.of(context).canvasColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              height: altura * 0.9,
+              child: Container(
+                margin: EdgeInsets.symmetric(
+                    horizontal: largura * 0.01, vertical: altura * 0.02),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,33 +280,39 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
                       height: altura * 0.8,
                       child: listaEvFiltrada.isEmpty
                           ? _isLoading
-                              ? const Center(child: CircularProgressIndicator())
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                      backgroundColor:
+                                          Theme.of(context).canvasColor),
+                                )
                               : Center(
                                   child: Text(
                                       AppLocalizations.of(context)!.naoHaDados),
                                 )
-                          : ListView(
-                              children: listaEvFiltrada.map((e) {
-                                return InkWell(
-                                  enableFeedback: true,
-                                  child: TopicoCardItem(
-                                    topico: e,
-                                    categorias: categorias,
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            TopicoDetailsScreen(
-                                          topico: e,
-                                          categorias: categorias,
+                          : Expanded(
+                              child: ListView(
+                                children: listaEvFiltrada.map((e) {
+                                  return InkWell(
+                                    enableFeedback: true,
+                                    child: TopicoCardItem(
+                                      topico: e,
+                                      categorias: categorias,
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              TopicoDetailsScreen(
+                                            topico: e,
+                                            categorias: categorias,
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              }).toList(),
+                                      );
+                                    },
+                                  );
+                                }).toList(),
+                              ),
                             ),
                     ),
                   ],

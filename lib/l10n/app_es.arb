@@ -118,5 +118,6 @@
   "utilizadoresInscritos": "Usuarios registrados", 
   "naoHaDados": "Sin datos para mostrar", 
   "ocorreuErro": "Ha ocurrido un error", 
-  "respostaFormulario": "Respuestas de formulario"
+  "respostaFormulario": "Respuestas de formulario", 
+  "novoTopico": "Nuevo tema"
 }
