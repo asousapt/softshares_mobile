@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import '../../widgets/pontos__de_interesse/pontos_de_interesse_card.dart';
+import 'package:softshares_mobile/models/categoria.dart';
 
 class PontosDeInteresseMainScreen extends StatefulWidget {
   const PontosDeInteresseMainScreen({Key? key}) : super(key: key);
@@ -27,6 +28,17 @@ class _PontosDeInteresseMainScreenState
     fetchPontosDeInteresse();
   }
 
+  List<Categoria> categorias = [
+    Categoria(1, "Gastronomia", "cor1", "garfo"),
+    Categoria(2, "Desporto", "cor2", "futebol"),
+    Categoria(3, "Atividade Ar Livre", "cor3", "arvore"),
+    Categoria(4, "Alojamento", "cor3", "casa"),
+    Categoria(5, "Saúde", "cor3", "cruz"),
+    Categoria(6, "Ensino", "cor3", "escola"),
+    Categoria(7, "Infraestruturas", "cor3", "infra"),
+    Categoria(0, "Todas", "corTodas", "todos"),
+  ];
+
   Future<void> fetchPontosDeInteresse() async {
     // Fetch data from your data source
     // Example:
@@ -36,12 +48,7 @@ class _PontosDeInteresseMainScreenState
   }
 
   void filterPontosDeInteresse(String query) {
-    // Filter the list of points of interest based on the query
-    // Example:
-    // listaPontosDeInteresseFiltrados = listaPontosDeInteresse.where((ponto) {
-    //   return ponto.titulo.toLowerCase().contains(query.toLowerCase());
-    // }).toList();
-    // setState(() {});
+    //Faz uma query que devolve pontos de interesse de uma certa categoria
   }
 
   @override
@@ -79,16 +86,18 @@ class _PontosDeInteresseMainScreenState
               ? Center(
                   child: Text('No data available'),
                 )
-              : ListView.builder(
-                  itemCount: listaPontosDeInteresseFiltrados.length,
-                  itemBuilder: (context, index) {
-                    final pontoDeInteresse =
-                        listaPontosDeInteresseFiltrados[index];
-                    return PontoInteresseCard(
-                      pontoInteresse: pontoDeInteresse,
-                    );
-                  },
-                ),
+              : SingleChildScrollView(
+                child: ListView.builder(
+                    itemCount: listaPontosDeInteresseFiltrados.length,
+                    itemBuilder: (context, index) {
+                      final pontoDeInteresse =
+                          listaPontosDeInteresseFiltrados[index];
+                      return PontoInteresseCard(
+                        pontoInteresse: pontoDeInteresse,
+                      );
+                    },
+                  ),
+              ),
     );
   }
 }
