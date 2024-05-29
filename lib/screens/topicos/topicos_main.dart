@@ -240,7 +240,7 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
-          Navigator.pushNamed(context, 'criarTopico');
+          Navigator.pushNamed(context, '/criarTopico');
         },
         child: const Icon(
           FontAwesomeIcons.plus,
