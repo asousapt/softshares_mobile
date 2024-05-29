@@ -195,9 +195,7 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
         String tituloLower = element.titulo.toLowerCase();
         String mensagemLower = element.mensagem.toLowerCase();
 
-        return tituloLower.contains(texto) ||
-            mensagemLower.contains(texto) ||
-            tituloLower.contains(texto);
+        return mensagemLower.contains(texto) || tituloLower.contains(texto);
       }).toList();
 
       if (listaEvFiltrada.isEmpty) {
