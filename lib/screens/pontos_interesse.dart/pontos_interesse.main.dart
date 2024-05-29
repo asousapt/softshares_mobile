@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
+import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 import '../../widgets/pontos__de_interesse/pontos_de_interesse_card.dart';
 import 'package:softshares_mobile/models/categoria.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PontosDeInteresseMainScreen extends StatefulWidget {
   const PontosDeInteresseMainScreen({Key? key}) : super(key: key);
@@ -20,12 +23,13 @@ class _PontosDeInteresseMainScreenState
   List<PontoInteresse> listaPontosDeInteresseFiltrados = [];
   bool _isLoading = false;
   bool _isSearching = false;
-  Color _containerColorPontosDeInteresse = Colors.transparent;
+  Color containerColorPontosDeInteresse = Colors.transparent;
 
   @override
   void initState() {
     super.initState();
-    fetchPontosDeInteresse();
+    //fetchPontosDeInteresse();
+    listaPontosDeInteresseFiltrados = pontosDeInteresseTeste;
   }
 
   List<Categoria> categorias = [
@@ -39,6 +43,8 @@ class _PontosDeInteresseMainScreenState
     Categoria(0, "Todas", "corTodas", "todos"),
   ];
 
+  
+
   Future<void> fetchPontosDeInteresse() async {
     // Fetch data from your data source
     // Example:
@@ -47,46 +53,112 @@ class _PontosDeInteresseMainScreenState
     // setState(() {});
   }
 
-  void filterPontosDeInteresse(String query) {
-    //Faz uma query que devolve pontos de interesse de uma certa categoria
+  List<Widget> _buildAppBarActions() {
+    return [
+      IconButton(
+        onPressed: () {
+          setState(() {
+            _isSearching = !_isSearching;
+            if (!_isSearching) {
+              _searchController.clear();
+            }
+          });
+        },
+        icon: Icon(_isSearching ? Icons.close : Icons.search),
+      ),
+      PopupMenuButton<String>(
+        icon: const Icon(Icons.filter_list),
+        onSelected: (String value) {
+          filtraPorTexto(value);
+        },
+        itemBuilder: (BuildContext context) => getCatLista(categorias),
+      ),
+    ];
+  }
+
+  void filtraPorTexto(String texto) {
+     texto = texto.toLowerCase();
+    setState(() {
+      listaPontosDeInteresseFiltrados = listaPontosDeInteresse.where((element) {
+        String descricaoLower = element.descricao.toLowerCase();
+        String localizacaoLower = element.localizacao.toLowerCase();
+        String tituloLower = element.titulo.toLowerCase();
+        return descricaoLower.contains(texto) ||
+            localizacaoLower.contains(texto) ||
+            tituloLower.contains(texto);
+      }).toList();
+
+      if (listaPontosDeInteresseFiltrados.isEmpty) {
+        containerColorPontosDeInteresse = Theme.of(context).canvasColor;
+      } else {
+        containerColorPontosDeInteresse = Colors.transparent;
+      }
+    });
+    print(listaPontosDeInteresseFiltrados);
+  }
+  
+  Widget _buildSearchField() {
+    return TextField(
+      onChanged: (value) {
+        filtraPorTexto(value);
+      },
+      controller: _searchController,
+      autofocus: true,
+      decoration: InputDecoration(
+        hintText: "${AppLocalizations.of(context)!.procurar}...",
+        border: InputBorder.none,
+        suffixIcon: IconButton(
+          icon: const Icon(FontAwesomeIcons.eraser),
+          onPressed: () {
+            setState(() {
+              _searchController.clear();
+            });
+          },
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    double altura = MediaQuery.of(context).size.height;
+    double largura = MediaQuery.of(context).size.width;
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
+        onPressed: () {
+          Navigator.pushNamed(context, '/criarPontoInteresse');
+        },
+        child: const Icon(
+          FontAwesomeIcons.plus,
+          color: Color.fromRGBO(217, 215, 215, 1),
+        ),
+      ),
+      drawer: const MainDrawer(),
       appBar: AppBar(
         title: _isSearching
-            ? TextField(
-                controller: _searchController,
-                onChanged: filterPontosDeInteresse,
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  border: InputBorder.none,
-                ),
-              )
-            : Text('Pontos de Interesse'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(_isSearching ? Icons.cancel : Icons.search),
-            onPressed: () {
-              setState(() {
-                _isSearching = !_isSearching;
-                if (!_isSearching) {
-                  filterPontosDeInteresse('');
-                  _searchController.clear();
-                }
-              });
-            },
-          ),
-        ],
+            ? _buildSearchField()
+            : Text(AppLocalizations.of(context)!.pontosInteresse),
+        actions: _buildAppBarActions(),
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : listaPontosDeInteresseFiltrados.isEmpty
-              ? Center(
-                  child: Text('No data available'),
-                )
-              : SingleChildScrollView(
+              ? Container(
+                height: altura*0.8,
+                color: containerColorPontosDeInteresse,
+                child: Center(
+                    child: Column(
+                      children: [
+                        Text(AppLocalizations.of(context)!.naoHaDados),
+                        Text("O tamanho da lista é:${listaPontosDeInteresseFiltrados.length}"),
+                      ],
+                    ),
+                  ),
+              )
+              : Container(
+                color: containerColorPontosDeInteresse,
                 child: ListView.builder(
                     itemCount: listaPontosDeInteresseFiltrados.length,
                     itemBuilder: (context, index) {

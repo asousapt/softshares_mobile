@@ -22,6 +22,7 @@ import 'package:softshares_mobile/screens/drawerLateral/notifications_alert.dart
 import 'screens/Login/confirmar_id.dart';
 import 'screens/Login/repor_pass.dart';
 import 'screens/Login/escolher_polo.dart';
+import 'screens/pontos_interesse.dart/pontos_interesse.main.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,7 +39,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String local = 'pt';
-
+  
   @override
   void initState() {
     local = 'pt';
@@ -89,6 +90,7 @@ class _MyAppState extends State<MyApp> {
         '/vertopico': (context) => const TopicoDetailsScreen(),
         '/criarTopico': (context) => const CriarTopicoScreen(),
         '/mensagens': (context) => const MensagensMainScreen(),
+        '/pontosInteresse' : (context) => const PontosDeInteresseMainScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/consultarEvento') {

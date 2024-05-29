@@ -120,5 +120,6 @@
   "naoHaDados": "Não existem dados", 
   "ocorreuErro": "Ocorreu um erro", 
   "respostaFormulario": "Resposta ao Formulário", 
-  "novoTopico": "Novo Tópico"
+  "novoTopico": "Novo Tópico",
+  "pontosInteresse": "Pontos de Interesse"
 }

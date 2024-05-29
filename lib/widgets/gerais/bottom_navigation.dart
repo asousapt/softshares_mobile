@@ -37,7 +37,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
             break;
           case 1:
             // POI
-            Navigator.pushNamed(context, '/home');
+            Navigator.pushNamed(context, '/pontosInteresse');
             break;
           case 2:
             // Tópicos

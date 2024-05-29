@@ -35,7 +35,7 @@ class PontoInteresseCard extends StatelessWidget {
             ),
             FadeInImage(
                 fit: BoxFit.cover,
-                height: altura * 0.1,
+                height: altura * 0.2,
                 width: double.infinity,
                 placeholder: MemoryImage(kTransparentImage),
                 image: NetworkImage(
@@ -50,9 +50,10 @@ class PontoInteresseCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 8),
-            Text(pontoInteresse.descricao),
-            SizedBox(height: 8),
             Text("Location: ${pontoInteresse.localizacao}"),
+            SizedBox(height: 10),
+            Text(pontoInteresse.descricao),
+            
           ],
         ),
       ),
