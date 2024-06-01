@@ -348,7 +348,6 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       tituloTotalEventos =
           "${listaEvFiltrada.length.toString()} ${AppLocalizations.of(context)!.eventos}";
     });
-    print(listaEvFiltrada);
   }
 
   void filtraPorCategoria(String categoria) {

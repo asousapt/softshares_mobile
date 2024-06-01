@@ -8,18 +8,11 @@ class Utilizador {
   List<int> preferencias;
   int funcaoId;
   int departamentoId;
+  String? fotoUrl;
 
-  Utilizador(
-    this.utilizadorId,
-    this.pNome,
-    this.uNome,
-    this.email,
-    this.sobre,
-    this.poloId,
-    this.preferencias,
-    this.funcaoId,
-    this.departamentoId,
-  );
+  Utilizador(this.utilizadorId, this.pNome, this.uNome, this.email, this.sobre,
+      this.poloId, this.preferencias, this.funcaoId, this.departamentoId,
+      [this.fotoUrl]);
 
   /// Returns the full name of the user.
   String getNomeCompleto() {

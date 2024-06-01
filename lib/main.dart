@@ -5,6 +5,7 @@ import 'package:softshares_mobile/screens/eventos/consultar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/criar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/eventos_main.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
+import 'package:softshares_mobile/screens/mensagensGrupos/mensagem_detalhe.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/mensagens_main.dart';
 import 'package:softshares_mobile/screens/topicos/criar_topico.dart';
 import 'package:softshares_mobile/screens/topicos/topico_details.dart';
@@ -39,7 +40,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String local = 'pt';
-  
+
   @override
   void initState() {
     local = 'pt';
@@ -90,14 +91,22 @@ class _MyAppState extends State<MyApp> {
         '/vertopico': (context) => const TopicoDetailsScreen(),
         '/criarTopico': (context) => const CriarTopicoScreen(),
         '/mensagens': (context) => const MensagensMainScreen(),
-        '/pontosInteresse' : (context) => const PontosDeInteresseMainScreen(),
+        '/pontosInteresse': (context) => const PontosDeInteresseMainScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/consultarEvento') {
-          final arguments = settings.arguments;
+          final arguments = settings.arguments as Evento;
           return MaterialPageRoute(
-            builder: (context) =>
-                ConsultEventScreen(evento: arguments as Evento),
+            builder: (context) => ConsultEventScreen(evento: arguments),
+          );
+        } else if (settings.name == '/mensagem_detalhe') {
+          final arguments = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) => MensagemDetalheScreen(
+              mensagemId: arguments['mensagemId'] as int,
+              nome: arguments['nome'] as String,
+              imagemUrl: arguments['imagemUrl'] as String,
+            ),
           );
         }
         return null;

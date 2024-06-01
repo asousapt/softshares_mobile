@@ -7,7 +7,7 @@ class MensagemItem extends StatelessWidget {
       required this.mensagemTexto,
       required this.hora,
       required this.lida,
-      required this.imagemUrl});
+      required this.imagemUrl,});
 
   final String nome;
   final String mensagemTexto;
