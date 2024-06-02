@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/screens/generic/galeria_fotos.dart';
 import 'package:softshares_mobile/time_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -37,7 +38,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
     List<Mensagem> messages = [
       Mensagem(
         mensagemId: 1,
-        mensagemTexto: 'Hello John!',
+        mensagemTexto: '',
         remetente: Utilizador(
             1,
             'Alice',
@@ -68,7 +69,14 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
           DateTime.now().hour,
           DateTime.now().minute,
         ),
-        anexos: [],
+        anexos: [
+          'https://via.placeholder.com/150',
+          'https://via.placeholder.com/150',
+          'https://via.placeholder.com/150',
+          'https://via.placeholder.com/150',
+          'https://via.placeholder.com/150',
+          'https://via.placeholder.com/150'
+        ],
         vista: true,
       ),
       Mensagem(
@@ -98,7 +106,10 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
             1,
             'https://via.placeholder.com/150'),
         dataEnvio: DateTime.now().subtract(Duration(minutes: 50)),
-        anexos: [],
+        anexos: [
+          'https://via.placeholder.com/150',
+          'https://via.placeholder.com/150',
+        ],
         vista: true,
       ),
       Mensagem(
@@ -246,36 +257,23 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.black,
-                  ),
+                  icon: const Icon(Icons.arrow_back, color: Colors.black),
                 ),
-                SizedBox(
-                  width: largura * 0.02,
-                ),
+                SizedBox(width: largura * 0.02),
                 CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    widget.imagemUrl,
-                  ),
+                  backgroundImage: NetworkImage(widget.imagemUrl),
                   maxRadius: 20,
                 ),
-                SizedBox(
-                  width: largura * 0.02,
-                ),
+                SizedBox(width: largura * 0.02),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        widget.nome,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        height: altura * 0.01,
-                      ),
+                      Text(widget.nome,
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600)),
+                      SizedBox(height: altura * 0.01),
                     ],
                   ),
                 ),
@@ -296,9 +294,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                   itemCount: mensagens.length + 1,
                   shrinkWrap: true,
                   padding: EdgeInsets.only(
-                    top: altura * 0.02,
-                    bottom: altura * 0.02,
-                  ),
+                      top: altura * 0.02, bottom: altura * 0.02),
                   itemBuilder: (context, index) {
                     if (index == mensagens.length) {
                       return SizedBox(height: altura * 0.1);
@@ -307,14 +303,11 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                         mensagens[index].remetente.utilizadorId == utilizadorId;
                     return Container(
                       padding: EdgeInsets.only(
-                        left: largura * 0.02,
-                        right: largura * 0.02,
-                        top: altura * 0.02,
-                        bottom: altura * 0.02,
-                      ),
+                          left: largura * 0.02,
+                          right: largura * 0.02,
+                          top: altura * 0.02,
+                          bottom: altura * 0.02),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: isSender
                             ? CrossAxisAlignment.end
                             : CrossAxisAlignment.start,
@@ -324,18 +317,15 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                               children: [
                                 CircleAvatar(
                                   backgroundImage: NetworkImage(
-                                    mensagens[index].remetente.fotoUrl!,
-                                  ),
+                                      mensagens[index].remetente.fotoUrl!),
                                   maxRadius: 12,
                                 ),
                                 SizedBox(width: largura * 0.02),
                                 Text(
                                   mensagens[index].remetente.getNomeCompleto(),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).canvasColor,
-                                  ),
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -344,27 +334,101 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                           Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
-                              color: (isSender
+                              color: isSender
                                   ? Theme.of(context)
                                       .secondaryHeaderColor
                                       .withOpacity(0.8)
-                                  : Theme.of(context).canvasColor),
+                                  : Theme.of(context).canvasColor,
                             ),
                             padding: EdgeInsets.symmetric(
                                 horizontal: largura * 0.02,
                                 vertical: altura * 0.02),
-                            child: Text(
-                              mensagens[index].mensagemTexto,
-                              style: const TextStyle(fontSize: 15),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  mensagens[index].mensagemTexto,
+                                  style: const TextStyle(fontSize: 15),
+                                ),
+                                // Mostrar imagens se existirem
+                                if (mensagens[index].anexos.isNotEmpty)
+                                  InkWell(
+                                    onTap: () {
+                                      // Navegar para a galeria de fotos
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              PhotoGalleryScreen(
+                                            imageUrls: mensagens[index].anexos,
+                                            initialIndex: 0,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.only(top: altura * 0.02),
+                                      child: GridView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        gridDelegate:
+                                            SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2,
+                                          crossAxisSpacing: largura * 0.02,
+                                          mainAxisSpacing: altura * 0.02,
+                                        ),
+                                        itemCount:
+                                            mensagens[index].anexos.length > 4
+                                                ? 4
+                                                : mensagens[index]
+                                                    .anexos
+                                                    .length,
+                                        itemBuilder: (context, imgIndex) {
+                                          if (imgIndex == 3 &&
+                                              mensagens[index].anexos.length >
+                                                  4) {
+                                            return Stack(
+                                              fit: StackFit.expand,
+                                              children: [
+                                                Image.network(
+                                                  mensagens[index]
+                                                      .anexos[imgIndex],
+                                                  fit: BoxFit.cover,
+                                                ),
+                                                Container(
+                                                  color: Colors.black54,
+                                                  child: Center(
+                                                    child: Text(
+                                                      '+${mensagens[index].anexos.length - 4}',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 24,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          }
+                                          return Image.network(
+                                            mensagens[index].anexos[imgIndex],
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                           SizedBox(height: altura * 0.01),
                           Text(
                             dataFormatadaMsg(mensagens[index].dataEnvio, "pt"),
                             style: TextStyle(
-                              fontSize: 10,
-                              color: Theme.of(context).canvasColor,
-                            ),
+                                fontSize: 10,
+                                color: Theme.of(context).canvasColor),
                           ),
                         ],
                       ),
@@ -375,17 +439,18 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
             alignment: Alignment.bottomLeft,
             child: Container(
               padding: EdgeInsets.only(
-                left: largura * 0.02,
-                bottom: altura * 0.02,
-                top: altura * 0.02,
-              ),
+                  left: largura * 0.02,
+                  bottom: altura * 0.02,
+                  top: altura * 0.02),
               height: altura * 0.1,
               width: double.infinity,
               color: Theme.of(context).canvasColor,
               child: Row(
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      // Implement your attachment functionality here
+                    },
                     child: Container(
                       height: altura * 0.06,
                       width: largura * 0.12,
@@ -406,13 +471,11 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                       controller: _messageController,
                       decoration: InputDecoration(
                           hintText: AppLocalizations.of(context)!.writeMessage,
-                          hintStyle: TextStyle(color: Colors.black),
+                          hintStyle: const TextStyle(color: Colors.black),
                           border: InputBorder.none),
                     ),
                   ),
-                  SizedBox(
-                    width: largura * 0.02,
-                  ),
+                  SizedBox(width: largura * 0.02),
                   Container(
                     height: altura * 0.06,
                     width: largura * 0.12,
@@ -451,7 +514,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                                   1,
                                 ),
                                 dataEnvio: DateTime.now(),
-                                anexos: [],
+                                anexos: [], // Add attachments if any
                                 vista: true,
                               ),
                             );
@@ -459,11 +522,8 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                           });
                         }
                       },
-                      icon: Icon(
-                        Icons.send,
-                        color: Theme.of(context).canvasColor,
-                        size: 20,
-                      ),
+                      icon: Icon(Icons.send,
+                          color: Theme.of(context).canvasColor, size: 20),
                     ),
                   ),
                 ],
