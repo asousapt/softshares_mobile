@@ -106,6 +106,7 @@ class _MyAppState extends State<MyApp> {
               mensagemId: arguments['mensagemId'] as int,
               nome: arguments['nome'] as String,
               imagemUrl: arguments['imagemUrl'] as String,
+              msgGrupo: arguments['msgGrupo'] as bool,
             ),
           );
         }

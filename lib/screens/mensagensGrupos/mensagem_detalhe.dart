@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/time_utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MensagemDetalheScreen extends StatefulWidget {
   const MensagemDetalheScreen({
@@ -9,11 +11,13 @@ class MensagemDetalheScreen extends StatefulWidget {
     required this.mensagemId,
     required this.nome,
     required this.imagemUrl,
+    required this.msgGrupo,
   });
 
   final int mensagemId;
   final String nome;
   final String imagemUrl;
+  final bool msgGrupo;
 
   @override
   State<StatefulWidget> createState() {
@@ -34,21 +38,65 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
       Mensagem(
         mensagemId: 1,
         mensagemTexto: 'Hello John!',
-        remetente: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
-        destinatarioUtil: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
-        dataEnvio: DateTime.now().subtract(Duration(hours: 1)),
+        remetente: Utilizador(
+            1,
+            'Alice',
+            'Johnson',
+            'alice.johnson@example.com',
+            'Some info',
+            1,
+            [1, 2],
+            1,
+            1,
+            'https://via.placeholder.com/150'),
+        destinatarioUtil: Utilizador(
+          2,
+          'John',
+          'Doe',
+          'john.doe@example.com',
+          'Some info',
+          1,
+          [1, 2],
+          1,
+          1,
+          'https://via.placeholder.com/150',
+        ),
+        dataEnvio: DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day - 1,
+          DateTime.now().hour,
+          DateTime.now().minute,
+        ),
         anexos: [],
         vista: true,
       ),
       Mensagem(
         mensagemId: 2,
         mensagemTexto: 'Hi Alice! How are you doing?',
-        remetente: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
-        destinatarioUtil: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
+        remetente: Utilizador(
+          2,
+          'John',
+          'Doe',
+          'john.doe@example.com',
+          'Some info',
+          1,
+          [1, 2],
+          1,
+          1,
+          'https://via.placeholder.com/150',
+        ),
+        destinatarioUtil: Utilizador(
+            1,
+            'Alice',
+            'Johnson',
+            'alice.johnson@example.com',
+            'Some info',
+            1,
+            [1, 2],
+            1,
+            1,
+            'https://via.placeholder.com/150'),
         dataEnvio: DateTime.now().subtract(Duration(minutes: 50)),
         anexos: [],
         vista: true,
@@ -56,10 +104,30 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
       Mensagem(
         mensagemId: 3,
         mensagemTexto: 'I\'m good, thanks! Just got back from vacation.',
-        remetente: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
-        destinatarioUtil: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
+        remetente: Utilizador(
+          1,
+          'Alice',
+          'Johnson',
+          'alice.johnson@example.com',
+          'Some info',
+          1,
+          [1, 2],
+          1,
+          1,
+          'https://via.placeholder.com/150',
+        ),
+        destinatarioUtil: Utilizador(
+          2,
+          'John',
+          'Doe',
+          'john.doe@example.com',
+          'Some info',
+          1,
+          [1, 2],
+          1,
+          1,
+          'https://via.placeholder.com/150',
+        ),
         dataEnvio: DateTime.now().subtract(Duration(minutes: 45)),
         anexos: [],
         vista: true,
@@ -67,10 +135,30 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
       Mensagem(
         mensagemId: 4,
         mensagemTexto: 'That\'s awesome! Where did you go?',
-        remetente: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
-        destinatarioUtil: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
+        remetente: Utilizador(
+          2,
+          'John',
+          'Doe',
+          'john.doe@example.com',
+          'Some info',
+          1,
+          [1, 2],
+          1,
+          1,
+          'https://via.placeholder.com/150',
+        ),
+        destinatarioUtil: Utilizador(
+          1,
+          'Alice',
+          'Johnson',
+          'alice.johnson@example.com',
+          'Some info',
+          1,
+          [1, 2],
+          1,
+          1,
+          'https://via.placeholder.com/150',
+        ),
         dataEnvio: DateTime.now().subtract(Duration(minutes: 40)),
         anexos: [],
         vista: true,
@@ -78,8 +166,17 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
       Mensagem(
         mensagemId: 5,
         mensagemTexto: 'I went to the mountains. It was so refreshing!',
-        remetente: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
+        remetente: Utilizador(
+            1,
+            'Alice',
+            'Johnson',
+            'alice.johnson@example.com',
+            'Some info',
+            1,
+            [1, 2],
+            1,
+            1,
+            'https://via.placeholder.com/150'),
         destinatarioUtil: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
             'Some info', 1, [1, 2], 1, 1),
         dataEnvio: DateTime.now().subtract(Duration(minutes: 35)),
@@ -89,75 +186,18 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
       Mensagem(
         mensagemId: 6,
         mensagemTexto: 'Sounds amazing! I could use a vacation myself.',
-        remetente: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
-        destinatarioUtil: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
-        dataEnvio: DateTime.now().subtract(Duration(minutes: 30)),
-        anexos: [],
-        vista: true,
-      ),
-      Mensagem(
-        mensagemId: 7,
-        mensagemTexto: 'Hello John!',
-        remetente: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
-        destinatarioUtil: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
-        dataEnvio: DateTime.now().subtract(Duration(hours: 1)),
-        anexos: [],
-        vista: true,
-      ),
-      Mensagem(
-        mensagemId: 8,
-        mensagemTexto: 'Hi Alice! How are you doing?',
-        remetente: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
-        destinatarioUtil: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
-        dataEnvio: DateTime.now().subtract(Duration(minutes: 50)),
-        anexos: [],
-        vista: true,
-      ),
-      Mensagem(
-        mensagemId: 9,
-        mensagemTexto: 'I\'m good, thanks! Just got back from vacation.',
-        remetente: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
-        destinatarioUtil: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
-        dataEnvio: DateTime.now().subtract(Duration(minutes: 45)),
-        anexos: [],
-        vista: true,
-      ),
-      Mensagem(
-        mensagemId: 10,
-        mensagemTexto: 'That\'s awesome! Where did you go?',
-        remetente: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
-        destinatarioUtil: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
-        dataEnvio: DateTime.now().subtract(Duration(minutes: 40)),
-        anexos: [],
-        vista: true,
-      ),
-      Mensagem(
-        mensagemId: 11,
-        mensagemTexto: 'I went to the mountains. It was so refreshing!',
-        remetente: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
-        destinatarioUtil: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
-        dataEnvio: DateTime.now().subtract(Duration(minutes: 35)),
-        anexos: [],
-        vista: true,
-      ),
-      Mensagem(
-        mensagemId: 12,
-        mensagemTexto:
-            'Sounds amazing! I could use a vacation myself Sounds amazing! I could use a vacation myself Sounds amazing! I could use a vacation myself Sounds amazing! I could use a vacation myself jfnhewjknfkjewnfkjnewkjfnkjewnf.',
-        remetente: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
+        remetente: Utilizador(
+          2,
+          'John',
+          'Doe',
+          'john.doe@example.com',
+          'Some info',
+          1,
+          [1, 2],
+          1,
+          1,
+          'https://via.placeholder.com/150',
+        ),
         destinatarioUtil: Utilizador(1, 'Alice', 'Johnson',
             'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
         dataEnvio: DateTime.now().subtract(Duration(minutes: 30)),
@@ -206,7 +246,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.arrow_back,
                     color: Colors.black,
                   ),
@@ -227,10 +267,10 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+                    children: [
                       Text(
                         widget.nome,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(
@@ -239,17 +279,13 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                     ],
                   ),
                 ),
-                Icon(
-                  Icons.settings,
-                  color: Colors.black54,
-                ),
               ],
             ),
           ),
         ),
       ),
       body: Stack(
-        children: <Widget>[
+        children: [
           _isLoading
               ? Center(
                   child: CircularProgressIndicator(
@@ -257,43 +293,80 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                   ),
                 )
               : ListView.builder(
-                  itemCount: mensagens.length + 1, // Include one extra item
+                  itemCount: mensagens.length + 1,
                   shrinkWrap: true,
                   padding: EdgeInsets.only(
-                      top: altura * 0.02, bottom: altura * 0.02),
+                    top: altura * 0.02,
+                    bottom: altura * 0.02,
+                  ),
                   itemBuilder: (context, index) {
                     if (index == mensagens.length) {
-                      // This is the last item, return an extra SizedBox for spacing
                       return SizedBox(height: altura * 0.1);
                     }
                     bool isSender =
                         mensagens[index].remetente.utilizadorId == utilizadorId;
                     return Container(
                       padding: EdgeInsets.only(
-                          left: largura * 0.02,
-                          right: largura * 0.02,
-                          top: altura * 0.02,
-                          bottom: altura * 0.02),
-                      child: Align(
-                        alignment:
-                            (isSender ? Alignment.topRight : Alignment.topLeft),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: (isSender
-                                ? Theme.of(context)
-                                    .secondaryHeaderColor
-                                    .withOpacity(0.8)
-                                : Theme.of(context).canvasColor),
+                        left: largura * 0.02,
+                        right: largura * 0.02,
+                        top: altura * 0.02,
+                        bottom: altura * 0.02,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: isSender
+                            ? CrossAxisAlignment.end
+                            : CrossAxisAlignment.start,
+                        children: [
+                          if (widget.msgGrupo && !isSender) ...[
+                            Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    mensagens[index].remetente.fotoUrl!,
+                                  ),
+                                  maxRadius: 12,
+                                ),
+                                SizedBox(width: largura * 0.02),
+                                Text(
+                                  mensagens[index].remetente.getNomeCompleto(),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).canvasColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: altura * 0.02),
+                          ],
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: (isSender
+                                  ? Theme.of(context)
+                                      .secondaryHeaderColor
+                                      .withOpacity(0.8)
+                                  : Theme.of(context).canvasColor),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: largura * 0.02,
+                                vertical: altura * 0.02),
+                            child: Text(
+                              mensagens[index].mensagemTexto,
+                              style: const TextStyle(fontSize: 15),
+                            ),
                           ),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: largura * 0.02,
-                              vertical: altura * 0.02),
-                          child: Text(
-                            mensagens[index].mensagemTexto,
-                            style: const TextStyle(fontSize: 15),
+                          SizedBox(height: altura * 0.01),
+                          Text(
+                            dataFormatadaMsg(mensagens[index].dataEnvio, "pt"),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Theme.of(context).canvasColor,
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     );
                   },
@@ -332,7 +405,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                     child: TextField(
                       controller: _messageController,
                       decoration: InputDecoration(
-                          hintText: "Write message...",
+                          hintText: AppLocalizations.of(context)!.writeMessage,
                           hintStyle: TextStyle(color: Colors.black),
                           border: InputBorder.none),
                     ),
@@ -349,7 +422,6 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                     ),
                     child: IconButton(
                       onPressed: () {
-                        // Substituir pela função de envio de mensagem
                         if (_messageController.text.trim().isNotEmpty) {
                           setState(() {
                             mensagens.add(

@@ -194,6 +194,9 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
                         'imagemUrl': mensagens[index].destinatarioGrupo != null
                             ? mensagens[index].destinatarioGrupo!.imagem
                             : mensagens[index].destinatarioUtil!.fotoUrl,
+                        'msgGrupo': mensagens[index].destinatarioGrupo != null
+                            ? true
+                            : false,
                       },
                     );
                   },

@@ -120,5 +120,6 @@
   "ocorreuErro": "An error has occurred", 
   "respostaFormulario": "Form Answers", 
   "novoTopico": "New Thread",
-  "pontosInteresse": "Points of interest"
+  "pontosInteresse": "Points of interest",
+  "writeMessage": "Write Message..."
 }

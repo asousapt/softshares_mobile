@@ -120,5 +120,6 @@
   "ocorreuErro": "Ha ocurrido un error", 
   "respostaFormulario": "Respuestas de formulario", 
   "novoTopico": "Nuevo tema",
-  "pontosInteresse": "Puntos de interés"
+  "pontosInteresse": "Puntos de interés", 
+  "writeMessage": "Escribir mensaje..."
 }
