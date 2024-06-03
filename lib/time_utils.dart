@@ -51,3 +51,18 @@ String dataFormatada(String local, DateTime data) {
       "${DateFormat.yMd(local).format(data)} - ${DateFormat.jm(local).format(data)}";
   return dataF;
 }
+
+String dataFormatadaMsg(DateTime data, String local) {
+  String dataF = "";
+  DateTime hoje = DateTime.now();
+
+  if (data.day == hoje.day &&
+      data.month == hoje.month &&
+      data.year == hoje.year) {
+    dataF = DateFormat.jm(local).format(data).toString();
+  } else {
+    dataF = DateFormat.yMd(local).format(data).toString();
+  }
+
+  return dataF;
+}

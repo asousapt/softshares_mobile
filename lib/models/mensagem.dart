@@ -7,7 +7,7 @@ class Mensagem {
   Utilizador remetente;
   Utilizador? destinatarioUtil;
   Grupo? destinatarioGrupo;
-  bool vista = false;
+  bool? vista = false;
   DateTime dataEnvio;
   List<String> anexos = [];
 
@@ -19,5 +19,6 @@ class Mensagem {
     this.destinatarioGrupo,
     required this.dataEnvio,
     required this.anexos,
+    this.vista,
   });
 }

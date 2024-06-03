@@ -121,5 +121,7 @@
   "ocorreuErro": "Ocorreu um erro", 
   "respostaFormulario": "Resposta ao Formulário", 
   "novoTopico": "Novo Tópico",
-  "pontosInteresse": "Pontos de Interesse"
+  "pontosInteresse": "Pontos de Interesse", 
+  "writeMessage": "Escrever Mensagem...", 
+  "imageGallery": "Galeria de Imagens"
 }
