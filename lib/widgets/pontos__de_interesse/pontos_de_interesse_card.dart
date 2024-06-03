@@ -24,6 +24,7 @@ class PontoInteresseCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListTile(
+              contentPadding: EdgeInsets.symmetric(horizontal: 0),
               leading: Icon(FontAwesomeIcons.user),
               title: Text("${pontoInteresse.criador?.pNome} ${pontoInteresse.criador?.uNome}"),
               trailing: IconButton(
@@ -37,9 +38,11 @@ class PontoInteresseCard extends StatelessWidget {
                 fit: BoxFit.cover,
                 height: altura * 0.2,
                 width: double.infinity,
-                placeholder: MemoryImage(kTransparentImage),
-                image: NetworkImage(
-                    "https://pplware.sapo.pt/wp-content/uploads/2022/02/s_22_plus_1.jpg "),
+                placeholder: const AssetImage("Images/Restaurante.jpg"),
+                image: const AssetImage("Images/Restaurante.jpg"),
+                imageErrorBuilder: (context, error, stackTrace) {
+                  return const Image(image:AssetImage("Images/Restaurante.jpg"));
+                },
               ),
             Divider(),
             Text(

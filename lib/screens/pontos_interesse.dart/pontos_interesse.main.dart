@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
+import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import '../../widgets/pontos__de_interesse/pontos_de_interesse_card.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -136,6 +137,7 @@ class _PontosDeInteresseMainScreenState
         ),
       ),
       drawer: const MainDrawer(),
+      bottomNavigationBar: BottomNavigation(seleccao: 1),
       appBar: AppBar(
         title: _isSearching
             ? _buildSearchField()
@@ -158,6 +160,7 @@ class _PontosDeInteresseMainScreenState
                   ),
               )
               : Container(
+                margin: EdgeInsets.all(10),
                 color: containerColorPontosDeInteresse,
                 child: ListView.builder(
                     itemCount: listaPontosDeInteresseFiltrados.length,
