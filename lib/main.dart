@@ -1,4 +1,5 @@
 import 'package:softshares_mobile/models/evento.dart';
+import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:softshares_mobile/screens/Login/recuperar_pass.dart';
 import 'package:softshares_mobile/screens/drawerLateral/contacte_suporte.dart';
 import 'package:softshares_mobile/screens/eventos/consultar_evento.dart';
@@ -7,6 +8,7 @@ import 'package:softshares_mobile/screens/eventos/eventos_main.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/mensagem_detalhe.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/mensagens_main.dart';
+import 'package:softshares_mobile/screens/pontos_interesse.dart/consultar_ponto_interesse.dart';
 import 'package:softshares_mobile/screens/pontos_interesse.dart/criar_ponto_interesse.dart';
 import 'package:softshares_mobile/screens/topicos/criar_topico.dart';
 import 'package:softshares_mobile/screens/topicos/topico_details.dart';
@@ -109,6 +111,13 @@ class _MyAppState extends State<MyApp> {
               nome: arguments['nome'] as String,
               imagemUrl: arguments['imagemUrl'] as String,
               msgGrupo: arguments['msgGrupo'] as bool,
+            ),
+          );
+        }else if (settings.name == '/consultarPontoInteresse') {
+          final arguments = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) => ConsultPontoInteresseScreen(
+              pontoInteresse: arguments['PontoInteresse'] as PontoInteresse,
             ),
           );
         }

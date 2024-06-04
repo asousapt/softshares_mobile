@@ -283,7 +283,6 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
                             ),
                             SizedBox(height: altura * 0.02),
                             TextFormField(
-                              maxLines: 2,
                               controller: _descricao,
                               decoration: InputDecoration(
                                 label: Text(

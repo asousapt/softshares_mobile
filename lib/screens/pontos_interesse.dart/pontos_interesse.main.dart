@@ -167,8 +167,19 @@ class _PontosDeInteresseMainScreenState
                     itemBuilder: (context, index) {
                       final pontoDeInteresse =
                           listaPontosDeInteresseFiltrados[index];
-                      return PontoInteresseCard(
-                        pontoInteresse: pontoDeInteresse,
+                      return InkWell(
+                        enableFeedback: true,
+                        child: PontoInteresseCard(
+                          pontoInteresse: pontoDeInteresse,
+                        ),
+                        onTap: (){
+                          debugPrint("Working");
+                          Navigator.pushNamed(
+                                        context, '/consultarPontoInteresse',
+                                        arguments: {
+                                          'PontoInteresse': pontoDeInteresse
+                                        });
+                        },
                       );
                     },
                   ),
