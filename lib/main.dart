@@ -7,6 +7,7 @@ import 'package:softshares_mobile/screens/eventos/eventos_main.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/mensagem_detalhe.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/mensagens_main.dart';
+import 'package:softshares_mobile/screens/pontos_interesse.dart/criar_ponto_interesse.dart';
 import 'package:softshares_mobile/screens/topicos/criar_topico.dart';
 import 'package:softshares_mobile/screens/topicos/topico_details.dart';
 import 'package:softshares_mobile/screens/topicos/topicos_main.dart';
@@ -92,6 +93,7 @@ class _MyAppState extends State<MyApp> {
         '/criarTopico': (context) => const CriarTopicoScreen(),
         '/mensagens': (context) => const MensagensMainScreen(),
         '/pontosInteresse': (context) => const PontosDeInteresseMainScreen(),
+        '/criarPontoInteresse':(context) => const CriarPontoInteresseScreen()
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/consultarEvento') {

@@ -122,5 +122,7 @@
   "novoTopico": "Nuevo tema",
   "pontosInteresse": "Puntos de interés", 
   "writeMessage": "Escribir mensaje...", 
-  "imageGallery": "Galería de imágenes"
+  "imageGallery": "Galería de imágenes",
+  "inputPontosInteresse":"Entrada de datos de puntos de interés",
+  "criarPontoInteresse":"Crear punto de interés"
 }
