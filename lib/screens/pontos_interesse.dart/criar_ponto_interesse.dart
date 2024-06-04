@@ -196,7 +196,8 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              AppLocalizations.of(context)!.inputPontosInteresse,
+                              AppLocalizations.of(context)!
+                                  .inputPontosInteresse,
                               style: const TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold),
                             ),
@@ -391,7 +392,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
                                       Future<bool> confirma = confirmExit(
                                         context,
                                         AppLocalizations.of(context)!
-                                            .criarPontoIntere,
+                                            .criarPontoInteresse,
                                         mensagem,
                                       );
 
