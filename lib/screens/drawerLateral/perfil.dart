@@ -44,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         user!.poloId == 0 ||
         user!.departamentoId == 0 ||
         user!.funcaoId == 0 ||
-        user!.sobre.isEmpty ||
+        user!.sobre!.isEmpty ||
         user!.departamentoId == 0 ||
         user!.funcaoId == 0 ||
         user!.poloId == 0) {

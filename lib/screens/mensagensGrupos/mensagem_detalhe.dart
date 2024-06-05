@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/generic/galeria_fotos.dart';
 import 'package:softshares_mobile/time_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/widgets/gerais/fotoPicker.dart';
 
 class MensagemDetalheScreen extends StatefulWidget {
   const MensagemDetalheScreen({
@@ -28,9 +30,11 @@ class MensagemDetalheScreen extends StatefulWidget {
 
 class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   final int utilizadorId = 1;
   List<Mensagem> mensagens = [];
   bool _isLoading = false;
+  List<XFile> _selectedImages = [];
 
   // Função que busca as mensagens
   Future<List<Mensagem>> fetchMensagens() async {
@@ -225,8 +229,20 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
     });
 
     mensagens = await fetchMensagens();
+
     setState(() {
       _isLoading = false;
+    });
+
+    // Faz scroll para a última mensagem
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
+  }
+
+  void _onImagesPicked(List<XFile> images) {
+    setState(() {
+      _selectedImages = images;
     });
   }
 
@@ -291,6 +307,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                   ),
                 )
               : ListView.builder(
+                  controller: _scrollController,
                   itemCount: mensagens.length + 1,
                   shrinkWrap: true,
                   padding: EdgeInsets.only(
@@ -323,9 +340,11 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                                 SizedBox(width: largura * 0.02),
                                 Text(
                                   mensagens[index].remetente.getNomeCompleto(),
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).canvasColor,
+                                  ),
                                 ),
                               ],
                             ),
@@ -403,7 +422,8 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                                                     child: Text(
                                                       '+${mensagens[index].anexos.length - 4}',
                                                       style: TextStyle(
-                                                        color: Colors.white,
+                                                        color: Theme.of(context)
+                                                            .canvasColor,
                                                         fontSize: 24,
                                                       ),
                                                     ),
@@ -447,24 +467,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
               color: Theme.of(context).canvasColor,
               child: Row(
                 children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      // Implement your attachment functionality here
-                    },
-                    child: Container(
-                      height: altura * 0.06,
-                      width: largura * 0.12,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Icon(
-                        FontAwesomeIcons.plus,
-                        color: Theme.of(context).canvasColor,
-                        size: 20,
-                      ),
-                    ),
-                  ),
+                  FotoPicker(onImagesPicked: _onImagesPicked),
                   SizedBox(width: largura * 0.02),
                   Expanded(
                     child: TextField(
@@ -485,7 +488,8 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                     ),
                     child: IconButton(
                       onPressed: () {
-                        if (_messageController.text.trim().isNotEmpty) {
+                        if (_messageController.text.trim().isNotEmpty ||
+                            _selectedImages.isNotEmpty) {
                           setState(() {
                             mensagens.add(
                               Mensagem(
@@ -514,11 +518,18 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                                   1,
                                 ),
                                 dataEnvio: DateTime.now(),
-                                anexos: [], // Add attachments if any
+                                anexos: _selectedImages
+                                    .map((image) => image.path)
+                                    .toList(),
                                 vista: true,
                               ),
                             );
                             _messageController.clear();
+                          });
+                          // Faz scroll para a última mensagem
+                          WidgetsBinding.instance!.addPostFrameCallback((_) {
+                            _scrollController.jumpTo(
+                                _scrollController.position.maxScrollExtent);
                           });
                         }
                       },

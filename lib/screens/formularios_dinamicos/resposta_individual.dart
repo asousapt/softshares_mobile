@@ -98,7 +98,7 @@ class _RespostaIndividualScreenState extends State<RespostaIndividualScreen> {
       _isLoading = false;
       tituloForm = fetchedFormulario.titulo;
       tipoForm = AppLocalizations.of(context)!
-          .getEnumValue(fetchedFormulario.tipoFormulario);
+          .getEnumValue(fetchedFormulario.tipoFormulario!);
     });
   }
 

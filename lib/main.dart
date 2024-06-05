@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:softshares_mobile/screens/Login/recuperar_pass.dart';
@@ -28,7 +29,8 @@ import 'screens/Login/repor_pass.dart';
 import 'screens/Login/escolher_polo.dart';
 import 'screens/pontos_interesse.dart/pontos_interesse.main.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -95,7 +97,7 @@ class _MyAppState extends State<MyApp> {
         '/criarTopico': (context) => const CriarTopicoScreen(),
         '/mensagens': (context) => const MensagensMainScreen(),
         '/pontosInteresse': (context) => const PontosDeInteresseMainScreen(),
-        '/criarPontoInteresse':(context) => const CriarPontoInteresseScreen()
+        '/criarPontoInteresse': (context) => const CriarPontoInteresseScreen()
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/consultarEvento') {
@@ -113,7 +115,7 @@ class _MyAppState extends State<MyApp> {
               msgGrupo: arguments['msgGrupo'] as bool,
             ),
           );
-        }else if (settings.name == '/consultarPontoInteresse') {
+        } else if (settings.name == '/consultarPontoInteresse') {
           final arguments = settings.arguments as Map<String, dynamic>;
           return MaterialPageRoute(
             builder: (context) => ConsultPontoInteresseScreen(

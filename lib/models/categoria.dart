@@ -45,7 +45,7 @@ class Categoria {
         resultado = const Icon(FontAwesomeIcons.hashtag);
         break;
     }
-    return resultado!;
+    return resultado;
   }
 }
 
