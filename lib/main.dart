@@ -1,4 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:softshares_mobile/screens/Login/recuperar_pass.dart';
@@ -30,7 +29,6 @@ import 'screens/Login/escolher_polo.dart';
 import 'screens/pontos_interesse.dart/pontos_interesse.main.dart';
 
 void main() async {
-  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
