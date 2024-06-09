@@ -17,13 +17,24 @@ class _FotoPickerState extends State<FotoPicker> {
   List<XFile> _images = [];
 
   Future<void> _pickImage(ImageSource source) async {
-    final List<XFile>? pickedImages = await _picker.pickMultiImage();
+    if (source == ImageSource.gallery) {
+      final List<XFile>? pickedImages = await _picker.pickMultiImage();
 
-    if (pickedImages != null && pickedImages.isNotEmpty) {
-      setState(() {
-        _images = pickedImages;
-      });
-      widget.onImagesPicked(pickedImages);
+      if (pickedImages != null && pickedImages.isNotEmpty) {
+        setState(() {
+          _images = pickedImages;
+        });
+        widget.onImagesPicked(pickedImages);
+      }
+    } else if (source == ImageSource.camera) {
+      final XFile? pickedImage = await _picker.pickImage(source: source);
+
+      if (pickedImage != null) {
+        setState(() {
+          _images = [pickedImage];
+        });
+        widget.onImagesPicked([pickedImage]);
+      }
     }
   }
 
