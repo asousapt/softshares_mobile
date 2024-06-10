@@ -95,7 +95,7 @@ class _TabelaRespostasScreenState extends State<TabelaRespostasScreen> {
       _isLoading = false;
       tituloForm = fetchedFormulario.titulo;
       tipoForm = AppLocalizations.of(context)!
-          .getEnumValue(fetchedFormulario.tipoFormulario);
+          .getEnumValue(fetchedFormulario.tipoFormulario!);
     });
   }
 

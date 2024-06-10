@@ -94,14 +94,14 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
     _pnome.text = widget.utilizador.pNome;
     _unome.text = widget.utilizador.uNome;
     _email.text = widget.utilizador.email;
-    _sobre.text = widget.utilizador.sobre;
+    _sobre.text = widget.utilizador.sobre!;
     _departamento = departamentos.firstWhere((element) =>
         element.departamentoId == widget.utilizador.departamentoId);
     _polo = polos
         .firstWhere((element) => element.poloId == widget.utilizador.poloId);
     _funcao = funcoes.firstWhere(
         (element) => element.funcaoId == widget.utilizador.funcaoId);
-    if (widget.utilizador.preferencias.isNotEmpty) {
+    if (widget.utilizador.preferencias!.isNotEmpty) {
       subcatFav = widget.utilizador.preferencias;
     } else {
       subcatFav = [];

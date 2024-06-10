@@ -689,7 +689,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                             subtitle: Text(
                                                 AppLocalizations.of(context)!
                                                     .getEnumValue(
-                                                        form.tipoFormulario)),
+                                                        form.tipoFormulario!)),
                                             trailing: IconButton(
                                               icon: const Icon(Icons.delete),
                                               onPressed: () {

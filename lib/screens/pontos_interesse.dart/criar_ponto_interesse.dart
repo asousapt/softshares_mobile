@@ -312,10 +312,6 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
                                         for (var form in forms)
                                           ListTile(
                                             title: Text(form.titulo),
-                                            subtitle: Text(
-                                                AppLocalizations.of(context)!
-                                                    .getEnumValue(
-                                                        form.tipoFormulario)),
                                             trailing: IconButton(
                                               icon: const Icon(Icons.delete),
                                               onPressed: () {

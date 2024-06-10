@@ -3,11 +3,11 @@ class Utilizador {
   String pNome;
   String uNome;
   String email;
-  String sobre;
+  String? sobre;
   int poloId;
-  List<int> preferencias;
-  int funcaoId;
-  int departamentoId;
+  List<int>? preferencias;
+  int? funcaoId;
+  int? departamentoId;
   String? fotoUrl;
 
   Utilizador(this.utilizadorId, this.pNome, this.uNome, this.email, this.sobre,
