@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/generic/galeria_fotos.dart';
 import 'package:softshares_mobile/time_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:softshares_mobile/widgets/gerais/fotoPicker.dart';
+import 'package:softshares_mobile/widgets/gerais/foto_picker.dart';
 
 class MensagemDetalheScreen extends StatefulWidget {
   const MensagemDetalheScreen({
@@ -488,6 +487,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                     ),
                     child: IconButton(
                       onPressed: () {
+                        // TODO implementar envio de mensagem e imagens
                         if (_messageController.text.trim().isNotEmpty ||
                             _selectedImages.isNotEmpty) {
                           setState(() {

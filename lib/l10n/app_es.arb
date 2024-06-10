@@ -124,5 +124,8 @@
   "writeMessage": "Escribir mensaje...", 
   "imageGallery": "Galería de imágenes",
   "inputPontosInteresse":"Entrada de datos de puntos de interés",
-  "criarPontoInteresse":"Crear punto de interés"
+  "criarPontoInteresse":"Crear punto de interés", 
+  "imagePreview": "Vista previa", 
+  "descartar": "Descartar", 
+  "tirarFoto": "Tirar fotografia"
 }
