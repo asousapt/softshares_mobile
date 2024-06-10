@@ -1,4 +1,5 @@
 import 'package:softshares_mobile/models/evento.dart';
+import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:softshares_mobile/screens/Login/recuperar_pass.dart';
 import 'package:softshares_mobile/screens/drawerLateral/contacte_suporte.dart';
@@ -6,8 +7,10 @@ import 'package:softshares_mobile/screens/eventos/consultar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/criar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/eventos_main.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
+import 'package:softshares_mobile/screens/mensagensGrupos/listar_grupos.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/mensagem_detalhe.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/mensagens_main.dart';
+import 'package:softshares_mobile/screens/mensagensGrupos/nova_mensagem.dart';
 import 'package:softshares_mobile/screens/pontos_interesse.dart/consultar_ponto_interesse.dart';
 import 'package:softshares_mobile/screens/pontos_interesse.dart/criar_ponto_interesse.dart';
 import 'package:softshares_mobile/screens/topicos/criar_topico.dart';
@@ -95,7 +98,8 @@ class _MyAppState extends State<MyApp> {
         '/criarTopico': (context) => const CriarTopicoScreen(),
         '/mensagens': (context) => const MensagensMainScreen(),
         '/pontosInteresse': (context) => const PontosDeInteresseMainScreen(),
-        '/criarPontoInteresse': (context) => const CriarPontoInteresseScreen()
+        '/criarPontoInteresse': (context) => const CriarPontoInteresseScreen(),
+        '/ListarGrupo': (context) => const ListarGrupoScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/consultarEvento') {
@@ -118,6 +122,13 @@ class _MyAppState extends State<MyApp> {
           return MaterialPageRoute(
             builder: (context) => ConsultPontoInteresseScreen(
               pontoInteresse: arguments['PontoInteresse'] as PontoInteresse,
+            ),
+          );
+        } else if (settings.name == '/novaMensagem') {
+          final arguments = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) => NovaMensagem(
+              mensagens: arguments['mensagens'] as List<Mensagem>,
             ),
           );
         }

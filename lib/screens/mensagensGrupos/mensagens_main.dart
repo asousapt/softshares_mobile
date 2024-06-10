@@ -4,6 +4,7 @@ import 'package:softshares_mobile/models/grupo.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/screens/mensagensGrupos/nova_mensagem.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/time_utils.dart';
@@ -49,6 +50,7 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
         destinatarioGrupo: Grupo(
           imagem: 'https://via.placeholder.com/150',
           grupoId: 1,
+          nome: 'Team Meeting',
           descricao: 'Team Meeting',
           subcategoria: Subcategoria(1, 1, 'Meeting'),
           utilizadores: [
@@ -159,7 +161,24 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
       top: true,
       bottom: true,
       child: Scaffold(
-        bottomNavigationBar: BottomNavigation(seleccao: 4),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Theme.of(context).primaryColor,
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => NovaMensagem(
+                  mensagens: mensagens,
+                ),
+              ),
+            );
+          },
+          child: const Icon(
+            FontAwesomeIcons.plus,
+            color: Color.fromRGBO(217, 215, 215, 1),
+          ),
+        ),
+        bottomNavigationBar: const BottomNavigation(seleccao: 4),
         appBar: AppBar(
           title: _isSearching
               ? _buildSearchField()

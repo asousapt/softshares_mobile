@@ -1,3 +1,5 @@
+import 'package:softshares_mobile/api_service.dart';
+
 class Utilizador {
   int utilizadorId;
   String pNome;
@@ -21,7 +23,7 @@ class Utilizador {
 }
 
 // List of Utilizador instances
-final List<Utilizador> utilizadores = [
+List<Utilizador> utilizadores = [
   Utilizador(
     1,
     'João',
@@ -67,3 +69,39 @@ final List<Utilizador> utilizadores = [
     2,
   ),
 ];
+
+// Funcao que busca a lista de utilizadores
+Future<List<Utilizador>> fetchUtilizadores() async {
+  ApiService apiService = ApiService();
+  List<dynamic> jsonUtilizadores = await apiService.getRequest('utilizadores');
+  if (jsonUtilizadores.isEmpty) {
+    utilizadores = [];
+  } else {
+    utilizadores = jsonToUtilizadores(jsonUtilizadores);
+  }
+  return utilizadores;
+}
+
+// Funcao que transforma um json num Utilizador
+Utilizador jsonToUtilizador(Map<String, dynamic> json) {
+  return Utilizador(
+    json['utilizadorId'],
+    json['pNome'],
+    json['uNome'],
+    json['email'],
+    json['sobre'],
+    json['poloId'],
+    json['preferencias'],
+    json['funcaoId'],
+    json['departamentoId'],
+    json['fotoUrl'],
+  );
+}
+
+List<Utilizador> jsonToUtilizadores(List<dynamic> json) {
+  List<Utilizador> utilizadores = [];
+  for (var utilizador in json) {
+    utilizadores.add(jsonToUtilizador(utilizador));
+  }
+  return utilizadores;
+}
