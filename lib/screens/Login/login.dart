@@ -3,6 +3,7 @@ import 'package:country_flags/country_flags.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class EcraLogin extends StatefulWidget {
   const EcraLogin({
@@ -19,6 +20,9 @@ class EcraLogin extends StatefulWidget {
 }
 
 class _EcraLoginState extends State<EcraLogin> {
+  Map<String, dynamic>? _facebookData;
+  AccessToken? _accessToken;
+  bool _checking = true;
   String version = 'Loading...';
   String email = '';
   String pass = '';
@@ -28,6 +32,52 @@ class _EcraLoginState extends State<EcraLogin> {
   //Basededados bd = Basededados();
   bool passwordVisible = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  _checkIfisLoggedInFacebook() async {
+    final accessToken = await FacebookAuth.instance.accessToken;
+
+    setState(() {
+      _checking = false;
+    });
+
+    if (accessToken != null) {
+      print(accessToken.toJson());
+      final facebookData = await FacebookAuth.instance.getUserData();
+      _accessToken = accessToken;
+      setState(() {
+        _facebookData = facebookData;
+      });
+      Navigator.pushNamed(context, '/escolherPolo');
+    } else {
+      _loginFacebook();
+    }
+  }
+
+  _loginFacebook() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+    if (result.status == LoginStatus.success) {
+      _accessToken = result.accessToken;
+
+      final facebookData = await FacebookAuth.instance.getUserData();
+      _facebookData = facebookData;
+    } else {
+      print(result.status);
+      print(result.message);
+    }
+    setState(() {
+      _checking = false;
+    });
+    _facebookData!.forEach((key, value) {
+      print('$key: $value');
+    });
+  }
+
+  _logoutFacebook() async {
+    await FacebookAuth.instance.logOut();
+    _accessToken = null;
+    _facebookData = null;
+    setState(() {});
+  }
 
   bool isValidEmail(String email) {
     final RegExp emailRegex = RegExp(
@@ -196,7 +246,9 @@ class _EcraLoginState extends State<EcraLogin> {
                                       }),
                                 ],
                               ),
-                              SizedBox(height: largura * 0.03,),
+                              SizedBox(
+                                height: largura * 0.03,
+                              ),
                               SizedBox(
                                 height: altura * 0.065,
                                 width: double.infinity,
@@ -212,7 +264,9 @@ class _EcraLoginState extends State<EcraLogin> {
                                       Text(AppLocalizations.of(context)!.login),
                                 ),
                               ),
-                              SizedBox(height: largura * 0.03,),
+                              SizedBox(
+                                height: largura * 0.03,
+                              ),
                               // Esqueceu a password
                               Row(
                                 children: [
@@ -318,7 +372,7 @@ class _EcraLoginState extends State<EcraLogin> {
                               ),
                               // Secção do SSO
                               ElevatedButton(
-                                onPressed: sub,
+                                onPressed: _checkIfisLoggedInFacebook,
                                 style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: largura * 0.1,
