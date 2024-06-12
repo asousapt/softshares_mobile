@@ -127,5 +127,10 @@
   "criarPontoInteresse":"Create Point of interest", 
   "imagePreview": "Image Preview", 
   "descartar": "Discard", 
-  "tirarFoto": "Take Picture"
+  "tirarFoto": "Take Picture", 
+  "juntarGrupo": "Join Group", 
+  "detalhesGrupo": "Group Details",
+  "groups": "Groups", 
+  "joinGroup": "Join existing group", 
+  "createGroup": "Create new Group"
 }

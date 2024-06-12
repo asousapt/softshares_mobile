@@ -52,6 +52,7 @@ Future<List<Grupo>> fetchGrupos() async {
   ];
 }
 
+// Função que simula a obtenção de um grupo
 Future<Grupo> fetchGrupo(int grupoId) async {
   await Future.delayed(Duration(seconds: 2));
 
@@ -61,4 +62,25 @@ Future<Grupo> fetchGrupo(int grupoId) async {
       descricao: "Grupo da Bola",
       publico: false,
       imagem: "https://via.placeholder.com/150");
+}
+
+// Função que simula a obtenção de utilizadores de um grupo
+Grupo JsonToGrupo(Map<String, dynamic> json) {
+  return Grupo(
+    grupoId: json['grupoId'],
+    nome: json['nome'],
+    descricao: json['descricao'],
+    publico: json['publico'],
+    imagem: json['imagem'],
+  );
+}
+
+Map<String, Object?> grupotojson(Grupo grupo) {
+  return {
+    'grupoId': grupo.grupoId,
+    'nome': grupo.nome,
+    'descricao': grupo.descricao,
+    'publico': grupo.publico,
+    'imagem': grupo.imagem,
+  };
 }

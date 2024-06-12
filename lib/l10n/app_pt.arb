@@ -128,5 +128,10 @@
   "criarPontoInteresse":"Criar ponto de interesse", 
   "imagePreview": "Pré-visualização", 
   "descartar": "Descartar", 
-  "tirarFoto": "Tirar Foto"
+  "tirarFoto": "Tirar Foto", 
+  "juntarGrupo": "Entrar no Grupo", 
+  "detalhesGrupo": "Detalhes do Grupo",
+  "groups": "Grupos", 
+  "joinGroup": "Entrar num Grupo", 
+  "createGroup": "Criar Novo Grupo"
 }

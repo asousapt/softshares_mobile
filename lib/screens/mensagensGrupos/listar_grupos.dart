@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/models/grupo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/screens/mensagensGrupos/grupo_detalhe.dart';
 
 class ListarGrupoScreen extends StatefulWidget {
   const ListarGrupoScreen({super.key});
@@ -13,7 +14,7 @@ class ListarGrupoScreen extends StatefulWidget {
 }
 
 class _ListarGrupoScreenState extends State<ListarGrupoScreen> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   bool _isLoading = false;
   bool _isSearching = false;
   List<Grupo> grupos = [];
@@ -97,7 +98,11 @@ class _ListarGrupoScreenState extends State<ListarGrupoScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: _isSearching ? _buildSearchField() : Text("Lista de Grupos"),
+        title: _isSearching
+            ? _buildSearchField()
+            : Text(
+                AppLocalizations.of(context)!.groups,
+              ),
         actions: _buildAppBarActions(),
       ),
       body: Padding(
@@ -119,7 +124,17 @@ class _ListarGrupoScreenState extends State<ListarGrupoScreen> {
                       itemCount: listaGruposFiltrada.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              // Navega para a tela de detalhes do grupo
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => GrupoDetalheScreen(
+                                  grupo: listaGruposFiltrada[index],
+                                ),
+                              ),
+                            );
+                          },
                           child: ListTile(
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(

@@ -196,15 +196,17 @@ class _NovaMensagemState extends State<NovaMensagem> {
                     onPressed: () {
                       Navigator.pushNamed(context, "/ListarGrupo");
                     },
-                    child: const Text('Join Group'),
+                    child: Text(AppLocalizations.of(context)!.joinGroup),
                   ),
                 ),
                 SizedBox(height: altura * 0.02),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Make New Group'),
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/criarGrupo");
+                    },
+                    child: Text(AppLocalizations.of(context)!.createGroup),
                   ),
                 ),
                 SizedBox(height: altura * 0.02),
