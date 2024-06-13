@@ -7,6 +7,7 @@ import 'package:softshares_mobile/screens/eventos/consultar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/criar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/eventos_main.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
+import 'package:softshares_mobile/screens/mensagensGrupos/criar_grupo.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/listar_grupos.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/mensagem_detalhe.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/mensagens_main.dart';
@@ -115,6 +116,7 @@ class _MyAppState extends State<MyApp> {
               nome: arguments['nome'] as String,
               imagemUrl: arguments['imagemUrl'] as String,
               msgGrupo: arguments['msgGrupo'] as bool,
+              grupoId: arguments['grupoId'] as int,
             ),
           );
         } else if (settings.name == '/consultarPontoInteresse') {
@@ -129,6 +131,13 @@ class _MyAppState extends State<MyApp> {
           return MaterialPageRoute(
             builder: (context) => NovaMensagem(
               mensagens: arguments['mensagens'] as List<Mensagem>,
+            ),
+          );
+        } else if (settings.name == '/criarGrupo') {
+          final arguments = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) => CriarGrupoScreen(
+              editar: arguments['editar'] as bool,
             ),
           );
         }

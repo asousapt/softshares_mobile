@@ -126,9 +126,19 @@
   "inputPontosInteresse":"Entrada de datos de puntos de interés",
   "criarPontoInteresse":"Crear punto de interés", 
   "imagePreview": "Vista previa", 
-  "descartar": "Descartar", 
-  "tirarFoto": "Tirar fotografia",
+  "descartar": "Descartar",
   "avaliar": "Avaliar",
   "deixaComentario": "Dejar un comentario",
   "outrosComentarios":"Comentarios de otros usuarios"
+  "tirarFoto": "Tirar fotografia", 
+  "juntarGrupo": "Unirse al Grupo", 
+  "detalhesGrupo": "Detalles del Grupo",
+  "groups": "Grupos",
+  "joinGroup": "Unirse a un grupo", 
+  "createGroup": "Crear nuevo grupo", 
+  "editarGrupo": "Editar Grupo", 
+  "selecioneUmaImagem": "Debe elegir una imagen", 
+  "selecionePeloMenosUmUtilizador": "Debe seleccionar al menos un usuario", 
+  "publico": "Público", 
+  "nomegrupo": "Nombre del grupo"
 }

@@ -60,6 +60,7 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
                 [1, 2], 1, 1)
           ],
           publico: false,
+          utilizadorCriouId: 1,
         ),
         dataEnvio: DateTime.now().subtract(Duration(days: 2)),
         anexos: [],
@@ -216,6 +217,9 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
                         'msgGrupo': mensagens[index].destinatarioGrupo != null
                             ? true
                             : false,
+                        'grupoId': mensagens[index].destinatarioGrupo != null
+                            ? mensagens[index].destinatarioGrupo!.grupoId
+                            : 0,
                       },
                     );
                   },

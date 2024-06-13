@@ -3,23 +3,25 @@ import 'package:image_picker/image_picker.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/generic/galeria_fotos.dart';
+import 'package:softshares_mobile/screens/mensagensGrupos/info_grupo.dart';
 import 'package:softshares_mobile/time_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/widgets/gerais/foto_picker.dart';
 
 class MensagemDetalheScreen extends StatefulWidget {
-  const MensagemDetalheScreen({
-    super.key,
-    required this.mensagemId,
-    required this.nome,
-    required this.imagemUrl,
-    required this.msgGrupo,
-  });
+  const MensagemDetalheScreen(
+      {super.key,
+      required this.mensagemId,
+      required this.nome,
+      required this.imagemUrl,
+      required this.msgGrupo,
+      this.grupoId});
 
   final int mensagemId;
   final String nome;
   final String imagemUrl;
   final bool msgGrupo;
+  final int? grupoId;
 
   @override
   State<StatefulWidget> createState() {
@@ -275,10 +277,29 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                   icon: const Icon(Icons.arrow_back, color: Colors.black),
                 ),
                 SizedBox(width: largura * 0.02),
-                CircleAvatar(
-                  backgroundImage: NetworkImage(widget.imagemUrl),
-                  maxRadius: 20,
-                ),
+                InkWell(
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(widget.imagemUrl),
+                      maxRadius: 20,
+                    ),
+                    onTap: () {
+                      if (widget.msgGrupo) {
+                        // Navegar para a página de informações do grupo
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return GrupoInfoScreen(
+                                grupoId: widget.grupoId!,
+                              );
+                            },
+                          ),
+                        );
+                      } else {
+                        // Navegar para a página de informações do utilizador
+                        Navigator.pushNamed(context, '/InfoUtilizador');
+                      }
+                    }),
                 SizedBox(width: largura * 0.02),
                 Expanded(
                   child: Column(

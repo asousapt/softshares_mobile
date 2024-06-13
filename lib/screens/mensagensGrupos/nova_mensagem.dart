@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/screens/mensagensGrupos/criar_grupo.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/mensagem_detalhe.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -196,15 +197,24 @@ class _NovaMensagemState extends State<NovaMensagem> {
                     onPressed: () {
                       Navigator.pushNamed(context, "/ListarGrupo");
                     },
-                    child: const Text('Join Group'),
+                    child: Text(AppLocalizations.of(context)!.joinGroup),
                   ),
                 ),
                 SizedBox(height: altura * 0.02),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Make New Group'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CriarGrupoScreen(
+                            editar: false,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(AppLocalizations.of(context)!.createGroup),
                   ),
                 ),
                 SizedBox(height: altura * 0.02),
