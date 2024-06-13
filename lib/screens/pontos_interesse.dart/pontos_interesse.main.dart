@@ -62,7 +62,9 @@ class _PontosDeInteresseMainScreenState
       setState(() {
         //listaPontosDeInteresse = List.from(listaUpdated);
       });
+      print("Agora mostra lista");
       print(lista);
+
     } catch (e) {
       print("Error fetching data: $e");
       // Handle error appropriately
