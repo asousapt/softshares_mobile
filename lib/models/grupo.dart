@@ -9,6 +9,7 @@ class Grupo {
   List<Utilizador>? utilizadores;
   bool publico = false;
   String? imagem;
+  int utilizadorCriouId;
 
   Grupo({
     this.grupoId,
@@ -18,6 +19,7 @@ class Grupo {
     this.utilizadores,
     required this.publico,
     this.imagem,
+    required this.utilizadorCriouId,
   });
 }
 
@@ -26,42 +28,52 @@ Future<List<Grupo>> fetchGrupos() async {
 
   return [
     Grupo(
-        grupoId: 1,
-        nome: "Grupo da Bola",
-        descricao: "Grupo da Bola",
-        publico: false,
-        imagem: "https://via.placeholder.com/150"),
+      grupoId: 1,
+      nome: "Grupo da Bola",
+      descricao: "Grupo da Bola",
+      publico: false,
+      imagem: "https://via.placeholder.com/150",
+      utilizadorCriouId: 1,
+    ),
     Grupo(
-        grupoId: 2,
-        nome: "Grupo das Jolas",
-        descricao: "Grupo das Jolas",
-        publico: false,
-        imagem: "https://via.placeholder.com/150"),
+      grupoId: 2,
+      nome: "Grupo das Jolas",
+      descricao: "Grupo das Jolas",
+      publico: false,
+      imagem: "https://via.placeholder.com/150",
+      utilizadorCriouId: 2,
+    ),
     Grupo(
-        grupoId: 3,
-        nome: "Grupo da Ramboia",
-        descricao: "Grupo da Ramboia",
-        publico: false,
-        imagem: "https://via.placeholder.com/150"),
+      grupoId: 3,
+      nome: "Grupo da Ramboia",
+      descricao: "Grupo da Ramboia",
+      publico: false,
+      imagem: "https://via.placeholder.com/150",
+      utilizadorCriouId: 2,
+    ),
     Grupo(
-        grupoId: 4,
-        nome: "Grupo de ir as gajas",
-        descricao: "Grupo de ir as gajas",
-        publico: false,
-        imagem: "https://via.placeholder.com/150"),
+      grupoId: 4,
+      nome: "Grupo de ir as gajas",
+      descricao: "Grupo de ir as gajas",
+      publico: false,
+      imagem: "https://via.placeholder.com/150",
+      utilizadorCriouId: 2,
+    ),
   ];
 }
 
 // Função que simula a obtenção de um grupo
-Future<Grupo> fetchGrupo(int grupoId) async {
+Future<Grupo> fetchGrupobyId(int grupoId) async {
   await Future.delayed(Duration(seconds: 2));
 
   return Grupo(
-      grupoId: grupoId,
-      nome: "Grupo da Bola",
-      descricao: "Grupo da Bola",
-      publico: false,
-      imagem: "https://via.placeholder.com/150");
+    grupoId: grupoId,
+    nome: "Grupo da Bola",
+    descricao: "Grupo da Bola",
+    publico: false,
+    imagem: "https://via.placeholder.com/150",
+    utilizadorCriouId: 1,
+  );
 }
 
 // Função que simula a obtenção de utilizadores de um grupo
@@ -72,6 +84,7 @@ Grupo JsonToGrupo(Map<String, dynamic> json) {
     descricao: json['descricao'],
     publico: json['publico'],
     imagem: json['imagem'],
+    utilizadorCriouId: json['utilizadorCriouId'],
   );
 }
 
@@ -82,5 +95,6 @@ Map<String, Object?> grupotojson(Grupo grupo) {
     'descricao': grupo.descricao,
     'publico': grupo.publico,
     'imagem': grupo.imagem,
+    'utilizadorCriouId': grupo.utilizadorCriouId,
   };
 }

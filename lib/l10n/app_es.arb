@@ -132,5 +132,10 @@
   "detalhesGrupo": "Detalles del Grupo",
   "groups": "Grupos",
   "joinGroup": "Unirse a un grupo", 
-  "createGroup": "Crear nuevo grupo"
+  "createGroup": "Crear nuevo grupo", 
+  "editarGrupo": "Editar Grupo", 
+  "selecioneUmaImagem": "Debe elegir una imagen", 
+  "selecionePeloMenosUmUtilizador": "Debe seleccionar al menos un usuario", 
+  "publico": "Público", 
+  "nomegrupo": "Nombre del grupo"
 }

@@ -101,7 +101,6 @@ class _MyAppState extends State<MyApp> {
         '/pontosInteresse': (context) => const PontosDeInteresseMainScreen(),
         '/criarPontoInteresse': (context) => const CriarPontoInteresseScreen(),
         '/ListarGrupo': (context) => const ListarGrupoScreen(),
-        '/criarGrupo': (context) => const CriarGrupoScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/consultarEvento') {
@@ -117,6 +116,7 @@ class _MyAppState extends State<MyApp> {
               nome: arguments['nome'] as String,
               imagemUrl: arguments['imagemUrl'] as String,
               msgGrupo: arguments['msgGrupo'] as bool,
+              grupoId: arguments['grupoId'] as int,
             ),
           );
         } else if (settings.name == '/consultarPontoInteresse') {
@@ -131,6 +131,13 @@ class _MyAppState extends State<MyApp> {
           return MaterialPageRoute(
             builder: (context) => NovaMensagem(
               mensagens: arguments['mensagens'] as List<Mensagem>,
+            ),
+          );
+        } else if (settings.name == '/criarGrupo') {
+          final arguments = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) => CriarGrupoScreen(
+              editar: arguments['editar'] as bool,
             ),
           );
         }
