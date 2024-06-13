@@ -112,214 +112,242 @@ class _ConsultPontoInteresseScreenState
       body: SafeArea(
         top: true,
         bottom: true,
-        child: Padding(
-          padding: EdgeInsets.only(
+
+        child: Container(
+          margin: EdgeInsets.only(
             top: altura * 0.01,
-            left: largura * 0.02,
-            right: largura * 0.02,
+            left: largura * 0.01,
+            right: largura * 0.01,
             bottom: altura * 0.01,
           ),
-          child: Container(
-            color: Theme.of(context).canvasColor,
-            height: altura * 0.9,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).canvasColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      children: [
-                        Center(
-                          child: FadeInImage(
-                            fit: BoxFit.cover,
-                            height: altura * 0.2,
-                            width: double.infinity,
-                            placeholder: MemoryImage(kTransparentImage),
-                            image: const NetworkImage(
-                                "https://pplware.sapo.pt/wp-content/uploads/2022/02/s_22_plus_1.jpg "),
-                          ),
-                        ),
-                        SizedBox(height: altura * 0.02),
-                        Row(children: [
-                          Text(
-                            pontoInteresse!.titulo,
-                            style: const TextStyle(
-                                fontSize: 22, fontWeight: FontWeight.bold),
-                          ),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: rating(
-                                  4) //Função que devolve o número de estrelas em forma de icone, depois será substituido pelo valor recebido pela Base de Dados
-                              )
-                        ]),
-                        SizedBox(height: altura * 0.02),
-                        Row(
-                          children: [
-                            const Icon(
-                              FontAwesomeIcons.locationDot,
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: largura * 0.02),
-                              child: Text(pontoInteresse!.localizacao),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: altura * 0.02),
-                        Center(
-                          child: Container(
-                            color: Colors.red,
-                            height: altura * 0.25,
-                            width: largura * 0.85,
-                            child: const Center(
-                              child: Text("Mapa"),
-                            ),
-                          ),
-                        ),
-                        DividerWithText(text: "Descrição"),
-                        Text(pontoInteresse!.descricao),
-                        DividerWithText(text: "Avaliação"),
-                        const Row(
-                          children: [],
-                        ),
-                        const Divider(
-                          color: Color.fromRGBO(29, 90, 161, 1),
-                        ),
-                        const Text("Comentários de outros utilizadores"),
-                        SizedBox(
-                          height: altura * 0.5,
-                          child: SingleChildScrollView(
-                            child: CommentSection(
-                              comentarios: [
-                                Commentario(
-                                  comentarioid: 1,
-                                  comentario: 'This is the first comment.',
-                                  autor: Utilizador(
-                                      3,
-                                      'Alice',
-                                      'Johnson',
-                                      'alice.johnson@example.com',
-                                      'Some info',
-                                      3,
-                                      [1, 2],
-                                      3,
-                                      3),
-                                  data: DateTime.now()
-                                      .subtract(const Duration(days: 1)),
-                                ),
-                                Commentario(
-                                  comentarioid: 4,
-                                  comentario: 'This is the second comment.',
-                                  autor: Utilizador(
-                                      3,
-                                      'Alice',
-                                      'Johnson',
-                                      'alice.johnson@example.com',
-                                      'Some info',
-                                      3,
-                                      [1, 2],
-                                      3,
-                                      3),
-                                  data: DateTime.now()
-                                      .subtract(Duration(days: 2)),
-                                ),
-                                Commentario(
-                                  comentarioid: 6,
-                                  comentario:
-                                      'This is the third comment with no subcomments.',
-                                  autor: Utilizador(
-                                      3,
-                                      'Alice',
-                                      'Johnson',
-                                      'alice.johnson@example.com',
-                                      'Some info',
-                                      3,
-                                      [1, 2],
-                                      3,
-                                      3),
-                                  data: DateTime.now()
-                                      .subtract(Duration(days: 3)),
-                                ),
-                                Commentario(
-                                  comentarioid: 7,
-                                  comentario: 'This is the fourth comment.',
-                                  autor: Utilizador(
-                                      3,
-                                      'Alice',
-                                      'Johnson',
-                                      'alice.johnson@example.com',
-                                      'Some info',
-                                      3,
-                                      [1, 2],
-                                      3,
-                                      3),
-                                  data: DateTime.now()
-                                      .subtract(Duration(days: 4)),
-                                  subcomentarios: [
-                                    Commentario(
-                                      comentarioid: 8,
-                                      comentario:
-                                          'Subcomment to the fourth comment.',
-                                      autor: Utilizador(
-                                          3,
-                                          'Alice',
-                                          'Johnson',
-                                          'alice.johnson@example.com',
-                                          'Some info',
-                                          3,
-                                          [1, 2],
-                                          3,
-                                          3),
-                                      data: DateTime.now().subtract(
-                                          Duration(days: 4, hours: 1)),
-                                    ),
-                                    Commentario(
-                                      comentarioid: 9,
-                                      comentario:
-                                          'Another subcomment to the fourth comment.',
-                                      autor: Utilizador(
-                                          3,
-                                          'Alice',
-                                          'Johnson',
-                                          'alice.johnson@example.com',
-                                          'Some info',
-                                          3,
-                                          [1, 2],
-                                          3,
-                                          3),
-                                      data: DateTime.now().subtract(
-                                          Duration(days: 4, hours: 2)),
-                                    ),
-                                    Commentario(
-                                      comentarioid: 10,
-                                      comentario:
-                                          'Yet another subcomment to the fourth comment.',
-                                      autor: Utilizador(
-                                          3,
-                                          'Alice',
-                                          'Johnson',
-                                          'alice.johnson@example.com',
-                                          'Some info',
-                                          3,
-                                          [1, 2],
-                                          3,
-                                          3),
-                                      data: DateTime.now().subtract(
-                                          Duration(days: 4, hours: 3)),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
+          height: altura * 0.9,
+          decoration: BoxDecoration(
+              color: Theme.of(context).canvasColor
               ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).canvasColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    children: [
+                      Center(
+                        child: FadeInImage(
+                          fit: BoxFit.fill,
+                          height: altura * 0.2,
+                          width: double.infinity,
+                          placeholder:
+                              const AssetImage("Images/Restaurante.jpg"),
+                          image: const AssetImage("Images/Restaurante.jpg"),
+                          imageErrorBuilder: (context, error, stackTrace) {
+                            return const Image(
+                                image: AssetImage("Images/Restaurante.jpg"));
+                          },
+                        ),
+                      ),
+                      SizedBox(height: altura * 0.02),
+                      Row(children: [
+                        Text(
+                          pontoInteresse!.titulo,
+                          style: const TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
+                        ),
+                        Spacer(),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: rating(
+                                4) //Função que devolve o número de estrelas em forma de icone, depois será substituido pelo valor recebido pela Base de Dados
+                            )
+                      ]),
+                      SizedBox(height: altura * 0.02),
+                      Row(
+                        children: [
+                          const Icon(
+                            FontAwesomeIcons.locationDot,
+                            color: Colors.red,
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: largura * 0.02),
+                            child: Text(pontoInteresse!.localizacao),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: altura * 0.02),
+                      Center(
+                        child: Container(
+                          color: Colors.red,
+                          height: altura * 0.25,
+                          width: largura * 0.85,
+                          child: const Center(
+                            child: Text("Mapa"),
+                          ),
+                        ),
+                      ),
+                      DividerWithText(
+                          text: AppLocalizations.of(context)!.descricao),
+                      Text(pontoInteresse!.descricao),
+                      DividerWithText(
+                          text: AppLocalizations.of(context)!.avaliar),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              maxLines: null,
+                              decoration: InputDecoration(
+                                hintText: AppLocalizations.of(context)!
+                                    .deixaComentario,
+                                border: InputBorder.none, // Remove the border
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 10.0), // Add padding
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Define the button action here
+                            },
+                            child: Text(AppLocalizations.of(context)!.avaliar),
+                          ),
+                        ],
+                      ),
+                      const Divider(
+                        color: Color.fromRGBO(29, 90, 161, 1),
+                      ),
+                      const Text("Comentários de outros utilizadores"),
+                      SizedBox(
+                        height: altura * 0.5,
+                        child: SingleChildScrollView(
+                          child: CommentSection(
+                            comentarios: [
+                              Commentario(
+                                comentarioid: 1,
+                                comentario: 'This is the first comment.',
+                                autor: Utilizador(
+                                    3,
+                                    'Alice',
+                                    'Johnson',
+                                    'alice.johnson@example.com',
+                                    'Some info',
+                                    3,
+                                    [1, 2],
+                                    3,
+                                    3),
+                                data: DateTime.now()
+                                    .subtract(const Duration(days: 1)),
+                              ),
+                              Commentario(
+                                comentarioid: 4,
+                                comentario: 'This is the second comment.',
+                                autor: Utilizador(
+                                    3,
+                                    'Alice',
+                                    'Johnson',
+                                    'alice.johnson@example.com',
+                                    'Some info',
+                                    3,
+                                    [1, 2],
+                                    3,
+                                    3),
+                                data:
+                                    DateTime.now().subtract(Duration(days: 2)),
+                              ),
+                              Commentario(
+                                comentarioid: 6,
+                                comentario:
+                                    'This is the third comment with no subcomments.',
+                                autor: Utilizador(
+                                    3,
+                                    'Alice',
+                                    'Johnson',
+                                    'alice.johnson@example.com',
+                                    'Some info',
+                                    3,
+                                    [1, 2],
+                                    3,
+                                    3),
+                                data:
+                                    DateTime.now().subtract(Duration(days: 3)),
+                              ),
+                              Commentario(
+                                comentarioid: 7,
+                                comentario: 'This is the fourth comment.',
+                                autor: Utilizador(
+                                    3,
+                                    'Alice',
+                                    'Johnson',
+                                    'alice.johnson@example.com',
+                                    'Some info',
+                                    3,
+                                    [1, 2],
+                                    3,
+                                    3),
+                                data:
+                                    DateTime.now().subtract(Duration(days: 4)),
+                                subcomentarios: [
+                                  Commentario(
+                                    comentarioid: 8,
+                                    comentario:
+                                        'Subcomment to the fourth comment.',
+                                    autor: Utilizador(
+                                        3,
+                                        'Alice',
+                                        'Johnson',
+                                        'alice.johnson@example.com',
+                                        'Some info',
+                                        3,
+                                        [1, 2],
+                                        3,
+                                        3),
+                                    data: DateTime.now()
+                                        .subtract(Duration(days: 4, hours: 1)),
+                                  ),
+                                  Commentario(
+                                    comentarioid: 9,
+                                    comentario:
+                                        'Another subcomment to the fourth comment.',
+                                    autor: Utilizador(
+                                        3,
+                                        'Alice',
+                                        'Johnson',
+                                        'alice.johnson@example.com',
+                                        'Some info',
+                                        3,
+                                        [1, 2],
+                                        3,
+                                        3),
+                                    data: DateTime.now()
+                                        .subtract(Duration(days: 4, hours: 2)),
+                                  ),
+                                  Commentario(
+                                    comentarioid: 10,
+                                    comentario:
+                                        'Yet another subcomment to the fourth comment.',
+                                    autor: Utilizador(
+                                        3,
+                                        'Alice',
+                                        'Johnson',
+                                        'alice.johnson@example.com',
+                                        'Some info',
+                                        3,
+                                        [1, 2],
+                                        3,
+                                        3),
+                                    data: DateTime.now()
+                                        .subtract(Duration(days: 4, hours: 3)),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),

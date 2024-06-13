@@ -127,5 +127,8 @@
   "criarPontoInteresse":"Crear punto de interés", 
   "imagePreview": "Vista previa", 
   "descartar": "Descartar", 
-  "tirarFoto": "Tirar fotografia"
+  "tirarFoto": "Tirar fotografia",
+  "avaliar": "Avaliar",
+  "deixaComentario": "Dejar un comentario",
+  "outrosComentarios":"Comentarios de otros usuarios"
 }
