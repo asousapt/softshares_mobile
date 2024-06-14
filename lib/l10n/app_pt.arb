@@ -141,5 +141,10 @@
   "selecioneUmaImagem": "Por favor seleccione uma imagem", 
   "selecionePeloMenosUmUtilizador": "Por favor seleccione pelo menos um utilizador", 
   "publico": "Público", 
-  "nomegrupo": "Nome do Grupo"
+  "nomegrupo": "Nome do Grupo", 
+  "membros": "Membros", 
+  "addMembros": "Adicionar Membros",
+  "galeriaVazia": "Galeria vazia",
+  "sairGrupo": "Sair do grupo", 
+  "galeria": "Galeria"
 }

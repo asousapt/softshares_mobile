@@ -140,5 +140,9 @@
   "selecioneUmaImagem": "Debe elegir una imagen", 
   "selecionePeloMenosUmUtilizador": "Debe seleccionar al menos un usuario", 
   "publico": "Público", 
-  "nomegrupo": "Nombre del grupo"
+  "nomegrupo": "Nombre del grupo", 
+  "membros": "Membros", 
+  "addMembros": "Adicionar Membros", 
+  "galeriaVazia": "Galeria vazia", 
+  "galeria": "Galeria"
 }

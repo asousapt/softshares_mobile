@@ -117,6 +117,7 @@ class _MyAppState extends State<MyApp> {
               imagemUrl: arguments['imagemUrl'] as String,
               msgGrupo: arguments['msgGrupo'] as bool,
               grupoId: arguments['grupoId'] as int,
+              utilizadorId: arguments['utilizadorId'] as int,
             ),
           );
         } else if (settings.name == '/consultarPontoInteresse') {

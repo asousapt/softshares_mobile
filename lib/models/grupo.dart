@@ -73,6 +73,32 @@ Future<Grupo> fetchGrupobyId(int grupoId) async {
     publico: false,
     imagem: "https://via.placeholder.com/150",
     utilizadorCriouId: 1,
+    utilizadores: [
+      Utilizador.simplificado(
+        1,
+        'João',
+        'Silva',
+        'joao.silva@example.com',
+        1,
+        "https://via.placeholder.com/150",
+      ),
+      Utilizador.simplificado(
+        3,
+        'Carlos',
+        'Santos',
+        'carlos.santos@example.com',
+        2,
+        "https://via.placeholder.com/150",
+      ),
+      Utilizador.simplificado(
+        4,
+        'Ana',
+        'Costa',
+        'ana.costa@example.com',
+        2,
+        "https://via.placeholder.com/150",
+      ),
+    ],
   );
 }
 

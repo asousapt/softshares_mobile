@@ -220,6 +220,10 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
                         'grupoId': mensagens[index].destinatarioGrupo != null
                             ? mensagens[index].destinatarioGrupo!.grupoId
                             : 0,
+                        'utilizadorId': mensagens[index].destinatarioUtil !=
+                                null
+                            ? mensagens[index].destinatarioUtil!.utilizadorId
+                            : 0,
                       },
                     );
                   },

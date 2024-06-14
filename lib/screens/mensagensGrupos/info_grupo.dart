@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:softshares_mobile/models/grupo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/screens/generic/galeria_fotos.dart';
+import 'package:softshares_mobile/screens/mensagensGrupos/criar_grupo.dart';
 
 class GrupoInfoScreen extends StatefulWidget {
   const GrupoInfoScreen({
@@ -19,6 +21,7 @@ class GrupoInfoScreen extends StatefulWidget {
 class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
   Grupo? grupo;
   bool _isLoading = true;
+  int utilizadorId = 1;
 
   @override
   void initState() {
@@ -32,6 +35,17 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
       grupo = fetchedGrupo;
       _isLoading = false;
     });
+  }
+
+  // Funcao para buscar o grupo pelo id
+  Future<List<String>> fetchGalleryImages() async {
+    await Future.delayed(Duration(seconds: 2));
+
+    // Dummy list de imagens
+    return List.generate(
+      12,
+      (index) => 'https://via.placeholder.com/150?text=Image+$index',
+    );
   }
 
   @override
@@ -94,36 +108,129 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         DefaultTabController(
-                          length: 2,
+                          length: 3,
                           child: Expanded(
                             child: Column(
                               children: [
                                 TabBar(
                                   tabs: [
                                     Tab(
-                                      text: "TAB 1",
+                                      text: AppLocalizations.of(context)!
+                                          .descricao,
                                     ),
                                     Tab(
-                                      text: "Tab 2",
+                                      text:
+                                          AppLocalizations.of(context)!.membros,
+                                    ),
+                                    Tab(
+                                      text:
+                                          AppLocalizations.of(context)!.galeria,
                                     ),
                                   ],
                                 ),
                                 Expanded(
                                   child: TabBarView(
                                     children: [
-                                      // Content for Tab 1
-                                      Center(
-                                        child: Text(
-                                          "conteudo 1",
-                                          style: const TextStyle(fontSize: 16),
-                                        ),
+                                      // Tab de descricao do grupo
+                                      Container(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: largura * 0.02,
+                                            vertical: altura * 0.02),
+                                        width: double.infinity,
+                                        child: Text(grupo!.descricao),
                                       ),
-                                      // Content for Tab 2
-                                      Center(
-                                        child: Text(
-                                          "conteudo 2",
-                                          style: const TextStyle(fontSize: 16),
-                                        ),
+                                      // Tab de membros do grupo
+                                      Column(
+                                        children: [
+                                          Expanded(
+                                            child: ListView(
+                                              children: grupo!.utilizadores!
+                                                  .map(
+                                                    (utilizador) => ListTile(
+                                                      leading: CircleAvatar(
+                                                        backgroundImage:
+                                                            NetworkImage(
+                                                          utilizador.fotoUrl ??
+                                                              'https://via.placeholder.com/150',
+                                                        ),
+                                                      ),
+                                                      title: Text(
+                                                        utilizador
+                                                            .getNomeCompleto(),
+                                                      ),
+                                                    ),
+                                                  )
+                                                  .toList(),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // Tab de galeria
+                                      FutureBuilder<List<String>>(
+                                        future: fetchGalleryImages(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return Center(
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .ocorreuErro,
+                                              ),
+                                            );
+                                          } else if (!snapshot.hasData ||
+                                              snapshot.data!.isEmpty) {
+                                            return Center(
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .galeriaVazia,
+                                              ),
+                                            );
+                                          } else {
+                                            List<String> imageUrls =
+                                                snapshot.data!;
+                                            return GridView.builder(
+                                              gridDelegate:
+                                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount: 3,
+                                                crossAxisSpacing: 4.0,
+                                                mainAxisSpacing: 4.0,
+                                              ),
+                                              itemCount: imageUrls.length,
+                                              itemBuilder: (context, index) {
+                                                return InkWell(
+                                                  onTap: () => {
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PhotoGalleryScreen(
+                                                          imageUrls: imageUrls,
+                                                          initialIndex: index,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  },
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                        image: NetworkImage(
+                                                          imageUrls[index],
+                                                        ),
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
                                       ),
                                     ],
                                   ),
@@ -132,6 +239,43 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
                             ),
                           ),
                         ),
+                        SizedBox(height: altura * 0.02),
+                        Container(
+                          margin:
+                              EdgeInsets.symmetric(horizontal: largura * 0.02),
+                          width: double.infinity,
+                          child: grupo!.utilizadorCriouId == utilizadorId
+                              ? FilledButton(
+                                  onPressed: () {
+                                    if (grupo != null) {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              CriarGrupoScreen(
+                                            editar: true,
+                                            existingGroup: grupo!,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Text(AppLocalizations.of(context)!
+                                      .editarGrupo),
+                                )
+                              : ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Colors.red, // Button background color
+                                  ),
+                                  onPressed: () {},
+                                  child: Text(
+                                    AppLocalizations.of(context)!.sairGrupo,
+                                    style: TextStyle(
+                                        color: Theme.of(context).canvasColor),
+                                  ),
+                                ),
+                        ),
+                        SizedBox(height: altura * 0.02),
                       ],
                     ),
                   ),

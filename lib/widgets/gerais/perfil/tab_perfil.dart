@@ -10,9 +10,9 @@ import 'package:softshares_mobile/widgets/gerais/dropdown_generica.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TabPerfil extends StatefulWidget {
-  TabPerfil({super.key, required this.utilizador});
+  const TabPerfil({super.key, required this.utilizador});
 
-  Utilizador utilizador;
+  final Utilizador utilizador;
   @override
   State<StatefulWidget> createState() {
     return _TabPerfilState();
