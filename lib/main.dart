@@ -33,10 +33,17 @@ import 'package:softshares_mobile/screens/topicos/criar_topico.dart';
 import 'package:softshares_mobile/screens/topicos/topico_details.dart';
 import 'package:softshares_mobile/screens/topicos/topicos_main.dart';
 import 'package:softshares_mobile/Repositories/idioma_repository.dart';
+import 'package:softshares_mobile/services/database_service.dart';
 import 'package:softshares_mobile/softshares_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final dbService = DatabaseService.instance;
+
+  // Ensure the database is initialized before use
+  await dbService.database;
+
   runApp(const MyApp());
 }
 

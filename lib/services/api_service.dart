@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   //Android emulators use a special network address (10.0.2.2) to refer to your computer's localhost.
-  //final String _baseUrl = "http://192.168.1.84:8000";
-  final String _baseUrl = "http://10.0.2.2:8000";
+  final String _baseUrl = "http://192.168.1.84:8000";
+  //final String _baseUrl = "http://10.0.2.2:8000";
   String? _authToken;
 
   void setAuthToken(String token) {

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import "package:flutter/material.dart";
 import 'package:country_flags/country_flags.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,6 +6,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/polo_repository.dart';
+import 'package:softshares_mobile/models/polo.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 
 class EcraLogin extends StatefulWidget {
@@ -124,6 +125,38 @@ class _EcraLoginState extends State<EcraLogin> {
     setState(() {
       version = packageInfo.version;
     });
+  }
+
+  Future<void> carregaPolos() async {
+    PoloRepository poloRepository = PoloRepository();
+
+    try {
+      // Fetch polos da api
+      List<Polo> poloList = await poloRepository.fetchPolos();
+
+      // Apagar todos os polos da base de dados
+      await poloRepository.deleteAllPolos();
+
+      for (Polo polo in poloList) {
+        // Inserir polo na base de dados
+        bool inseriu = await poloRepository.createPolo(polo);
+        if (!inseriu) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.ocorreuErro),
+            ),
+          );
+        }
+      }
+    } catch (e, stacktrace) {
+      print("An error occurred: $e");
+      print("Stacktrace: $stacktrace");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${AppLocalizations.of(context)!.ocorreuErro}: $e'),
+        ),
+      );
+    }
   }
 
   @override
@@ -269,7 +302,7 @@ class _EcraLoginState extends State<EcraLogin> {
                                         'Doe', // uNome
                                         'john.doe@example.com', // email
                                         'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', // sobre
-                                        1, // poloId
+                                        5, // poloId
                                         [1, 2, 3], // preferencias
                                         1, // funcaoId
                                         1,
@@ -279,7 +312,7 @@ class _EcraLoginState extends State<EcraLogin> {
                                           utilizadorToJson(util);
                                       await prefs.setString("utilizadorObj",
                                           jsonEncode(utilJson));
-                                      print(jsonEncode(utilJson));
+                                      await carregaPolos();
 
                                       Navigator.pushNamed(
                                           context, '/escolherPolo');
