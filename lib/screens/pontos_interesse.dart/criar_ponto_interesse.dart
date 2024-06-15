@@ -4,10 +4,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/l10n/app_localizations_extension.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
+import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/formulario_cfg.dart';
 import '../../time_utils.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
+import '../../api_service.dart';
 
 class CriarPontoInteresseScreen extends StatefulWidget {
   const CriarPontoInteresseScreen({super.key});
@@ -26,63 +28,76 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   String? _subCategoriaId;
   String? descricao;
   List<Formulario> forms = [];
+  bool defaultValues = false;
+  List<Categoria> categorias = [];
+  List<Subcategoria> subcategorias = [];
+  ApiService api = ApiService();
+  bool _isLoading = true;
+  late PontoInteresse novoPonto;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 // Lista de categorias a substituir por dados vindos da BD ou chamada API
-  List<Categoria> categorias = [
-    Categoria(1, "Gastronomia", "cor1", "garfo"),
-    Categoria(2, "Desporto", "cor2", "futebol"),
-    Categoria(3, "Atividade Ar Livre", "cor3", "arvore"),
-    Categoria(4, "Alojamento", "cor3", "casa"),
-    Categoria(5, "Saúde", "cor3", "cruz"),
-    Categoria(6, "Ensino", "cor3", "escola"),
-    Categoria(7, "Infraestruturas", "cor3", "infra"),
-  ];
-
-  List<Subcategoria> subcategorias = [
-    // Subcategories for "Gastronomia" category
-    Subcategoria(1, 1, "Comida italiana"),
-    Subcategoria(2, 1, "Comida mexicana"),
-    Subcategoria(3, 1, "Comida japonesa"),
-
-    // Subcategories for "Desporto" category
-    Subcategoria(4, 2, "Futebol"),
-    Subcategoria(5, 2, "Basquetebol"),
-    Subcategoria(6, 2, "Ténis"),
-
-    // Subcategories for "Atividade Ar Livre" category
-    Subcategoria(7, 3, "Caminhada"),
-    Subcategoria(8, 3, "Ciclismo"),
-
-    // Subcategories for "Alojamento" category
-    Subcategoria(9, 4, "Hotel"),
-    Subcategoria(10, 4, "Hostel"),
-    Subcategoria(11, 4, "Apartamento"),
-
-    // Subcategories for "Saúde" category
-    Subcategoria(12, 5, "Médico geral"),
-    Subcategoria(13, 5, "Dentista"),
-    Subcategoria(14, 5, "Fisioterapia"),
-
-    // Subcategories for "Ensino" category
-    Subcategoria(15, 6, "Escola primária"),
-    Subcategoria(16, 6, "Escola secundária"),
-    Subcategoria(17, 6, "Universidade"),
-
-    // Subcategories for "Infraestruturas" category
-    Subcategoria(18, 7, "Transporte público"),
-    Subcategoria(19, 7, "Estradas"),
-    Subcategoria(20, 7, "Rede de água e saneamento"),
-  ];
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
-    _categoriaId = categorias[0].categoriaId.toString();
-    _subCategoriaId = subcategorias[0].subcategoriaId.toString();
+    api.setAuthToken('tokenFixo');
+    if (defaultValues) {
+      categorias = categoriasTeste;
+      _categoriaId = categorias[0].categoriaId.toString();
+      subcategorias = subcategoriasTeste;
+    } else {
+      _initializeData();
+    }
     descricao = "";
     forms = [];
+  }
+
+  void _initializeData() async {
+    _isLoading = true;
+    await fetchCategorias();
+    await fetchSubCategorias();
+    if (mounted) {
+      setState(() {
+        _categoriaId =
+            categorias.isNotEmpty ? categorias[0].categoriaId.toString() : '';
+            _subCategoriaId =
+            subcategorias.isNotEmpty ? subcategorias[0].subcategoriaId.toString() : '';
+      });
+      
+    }
+    _isLoading = false;
+  }
+
+  Future<void> fetchCategorias() async {
+    try {
+      final lista = await api.getRequest('categoria/');
+
+      List<Categoria> listaUpdated =
+          (lista as List).map((item) => Categoria.fromJson(item)).toList();
+
+      setState(() {
+        categorias = List.from(listaUpdated);
+      });
+    } catch (e) {
+      print("Error fetching data: $e");
+    }
+  }
+
+  Future<void> fetchSubCategorias() async {
+    try {
+      final lista = await api.getRequest('subcategoria/');
+
+      List<Subcategoria> listaUpdated =
+          (lista as List).map((item) => Subcategoria.fromJson(item)).toList();
+
+      setState(() {
+        subcategorias = List.from(listaUpdated);
+      });
+    } catch (e) {
+      print("Error fetching data: $e");
+    }
   }
 
   @override
@@ -171,7 +186,21 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
             AppLocalizations.of(context)!.criarPontoInteresse,
           ),
         ),
-        body: SafeArea(
+        body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : categorias.isEmpty
+              ? Container(
+                  height: altura * 0.8,
+                  color: Colors.transparent,
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Text(AppLocalizations.of(context)!.naoHaDados),
+                      ],
+                    ),
+                  ),
+                )
+              : SafeArea(
           top: true,
           bottom: true,
           child: Padding(
@@ -373,15 +402,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
                                 SizedBox(width: largura * 0.02),
                                 FilledButton(
                                   onPressed: () {
-                                    String mensagem = "";
-
-                                    if (forms.isEmpty) {
-                                      mensagem = AppLocalizations.of(context)!
-                                          .criarEventoSemForms;
-                                    } else if (forms.length == 1) {
-                                      mensagem = AppLocalizations.of(context)!
-                                          .maisForms;
-                                    }
+                                    String mensagem = "Criar ponto";
 
                                     if (forms.isEmpty || forms.length == 1) {
                                       Future<bool> confirma = confirmExit(

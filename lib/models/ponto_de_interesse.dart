@@ -18,44 +18,44 @@ class PontoInteresse {
   final DateTime? dataAlteracao;
   final Utilizador? criador;
 
-  PontoInteresse({
-    required this.pontoInteresseId,
-    required this.subCategoriaId,
-    required this.titulo,
-    required this.descricao,
-    this.aprovado,
-    this.dataAprovacao,
-    this.utilizadorAprova,
-    required this.localizacao,
-    this.latitude,
-    this.longitude,
-    required this.idiomaId,
-    required this.cidadeId,
-    required this.dataCriacao,
-    this.dataAlteracao,
-    this.criador
-  });
+  PontoInteresse(
+      {required this.pontoInteresseId,
+      required this.subCategoriaId,
+      required this.titulo,
+      required this.descricao,
+      this.aprovado,
+      this.dataAprovacao,
+      this.utilizadorAprova,
+      required this.localizacao,
+      this.latitude,
+      this.longitude,
+      required this.idiomaId,
+      required this.cidadeId,
+      required this.dataCriacao,
+      this.dataAlteracao,
+      this.criador});
 
   factory PontoInteresse.fromJson(Map<String, dynamic> json) {
     return PontoInteresse(
-      pontoInteresseId: json['pontoInteresseId'],
-      subCategoriaId: json['subCategoriaId'],
+      pontoInteresseId: json['pontointeresseid'],
+      subCategoriaId: json['subcategoriaid'],
       titulo: json['titulo'],
       descricao: json['descricao'],
       aprovado: json['aprovado'],
-      dataAprovacao: json['dataAprovacao'] != null
-          ? DateTime.parse(json['dataAprovacao'])
+      dataAprovacao: json['dataaprovacao'] != null
+          ? DateTime.parse(json['dataaprovacao'])
           : null,
-      utilizadorAprova: json['utilizadorAprova'],
+      utilizadorAprova: json['utilizadoraprova'],
       localizacao: json['localizacao'],
       latitude: json['latitude'],
       longitude: json['longitude'],
-      idiomaId: json['idiomaId'],
-      cidadeId: json['cidadeId'],
-      dataCriacao: DateTime.parse(json['dataCriacao']),
-      dataAlteracao: json['dataAlteracao'] != null
-          ? DateTime.parse(json['dataAlteracao'])
+      idiomaId: json['idiomaid'],
+      cidadeId: json['cidadeid'],
+      dataCriacao: DateTime.parse(json['datacriacao']),
+      dataAlteracao: json['dataalteracao'] != null
+          ? DateTime.parse(json['dataalteracao'])
           : null,
+      criador: jsonToUtilizador(json['utilizadorcriou_utilizador'])
     );
   }
 
@@ -84,7 +84,8 @@ final List<PontoInteresse> pontosDeInteresseTeste = [
     pontoInteresseId: 1,
     subCategoriaId: 1,
     titulo: 'Parque Central',
-    descricao: 'Um lindo parque no centro da cidade com áreas verdes e playgrounds.',
+    descricao:
+        'Um lindo parque no centro da cidade com áreas verdes e playgrounds.',
     aprovado: true,
     dataAprovacao: DateTime(2023, 4, 12),
     utilizadorAprova: 2,
@@ -100,7 +101,8 @@ final List<PontoInteresse> pontosDeInteresseTeste = [
     pontoInteresseId: 2,
     subCategoriaId: 2,
     titulo: 'Museu de Arte Moderna',
-    descricao: 'Um museu com uma coleção incrível de arte moderna e contemporânea.',
+    descricao:
+        'Um museu com uma coleção incrível de arte moderna e contemporânea.',
     aprovado: true,
     dataAprovacao: DateTime(2023, 5, 20),
     utilizadorAprova: 3,
