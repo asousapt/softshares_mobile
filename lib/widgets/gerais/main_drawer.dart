@@ -1,9 +1,36 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 
-class MainDrawer extends StatelessWidget {
-  const MainDrawer({super.key});
+class MainDrawer extends StatefulWidget {
+  const MainDrawer({Key? key}) : super(key: key);
+
+  @override
+  State<MainDrawer> createState() => _MainDrawerState();
+}
+
+class _MainDrawerState extends State<MainDrawer> {
+  Utilizador? utilizador;
+
+  @override
+  void initState() {
+    carregaUtilizador();
+    super.initState();
+  }
+
+  void carregaUtilizador() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? util = prefs.getString('utilizadorObj');
+    if (util != null) {
+      Map<String, dynamic> user = jsonDecode(util);
+      setState(() {
+        utilizador = jsonToUtilizador(user);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +39,9 @@ class MainDrawer extends StatelessWidget {
         children: [
           ListTile(
             onTap: () {
-              Navigator.pushNamed(context, '/perfil');
+              if (utilizador != null) {
+                Navigator.pushNamed(context, '/perfil', arguments: utilizador!);
+              }
             },
             contentPadding: const EdgeInsets.only(top: 15, left: 15),
             leading: const Icon(FontAwesomeIcons.user),
@@ -35,7 +64,9 @@ class MainDrawer extends StatelessWidget {
             title: Text(AppLocalizations.of(context)!.suporte),
           ),
           ListTile(
-            onTap: () {Navigator.pushNamed(context, "/escolherPolo");},
+            onTap: () {
+              Navigator.pushNamed(context, "/escolherPolo");
+            },
             contentPadding: const EdgeInsets.only(left: 15, top: 10),
             leading: const Icon(FontAwesomeIcons.city),
             title: Text(AppLocalizations.of(context)!.seleccionarPolo),
@@ -47,7 +78,9 @@ class MainDrawer extends StatelessWidget {
             title: Text(AppLocalizations.of(context)!.definicoes),
           ),
           ListTile(
-            onTap: () {Navigator.pushNamed(context, "/login");},
+            onTap: () {
+              Navigator.pushNamed(context, "/login");
+            },
             contentPadding: const EdgeInsets.only(left: 15, top: 10),
             leading: const Icon(FontAwesomeIcons.rightFromBracket),
             title: Text(AppLocalizations.of(context)!.logout),

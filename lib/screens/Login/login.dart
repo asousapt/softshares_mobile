@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import "package:flutter/material.dart";
 import 'package:country_flags/country_flags.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 
 class EcraLogin extends StatefulWidget {
   const EcraLogin({
@@ -140,7 +144,7 @@ class _EcraLoginState extends State<EcraLogin> {
             child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: largura*0.02),
+                  padding: EdgeInsets.symmetric(horizontal: largura * 0.02),
                   height: altura * 0.85,
                   decoration: BoxDecoration(
                     color: Theme.of(context).canvasColor,
@@ -181,7 +185,8 @@ class _EcraLoginState extends State<EcraLogin> {
                                     controller: controlEmail,
                                     decoration: const InputDecoration(
                                       labelText: "Email",
-                                      prefixIcon: Icon(Icons.account_circle_outlined),
+                                      prefixIcon:
+                                        Icon(Icons.account_circle_outlined),
                                     ),
                                     validator: (value) {
                                       if (value == null ||
@@ -253,14 +258,35 @@ class _EcraLoginState extends State<EcraLogin> {
                                     height: altura * 0.065,
                                     width: double.infinity,
                                     child: FilledButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         /*if (_formKey.currentState!.validate()) {
                                           Navigator.pushNamed(context, '/home');
                                         }*/
-                                        Navigator.pushNamed(context, '/escolherPolo');
+                                        final prefs =
+                                          await SharedPreferences.getInstance();
+                                      Utilizador util = Utilizador(
+                                        1, // utilizadorId
+                                        'John', // pNome
+                                        'Doe', // uNome
+                                        'john.doe@example.com', // email
+                                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', // sobre
+                                        1, // poloId
+                                        [1, 2, 3], // preferencias
+                                        1, // funcaoId
+                                        1,
+                                        'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200',
+                                      );
+                                      Map<String, dynamic> utilJson =
+                                          utilizadorToJson(util);
+                                      await prefs.setString("utilizadorObj",
+                                          jsonEncode(utilJson));
+                                      print(jsonEncode(utilJson));
+
+                                      Navigator.pushNamed(
+                                          context, '/escolherPolo');
                                       },
-                                      child:
-                                          Text(AppLocalizations.of(context)!.login),
+                                      child: Text(
+                                          AppLocalizations.of(context)!.login),
                                     ),
                                   ),
                                   SizedBox(
@@ -286,7 +312,8 @@ class _EcraLoginState extends State<EcraLogin> {
                                           style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
-                                              decoration: TextDecoration.underline),
+                                              decoration:
+                                                TextDecoration.underline),
                                         ),
                                       ),
                                     ],
@@ -310,7 +337,8 @@ class _EcraLoginState extends State<EcraLogin> {
                                               child: Container(
                                                 padding:
                                                     EdgeInsets.all(altura * 0.01),
-                                                child: CountryFlag.fromCountryCode(
+                                                child:
+                                                  CountryFlag.fromCountryCode(
                                                   'PT',
                                                   height: largura * 0.03,
                                                   width: largura * 0.03,
@@ -331,7 +359,8 @@ class _EcraLoginState extends State<EcraLogin> {
                                               aspectRatio: 1.0,
                                               child: Container(
                                                 padding: const EdgeInsets.all(8),
-                                                child: CountryFlag.fromCountryCode(
+                                                child:
+                                                  CountryFlag.fromCountryCode(
                                                   'ES',
                                                   height: largura * 0.03,
                                                   width: largura * 0.03,
@@ -352,7 +381,8 @@ class _EcraLoginState extends State<EcraLogin> {
                                               aspectRatio: 1.0,
                                               child: Container(
                                                 padding: const EdgeInsets.all(8),
-                                                child: CountryFlag.fromCountryCode(
+                                                child:
+                                                  CountryFlag.fromCountryCode(
                                                   'GB',
                                                   height: largura * 0.03,
                                                   width: largura * 0.03,
@@ -409,55 +439,54 @@ class _EcraLoginState extends State<EcraLogin> {
                             ),
                           ],
                         ),
-                        
-                      ],
+                        ],
                     ),
                   ),
                 ),
                 SizedBox(
-                          height: altura * 0.04,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  AppLocalizations.of(context)!.noAccount,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Color.fromRGBO(230, 230, 230, 1),
-                                  ),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () =>
-                                    {Navigator.pushNamed(context, "/registar")},
-                                child: Text(AppLocalizations.of(context)!.register,
-                                    style: const TextStyle(
-                                        color: Color(0xFF83B1FF),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        decoration: TextDecoration.underline)),
-                              )
-                            ],
+                  height: altura * 0.04,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          AppLocalizations.of(context)!.noAccount,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Color.fromRGBO(230, 230, 230, 1),
                           ),
                         ),
-                        SizedBox(
-                          height: altura * 0.04,
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.copyright,
-                                color: Color.fromRGBO(230, 230, 230, 1),
-                              ),
-                              SizedBox(width: largura * 0.01),
-                              Text(
-                                "Softinsa v$version",
-                                style: const TextStyle(
-                                    color: Color.fromRGBO(230, 230, 230, 1)),
-                              )
-                            ],
-                          ),
-                        )
+                      ),
+                      TextButton(
+                        onPressed: () =>
+                            {Navigator.pushNamed(context, "/registar")},
+                        child: Text(AppLocalizations.of(context)!.register,
+                            style: const TextStyle(
+                                color: Color(0xFF83B1FF),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline)),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: altura * 0.04,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.copyright,
+                        color: Color.fromRGBO(230, 230, 230, 1),
+                      ),
+                      SizedBox(width: largura * 0.01),
+                      Text(
+                        "Softinsa v$version",
+                        style: const TextStyle(
+                            color: Color.fromRGBO(230, 230, 230, 1)),
+                      )
+                    ],
+                  ),
+                )
               ],
             ),
           ),

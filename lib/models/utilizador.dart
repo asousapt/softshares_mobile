@@ -1,4 +1,4 @@
-import 'package:softshares_mobile/api_service.dart';
+import 'package:softshares_mobile/services/api_service.dart';
 
 class Utilizador {
   int utilizadorId;
@@ -12,9 +12,27 @@ class Utilizador {
   int? departamentoId;
   String? fotoUrl;
 
-  Utilizador(this.utilizadorId, this.pNome, this.uNome, this.email, this.sobre,
-      this.poloId, this.preferencias, this.funcaoId, this.departamentoId,
-      [this.fotoUrl]);
+  Utilizador(
+    this.utilizadorId,
+    this.pNome,
+    this.uNome,
+    this.email,
+    this.sobre,
+    this.poloId,
+    this.preferencias,
+    this.funcaoId,
+    this.departamentoId, [
+    this.fotoUrl,
+  ]);
+
+  Utilizador.simplificado(
+    this.utilizadorId,
+    this.pNome,
+    this.uNome,
+    this.email,
+    this.poloId,
+    this.fotoUrl,
+  );
 
   /// Returns the full name of the user.
   String getNomeCompleto() {
@@ -34,6 +52,7 @@ List<Utilizador> utilizadores = [
     [1, 2],
     1,
     1,
+    "https://via.placeholder.com/150",
   ),
   Utilizador(
     2,
@@ -45,41 +64,88 @@ List<Utilizador> utilizadores = [
     [3, 4],
     2,
     1,
+    "https://via.placeholder.com/150",
   ),
   Utilizador(
-    3,
-    'Carlos',
-    'Santos',
-    'carlos.santos@example.com',
-    'Graphic designer specializing in UI/UX.',
-    2,
-    [5, 6],
-    3,
-    2,
-  ),
+      3,
+      'Carlos',
+      'Santos',
+      'carlos.santos@example.com',
+      'Graphic designer specializing in UI/UX.',
+      2,
+      [5, 6],
+      3,
+      2,
+      "https://via.placeholder.com/150"),
   Utilizador(
-    4,
-    'Ana',
-    'Costa',
-    'ana.costa@example.com',
-    'Content writer and SEO expert.',
-    2,
-    [7, 8],
-    4,
-    2,
-  ),
+      4,
+      'Ana',
+      'Costa',
+      'ana.costa@example.com',
+      'Content writer and SEO expert.',
+      2,
+      [7, 8],
+      4,
+      2,
+      "https://via.placeholder.com/150"),
 ];
+
+// Busca um utilizador pelo id
+Future<Utilizador> fetchUtilizadorById(int id) async {
+  await Future.delayed(Duration(seconds: 2));
+
+  return Utilizador(
+    1,
+    'João',
+    'Silva',
+    'joao.silva@example.com',
+    'Developer with a passion for mobile applications.',
+    1,
+    [1, 2],
+    1,
+    1,
+    "https://via.placeholder.com/150",
+  );
+}
 
 // Funcao que busca a lista de utilizadores
 Future<List<Utilizador>> fetchUtilizadores() async {
-  ApiService apiService = ApiService();
-  List<dynamic> jsonUtilizadores = await apiService.getRequest('utilizadores');
-  if (jsonUtilizadores.isEmpty) {
-    utilizadores = [];
-  } else {
-    utilizadores = jsonToUtilizadores(jsonUtilizadores);
-  }
-  return utilizadores;
+  await Future.delayed(Duration(seconds: 2));
+
+  return [
+    Utilizador.simplificado(
+      1,
+      'João',
+      'Silva',
+      'joao.silva@example.com',
+      1,
+      "https://via.placeholder.com/150",
+    ),
+    Utilizador.simplificado(
+      2,
+      'Maria',
+      'Fernandes',
+      'maria.fernandes@example.com',
+      1,
+      "https://via.placeholder.com/150",
+    ),
+    Utilizador.simplificado(
+      3,
+      'Carlos',
+      'Santos',
+      'carlos.santos@example.com',
+      2,
+      "https://via.placeholder.com/150",
+    ),
+    Utilizador.simplificado(
+      4,
+      'Ana',
+      'Costa',
+      'ana.costa@example.com',
+      2,
+      "https://via.placeholder.com/150",
+    ),
+  ];
 }
 
 // Funcao que transforma um json num Utilizador
@@ -90,12 +156,28 @@ Utilizador jsonToUtilizador(Map<String, dynamic> json) {
     json['unome'],
     json['email'],
     json['sobre'],
-    json['poloid'],
-    json['preferencias'],
-    json['funcaoid'],
-    json['departamentoid'],
-    json['fotourl'],
+    json['poloId'],
+    json['preferencias'] != null ? List<int>.from(json['preferencias']) : null,
+    json['funcaoId'],
+    json['departamentoId'],
+    json['fotoUrl'],
   );
+}
+
+// Funcao que transforma um utilizador em JSON
+Map<String, dynamic> utilizadorToJson(Utilizador utilizador) {
+  return {
+    'utilizadorId': utilizador.utilizadorId,
+    'pNome': utilizador.pNome,
+    'uNome': utilizador.uNome,
+    'email': utilizador.email,
+    'sobre': utilizador.sobre,
+    'poloId': utilizador.poloId,
+    'preferencias': utilizador.preferencias,
+    'funcaoId': utilizador.funcaoId,
+    'departamentoId': utilizador.departamentoId,
+    'fotoUrl': utilizador.fotoUrl,
+  };
 }
 
 List<Utilizador> jsonToUtilizadores(List<dynamic> json) {

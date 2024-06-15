@@ -8,7 +8,7 @@ import '../../widgets/pontos__de_interesse/pontos_de_interesse_card.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../api_service.dart';
+import '../../services/api_service.dart';
 
 class PontosDeInteresseMainScreen extends StatefulWidget {
   const PontosDeInteresseMainScreen({Key? key}) : super(key: key);
@@ -52,6 +52,7 @@ class _PontosDeInteresseMainScreenState
       final lista = await api.getRequest('pontoInteresse/');
       final listaFormatted = lista['data'];
 
+      // Parse the JSON data into a list of PontoInteresse objects
       List<PontoInteresse> listaUpdated = (listaFormatted as List)
           .map((item) => PontoInteresse.fromJson(item))
           .toList();
@@ -60,6 +61,8 @@ class _PontosDeInteresseMainScreenState
         listaPontosDeInteresse = List.from(listaUpdated);
         listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
       });
+      print("Agora mostra lista");
+      print(lista);
     } catch (e) {
       print("Error fetching data: $e");
       // Handle error appropriately

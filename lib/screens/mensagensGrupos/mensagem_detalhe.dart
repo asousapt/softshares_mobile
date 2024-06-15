@@ -4,24 +4,28 @@ import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/generic/galeria_fotos.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/info_grupo.dart';
+import 'package:softshares_mobile/screens/mensagensGrupos/info_utilizador.dart';
 import 'package:softshares_mobile/time_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/widgets/gerais/foto_picker.dart';
 
 class MensagemDetalheScreen extends StatefulWidget {
-  const MensagemDetalheScreen(
-      {super.key,
-      required this.mensagemId,
-      required this.nome,
-      required this.imagemUrl,
-      required this.msgGrupo,
-      this.grupoId});
+  const MensagemDetalheScreen({
+    super.key,
+    required this.mensagemId,
+    required this.nome,
+    required this.imagemUrl,
+    required this.msgGrupo,
+    this.grupoId,
+    this.utilizadorId,
+  });
 
   final int mensagemId;
   final String nome;
   final String imagemUrl;
   final bool msgGrupo;
   final int? grupoId;
+  final int? utilizadorId;
 
   @override
   State<StatefulWidget> createState() {
@@ -297,7 +301,16 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                         );
                       } else {
                         // Navegar para a página de informações do utilizador
-                        Navigator.pushNamed(context, '/InfoUtilizador');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return UtilizadorInfoScreen(
+                                utilizadorId: widget.utilizadorId!,
+                              );
+                            },
+                          ),
+                        );
                       }
                     }),
                 SizedBox(width: largura * 0.02),

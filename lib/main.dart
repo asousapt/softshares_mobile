@@ -1,12 +1,26 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/screens/Login/confirmar_id.dart';
+import 'package:softshares_mobile/screens/Login/escolher_polo.dart';
+import 'package:softshares_mobile/screens/Login/login.dart';
 import 'package:softshares_mobile/screens/Login/recuperar_pass.dart';
+import 'package:softshares_mobile/screens/Login/registo.dart';
+import 'package:softshares_mobile/screens/Login/repor_pass.dart';
 import 'package:softshares_mobile/screens/drawerLateral/contacte_suporte.dart';
+import 'package:softshares_mobile/screens/drawerLateral/notifications_alert.dart';
+import 'package:softshares_mobile/screens/drawerLateral/perfil.dart';
 import 'package:softshares_mobile/screens/eventos/consultar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/criar_evento.dart';
 import 'package:softshares_mobile/screens/eventos/eventos_main.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
+import 'package:softshares_mobile/screens/home.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/criar_grupo.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/listar_grupos.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/mensagem_detalhe.dart';
@@ -14,23 +28,13 @@ import 'package:softshares_mobile/screens/mensagensGrupos/mensagens_main.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/nova_mensagem.dart';
 import 'package:softshares_mobile/screens/pontos_interesse.dart/consultar_ponto_interesse.dart';
 import 'package:softshares_mobile/screens/pontos_interesse.dart/criar_ponto_interesse.dart';
+import 'package:softshares_mobile/screens/pontos_interesse.dart/pontos_interesse.main.dart';
 import 'package:softshares_mobile/screens/topicos/criar_topico.dart';
 import 'package:softshares_mobile/screens/topicos/topico_details.dart';
 import 'package:softshares_mobile/screens/topicos/topicos_main.dart';
-import "screens/Login/registo.dart";
-import "screens/Login/login.dart";
-import "package:flutter/material.dart";
-import 'package:softshares_mobile/screens/home.dart';
-import 'package:softshares_mobile/screens/drawerLateral/perfil.dart';
-import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/Repositories/idioma_repository.dart';
 import 'package:softshares_mobile/softshares_theme.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:softshares_mobile/screens/drawerLateral/notifications_alert.dart';
-import 'screens/Login/confirmar_id.dart';
-import 'screens/Login/repor_pass.dart';
-import 'screens/Login/escolher_polo.dart';
-import 'screens/pontos_interesse.dart/pontos_interesse.main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -40,22 +44,76 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() {
-    return _MyAppState();
-  }
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  String local = 'pt';
+  final idiomaRepository = IdiomaRepository();
+  String local = "pt";
 
   @override
   void initState() {
-    local = 'pt';
     super.initState();
+    // Initialize locale asynchronously
+    _initializeLocale();
   }
 
-  //Funcao que faz a mudamça da linguagem da aplicação
-  void _mudaIdioma(String linguagem) {
+  Future<void> _initializeLocale() async {
+    String localAdefinir = "pt";
+    // carrega dados iniciais da aplicação
+    await carregaDadosCfgInicial();
+
+    // Get initial locale
+    final systemLocale = PlatformDispatcher.instance.locale;
+    final List<String> fetchedLocales =
+        await idiomaRepository.fetchSupportedLocales();
+
+    localAdefinir = fetchedLocales.contains(systemLocale.languageCode)
+        ? systemLocale.languageCode
+        : 'pt';
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("idioma", localAdefinir);
+
+    setState(() {
+      local = localAdefinir;
+    });
+  }
+
+  Future<void> carregaDadosCfgInicial() async {
+    try {
+      // carrega os idiomas da API
+      final idiomas = await idiomaRepository.fetchIdiomas();
+      final int numeroIdiomasAPI = idiomas.length;
+      final int numeroIdiomasLocal = await idiomaRepository.numeroIdiomas();
+
+      if (numeroIdiomasAPI != numeroIdiomasLocal) {
+        await idiomaRepository.deleteAllIdiomas();
+        for (final idioma in idiomas) {
+          final inserted = await idiomaRepository.createIdioma(idioma);
+          if (!inserted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.ocorreuErro),
+              ),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      print('Error loading data: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.ocorreuErro),
+        ),
+      );
+    }
+  }
+
+  // função que faz a mudança de idioma
+  void _mudaIdioma(String linguagem) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("idioma", linguagem);
     setState(() {
       local = linguagem;
     });
@@ -63,26 +121,13 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    Utilizador utilizador = Utilizador(
-      1, // utilizadorId
-      'John', // pNome
-      'Doe', // uNome
-      'john.doe@example.com', // email
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', // sobre
-      1, // poloId
-      [1, 2, 3], // preferencias
-      1, // funcaoId
-      1, // departamentoId
-    );
-
     return MaterialApp(
       title: 'Softshares',
-      //initialRoute: "/login",
+      // initialRoute: "/login",
       theme: SoftSharesTheme.lightTheme,
       routes: {
         "/login": (context) => EcraLogin(mudaIdioma: _mudaIdioma),
         "/registar": (context) => EcraRegistar(mudaIdioma: _mudaIdioma),
-        "/perfil": (context) => ProfileScreen(utilizador: utilizador),
         '/home': (context) => const HomeScreen(),
         '/notificacoes': (context) => const NotificationsAlertScreen(),
         '/suporte': (context) => const ContactSupport(),
@@ -117,6 +162,7 @@ class _MyAppState extends State<MyApp> {
               imagemUrl: arguments['imagemUrl'] as String,
               msgGrupo: arguments['msgGrupo'] as bool,
               grupoId: arguments['grupoId'] as int,
+              utilizadorId: arguments['utilizadorId'] as int,
             ),
           );
         } else if (settings.name == '/consultarPontoInteresse') {
@@ -139,6 +185,11 @@ class _MyAppState extends State<MyApp> {
             builder: (context) => CriarGrupoScreen(
               editar: arguments['editar'] as bool,
             ),
+          );
+        } else if (settings.name == "/perfil") {
+          final arguments = settings.arguments as Utilizador;
+          return MaterialPageRoute(
+            builder: (context) => ProfileScreen(utilizador: arguments),
           );
         }
         return null;

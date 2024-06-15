@@ -3,12 +3,13 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   //Android emulators use a special network address (10.0.2.2) to refer to your computer's localhost.
+  //final String _baseUrl = "http://192.168.1.84:8000";
   final String _baseUrl = "http://10.0.2.2:8000";
   /*Quando já tivermos o servidor online mudamos
   final String _baseUrl = "http://endereço do servidor";*/
   String? _authToken;
 
-  void setAuthToken(String token){
+  void setAuthToken(String token) {
     _authToken = token;
   }
 
@@ -48,6 +49,21 @@ class ApiService {
     );
     if (response.statusCode == 200) {
       print("Devolve dados");
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future<dynamic> getRequestNoAuth(String endpoint) async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/$endpoint'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to load data');

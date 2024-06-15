@@ -140,5 +140,10 @@
   "selecioneUmaImagem": "You must choose an image", 
   "selecionePeloMenosUmUtilizador": "You must select at least one user", 
   "publico": "Public", 
-  "nomegrupo": "Group Name"
+  "nomegrupo": "Group Name", 
+  "membros": "Members", 
+  "addMembros": "Add Members", 
+  "galeriaVazia": "Empty Gallery", 
+  "sairGrupo": "Salir del Grupo", 
+  "galeria": "Gallery"
 }
