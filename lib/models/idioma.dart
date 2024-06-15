@@ -1,31 +1,26 @@
+import 'package:softshares_mobile/services/api_service.dart';
+import 'package:softshares_mobile/services/database_service.dart';
+
 class Idioma {
-  final int id;
-  final String nome;
+  final int? idiomaid;
+  final String descricao;
   final String icone;
 
-  const Idioma(
-    this.id,
-    this.nome,
-    this.icone,
-  );
-}
+  Idioma({
+    this.idiomaid,
+    required this.descricao,
+    required this.icone,
+  });
 
-// Busca os idiomas disponíveis da API
-Future<List<Idioma>> fetchIdiomas() async {
-  await Future.delayed(Duration(seconds: 2));
+  static Idioma idiomafromJson(Map<String, Object?> json) => Idioma(
+        idiomaid: json['idiomaid'] as int?,
+        descricao: json['descricao'] as String,
+        icone: json['icone'] as String,
+      );
 
-  return [
-    Idioma(1, 'Português', '🇵🇹'),
-    Idioma(2, 'Inglês', '🇬🇧'),
-    Idioma(4, 'Espanhol', '🇪🇸'),
-  ];
-}
-
-// Transforma um json num idioma
-Idioma jsonToIdioma(Map<String, dynamic> json) {
-  return Idioma(
-    json['id'],
-    json['nome'],
-    json['icone'],
-  );
+  Map<String, Object?> idiomatoJson() => {
+        'idiomaid': idiomaid,
+        'descricao': descricao,
+        'icone': icone,
+      };
 }

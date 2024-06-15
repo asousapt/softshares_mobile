@@ -1,4 +1,4 @@
-import 'package:softshares_mobile/api_service.dart';
+import 'package:softshares_mobile/services/api_service.dart';
 
 class Utilizador {
   int utilizadorId;
@@ -157,11 +157,27 @@ Utilizador jsonToUtilizador(Map<String, dynamic> json) {
     json['email'],
     json['sobre'],
     json['poloId'],
-    json['preferencias'],
+    json['preferencias'] != null ? List<int>.from(json['preferencias']) : null,
     json['funcaoId'],
     json['departamentoId'],
     json['fotoUrl'],
   );
+}
+
+// Funcao que transforma um utilizador em JSON
+Map<String, dynamic> utilizadorToJson(Utilizador utilizador) {
+  return {
+    'utilizadorId': utilizador.utilizadorId,
+    'pNome': utilizador.pNome,
+    'uNome': utilizador.uNome,
+    'email': utilizador.email,
+    'sobre': utilizador.sobre,
+    'poloId': utilizador.poloId,
+    'preferencias': utilizador.preferencias,
+    'funcaoId': utilizador.funcaoId,
+    'departamentoId': utilizador.departamentoId,
+    'fotoUrl': utilizador.fotoUrl,
+  };
 }
 
 List<Utilizador> jsonToUtilizadores(List<dynamic> json) {
