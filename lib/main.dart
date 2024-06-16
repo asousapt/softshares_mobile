@@ -143,7 +143,7 @@ class _MyAppState extends State<MyApp> {
         '/recuperarPass': (context) => EcraRecPass(mudaIdioma: _mudaIdioma),
         '/confirmarID': (context) => EcraConfID(mudaIdioma: _mudaIdioma),
         '/reporPass': (context) => EcraReporPass(mudaIdioma: _mudaIdioma),
-        '/escolherPolo': (context) => EcraEscolherPolo(mudaIdioma: _mudaIdioma),
+        '/escolherPolo': (context) => const EcraEscolherPolo(),
         '/responderForm': (context) =>
             const RespostaFormScreen(formularioId: 0),
         '/forum': (context) => const TopicosListaScreen(),
