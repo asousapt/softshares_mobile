@@ -9,7 +9,7 @@ import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/formulario_cfg.dart';
 import '../../time_utils.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
-import '../../api_service.dart';
+import '../../services/api_service.dart';
 
 class CriarPontoInteresseScreen extends StatefulWidget {
   const CriarPontoInteresseScreen({super.key});
