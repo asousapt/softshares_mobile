@@ -1,4 +1,3 @@
-import 'package:softshares_mobile/models/idioma.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -20,20 +19,49 @@ class DatabaseService {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(
+      path,
+      version: 2, // Increment the version number
+      onCreate: _createDB,
+      onUpgrade: _upgradeDB,
+    );
   }
 
-  // criacao da tabela idioma
-  Future _createDB(Database db, int version) async {
-    const idType = 'INTEGER';
+  Future<void> _createDB(Database db, int version) async {
+    const idType = 'INTEGER NOT NULL';
     const textType = 'TEXT NOT NULL';
-    const booleanType = 'BOOLEAN NOT NULL';
 
     await db.execute('''CREATE TABLE idioma (
       idiomaid $idType,
       descricao $textType, 
       icone $textType
     )''');
+
+    await db.execute('''CREATE TABLE polo (
+       poloid $idType,
+      descricao $textType,
+      coordenador $textType,
+      cidade $textType, 
+      cidadeid $idType
+    )''');
+
+    print('Tables created');
+  }
+
+  Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    const idType = 'INTEGER NOT NULL';
+    const textType = 'TEXT NOT NULL';
+
+    if (oldVersion < 2) {
+      await db.execute('''CREATE TABLE IF NOT EXISTS polo (
+           poloid $idType,
+            descricao $textType,
+            coordenador $textType,
+            cidade $textType, 
+            cidadeid $idType
+      )''');
+      print('Table polo created in upgrade');
+    }
   }
 
   Future<List<Map<String, dynamic>>> execSQL(String sql) async {
@@ -41,9 +69,8 @@ class DatabaseService {
     return await db.rawQuery(sql);
   }
 
-  Future close() async {
+  Future<void> close() async {
     final db = await instance.database;
-
-    db.close();
+    await db.close();
   }
 }

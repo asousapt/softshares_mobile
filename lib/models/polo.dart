@@ -1,9 +1,35 @@
 class Polo {
-  final int poloId;
-  final String nome;
+  final int poloid;
+  final String descricao;
+  final String coordenador;
+  final String cidade;
+  final int cidadeid;
 
-  const Polo(
-    this.poloId,
-    this.nome,
-  );
+  Polo({
+    required this.poloid,
+    required this.descricao,
+    required this.coordenador,
+    required this.cidade,
+    required this.cidadeid,
+  });
+
+  factory Polo.fromJson(Map<String, dynamic> json) {
+    return Polo(
+      poloid: json['poloid'],
+      descricao: json['descricao'],
+      coordenador: json['coordenador'],
+      cidade: json['cidade'],
+      cidadeid: json['cidadeid'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'poloid': poloid,
+      'descricao': descricao,
+      'coordenador': coordenador,
+      'cidade': cidade,
+      'cidadeid': cidadeid,
+    };
+  }
 }
