@@ -13,8 +13,10 @@ class ConsultEventScreen extends StatefulWidget {
   const ConsultEventScreen({
     super.key,
     required this.evento,
+    required this.categorias,
   });
 
+  final List<Categoria> categorias;
   final Evento evento;
 
   @override
@@ -26,16 +28,6 @@ class ConsultEventScreen extends StatefulWidget {
 class _ConsultEventScreenState extends State<ConsultEventScreen> {
   Evento? evento;
   bool isSecondTabEnabled = false;
-
-  List<Categoria> categorias = [
-    Categoria(1, "Gastronomia", "cor1", "garfo"),
-    Categoria(2, "Desporto", "cor2", "futebol"),
-    Categoria(3, "Atividade Ar Livre", "cor3", "arvore"),
-    Categoria(4, "Alojamento", "cor3", "casa"),
-    Categoria(5, "Saúde", "cor3", "cruz"),
-    Categoria(6, "Ensino", "cor3", "escola"),
-    Categoria(7, "Infraestruturas", "cor3", "infra"),
-  ];
 
   int utilizadorId = 1;
 
@@ -190,6 +182,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List<Categoria> categorias = widget.categorias;
     double largura = MediaQuery.of(context).size.width;
     double altura = MediaQuery.of(context).size.height;
 

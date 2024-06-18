@@ -3,17 +3,27 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Categoria {
   final int categoriaId;
-  final String descricao;
   final String cor;
   final String icone;
+  final String descricao;
+  final int idiomaId;
 
-  const Categoria(
-    this.categoriaId,
-    this.descricao,
-    this.cor,
-    this.icone,
-  );
+  const Categoria({
+    required this.categoriaId,
+    required this.descricao,
+    required this.cor,
+    required this.icone,
+    required this.idiomaId,
+  });
 
+  // retorna a cor da categoria
+  Color getCor() {
+    String colorString = "FF$cor";
+    int colorInt = int.parse(colorString, radix: 16);
+    return Color(colorInt);
+  }
+
+  // retorna um icone de acordo com a categoria
   Widget getIcone() {
     Widget? resultado;
     switch (icone) {
@@ -48,6 +58,22 @@ class Categoria {
     return resultado;
   }
 }
+
+Categoria categoriafromJson(Map<String, Object?> json) => Categoria(
+      categoriaId: json['categoriaId'] as int,
+      cor: json['cor'] as String,
+      icone: json['icone'] as String,
+      descricao: json['descricao'] as String,
+      idiomaId: json['idiomaId'] as int,
+    );
+
+categoriaToJson(Categoria instance) => <String, Object?>{
+      'categoriaId': instance.categoriaId,
+      'descricao': instance.descricao,
+      'cor': instance.cor,
+      'icone': instance.icone,
+      'idiomaId': instance.idiomaId,
+    };
 
 // Retorna uma lista de itesms do filtro de categoria
 List<PopupMenuEntry<String>> getCatLista(List<Categoria> categorias) {

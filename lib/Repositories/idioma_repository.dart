@@ -39,6 +39,13 @@ class IdiomaRepository {
     return id > 0;
   }
 
+  // retorna o id do idimoa
+  Future<int> getIdiomaId(String idioma) async {
+    final queryIdioma = 'SELECT idiomaid FROM idioma WHERE icone = "$idioma"';
+    final result = await _databaseService.execSQL(queryIdioma);
+    return result[0]['idiomaid'] as int;
+  }
+
 // apaga todos os idiomas existentes
   Future<void> deleteAllIdiomas() async {
     final db = await _databaseService.database;

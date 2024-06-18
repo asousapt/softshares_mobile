@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
@@ -81,6 +82,8 @@ class _MyAppState extends State<MyApp> {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString("idioma", localAdefinir);
+    final int idiomaId = await idiomaRepository.getIdiomaId(localAdefinir);
+    await prefs.setInt("idiomaId", idiomaId);
 
     setState(() {
       local = localAdefinir;
@@ -156,9 +159,12 @@ class _MyAppState extends State<MyApp> {
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/consultarEvento') {
-          final arguments = settings.arguments as Evento;
+          final arguments = settings.arguments as Map<String, dynamic>;
           return MaterialPageRoute(
-            builder: (context) => ConsultEventScreen(evento: arguments),
+            builder: (context) => ConsultEventScreen(
+              evento: arguments['evento'] as Evento,
+              categorias: arguments['categorias'] as List<Categoria>,
+            ),
           );
         } else if (settings.name == '/mensagem_detalhe') {
           final arguments = settings.arguments as Map<String, dynamic>;

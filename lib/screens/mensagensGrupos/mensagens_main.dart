@@ -52,7 +52,7 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
           grupoId: 1,
           nome: 'Team Meeting',
           descricao: 'Team Meeting',
-          subcategoria: Subcategoria(1, 1, 'Meeting'),
+          subcategoria: Subcategoria(1, 1, 'Meeting', 1),
           utilizadores: [
             Utilizador(1, 'Alice', 'Johnson', 'alice.johnson@example.com',
                 'Some info', 1, [1, 2], 1, 1),

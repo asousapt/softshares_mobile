@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/categoria_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/topico.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
@@ -25,17 +27,25 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
   List<Topico> listaEvFiltrada = [];
   List<Topico> listaTopicos = [];
   Color containerColorTopicos = Colors.transparent;
+  List<Categoria> categoriasFiltro = [];
+  List<Categoria> categorias = [];
 
-  List<Categoria> categorias = [
-    Categoria(1, "Gastronomia", "cor1", "garfo"),
-    Categoria(2, "Desporto", "cor2", "futebol"),
-    Categoria(3, "Atividade Ar Livre", "cor3", "arvore"),
-    Categoria(4, "Alojamento", "cor3", "casa"),
-    Categoria(5, "Saúde", "cor3", "cruz"),
-    Categoria(6, "Ensino", "cor3", "escola"),
-    Categoria(7, "Infraestruturas", "cor3", "infra"),
-    Categoria(0, "Todas", "corTodas", "todos"),
-  ];
+  // Busca as categorias do idioma selecionado
+  Future<void> carregaCategorias() async {
+    final prefs = await SharedPreferences.getInstance();
+    final idiomaId = prefs.getInt("idiomaId") ?? 1;
+    CategoriaRepository categoriaRepository = CategoriaRepository();
+    categorias = await categoriaRepository.fetchCategoriasDB(idiomaId);
+    categoriasFiltro = List.from(categorias);
+    Categoria todos = Categoria(
+        categoriaId: 0,
+        descricao: AppLocalizations.of(context)!.todos,
+        icone: "",
+        cor: "",
+        idiomaId: idiomaId);
+
+    categoriasFiltro.add(todos);
+  }
 
   Future<List<Topico>> fetchTopicos() async {
     await Future.delayed(Duration(seconds: 2));
@@ -125,6 +135,7 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
   }
 
   Future<void> actualizaDados() async {
+    carregaCategorias();
     setState(() {
       _isLoading = true;
     });
@@ -162,7 +173,7 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
         onSelected: (String value) {
           filtraPorCategoria(value);
         },
-        itemBuilder: (BuildContext context) => getCatLista(categorias),
+        itemBuilder: (BuildContext context) => getCatLista(categoriasFiltro),
       ),
     ];
   }

@@ -6,8 +6,12 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/categoria_repository.dart';
 import 'package:softshares_mobile/Repositories/polo_repository.dart';
+import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
+import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/polo.dart';
+import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 
 class EcraLogin extends StatefulWidget {
@@ -158,6 +162,42 @@ class _EcraLoginState extends State<EcraLogin> {
       );
     }
   }
+
+  // carrega as categorias
+  Future<void> carregaCategorias() async {
+    CategoriaRepository categoriaRepository = CategoriaRepository();
+
+    try {
+      // Fetch categorias da api
+      List<Categoria> categoriaList =
+          await categoriaRepository.fetchCategorias();
+
+      // Apagar todas as categorias da base de dados
+      categoriaRepository.deleteAllCategorias();
+
+      for (Categoria categoria in categoriaList) {
+        // Inserir categoria na base de dados
+        bool inseriu = await categoriaRepository.createCategoria(categoria);
+        if (!inseriu) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.ocorreuErro),
+            ),
+          );
+        }
+      }
+    } catch (e, stacktrace) {
+      print("An error occurred: $e");
+      print("Stacktrace: $stacktrace");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${AppLocalizations.of(context)!.ocorreuErro}: $e'),
+        ),
+      );
+    }
+  }
+
+  // carrega subcategorias
 
   @override
   Widget build(BuildContext context) {
@@ -313,6 +353,12 @@ class _EcraLoginState extends State<EcraLogin> {
                                       await prefs.setString("utilizadorObj",
                                           jsonEncode(utilJson));
                                       await carregaPolos();
+                                      await carregaCategorias();
+                                      SubcategoriaRepository
+                                          subcategoriaRepository =
+                                          SubcategoriaRepository();
+                                      await subcategoriaRepository
+                                          .carregaSubategorias(context);
 
                                       Navigator.pushNamed(
                                           context, '/escolherPolo');

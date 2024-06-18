@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/widgets/eventos/event_item.dart';
 
 class EventListView extends StatelessWidget {
   final ValueNotifier<List<Evento>> selectedEvents;
+  final List<Categoria> categorias;
+  final String idioma;
 
   const EventListView({
     required this.selectedEvents,
     super.key,
+    required this.categorias,
+    required this.idioma,
   });
 
   @override
@@ -35,6 +40,8 @@ class EventListView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(15)),
                     child: EventItem(
                       evento: value[index],
+                      categorias: categorias,
+                      idioma: idioma,
                     )),
               );
             },

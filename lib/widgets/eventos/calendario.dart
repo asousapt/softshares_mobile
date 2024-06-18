@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:softshares_mobile/models/categoria.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:softshares_mobile/models/evento.dart';
 
@@ -14,6 +15,7 @@ class TableCalendarWidget extends StatelessWidget {
   final Function(CalendarFormat) onFormatChanged;
   final Function(DateTime) onPageChanged;
   final Function(DateTime) eventLoader;
+  final List<Categoria> categorias;
 
   const TableCalendarWidget({
     required this.selectedDay,
@@ -27,6 +29,7 @@ class TableCalendarWidget extends StatelessWidget {
     required this.onFormatChanged,
     required this.onPageChanged,
     required this.eventLoader,
+    required this.categorias,
     super.key,
   });
 
@@ -51,7 +54,10 @@ class TableCalendarWidget extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(horizontal: 2),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: _getCategoryColor(category),
+                      color: categorias
+                          .firstWhere(
+                              (element) => element.categoriaId == category)
+                          .getCor(),
                     ),
                     width: 8.0,
                     height: 8.0,
@@ -103,7 +109,7 @@ class TableCalendarWidget extends StatelessWidget {
     );
   }
 
-  Color _getCategoryColor(int categoryNumber) {
+  /* Color _getCategoryColor(int categoryNumber) {
     switch (categoryNumber) {
       case 1:
         return Colors.red;
@@ -114,5 +120,5 @@ class TableCalendarWidget extends StatelessWidget {
       default:
         return const Color(0x00e3fc03);
     }
-  }
+  }*/
 }
