@@ -27,49 +27,69 @@ class _PontosDeInteresseMainScreenState
   bool _isSearching = false;
   Color containerColorPontosDeInteresse = Colors.transparent;
   ApiService api = ApiService();
+  bool defaultValues = false;
+  List<Categoria> categorias = [];
 
   @override
   void initState() {
     super.initState();
     api.setAuthToken('tokenFixo');
     //api.fetchAuthToken(endpoint, credentials)
-    fetchPontosDeInteresse();
-    listaPontosDeInteresse = pontosDeInteresseTeste;
-    listaPontosDeInteresseFiltrados = pontosDeInteresseTeste;
-  }
 
-  List<Categoria> categorias = [
-    Categoria(1, "Gastronomia", "cor1", "garfo"),
-    Categoria(2, "Desporto", "cor2", "futebol"),
-    Categoria(3, "Atividade Ar Livre", "cor3", "arvore"),
-    Categoria(4, "Alojamento", "cor3", "casa"),
-    Categoria(5, "Saúde", "cor3", "cruz"),
-    Categoria(6, "Ensino", "cor3", "escola"),
-    Categoria(7, "Infraestruturas", "cor3", "infra"),
-    Categoria(0, "Todas", "corTodas", "todos"),
-  ];
+    if (defaultValues) {
+      listaPontosDeInteresse = pontosDeInteresseTeste;
+      listaPontosDeInteresseFiltrados = pontosDeInteresseTeste;
+      categorias = categoriasTeste;
+    } else {
+      fetchPontosDeInteresse();
+      fetchCategorias();
+    }
+  }
 
   Future<void> fetchPontosDeInteresse() async {
     try {
-      // Fetch the JSON data from the API
+      _isLoading = true;
       final lista = await api.getRequest('pontoInteresse/');
       final listaFormatted = lista['data'];
+      if (listaFormatted is! List) {
+      throw Exception("Failed to load data: Expected a list in 'data'");
+    }
 
       // Parse the JSON data into a list of PontoInteresse objects
-      List<PontoInteresse> listaUpdated = (listaFormatted as List)
-          .map((item) => PontoInteresse.fromJson(item))
-          .toList();
-
-      // If you're within a stateful widget, update the state
+      List<PontoInteresse> listaUpdated = listaFormatted.map<PontoInteresse>((item) {
+      try {
+        return PontoInteresse.fromJson(item);
+      } catch (e) {
+        print("Error parsing item: $item");
+        print("Error details: $e");
+        rethrow;
+      }
+    }).toList();
       setState(() {
-        //listaPontosDeInteresse = List.from(listaUpdated);
+        listaPontosDeInteresse = List.from(listaUpdated);
+        listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
       });
-      print("Agora mostra lista");
-      print(lista);
     } catch (e) {
-      print("Error fetching data: $e");
+      print("Error fetching data1: $e");
       // Handle error appropriately
     }
+  }
+
+  Future<void> fetchCategorias() async {
+    try {
+      final lista = await api.getRequest('categoria/');
+
+      List<Categoria> listaUpdated = (lista as List)
+          .map((item) => Categoria.fromJson(item))
+          .toList();
+      print(lista);
+      setState(() {
+        categorias = List.from(listaUpdated);
+      });
+    } catch (e) {
+      print("Error fetching data2: $e");
+    }
+    _isLoading = false;
   }
 
   void limparFiltro() {
@@ -169,7 +189,7 @@ class _PontosDeInteresseMainScreenState
         ),
       ),
       drawer: const MainDrawer(),
-      bottomNavigationBar: BottomNavigation(seleccao: 1),
+      bottomNavigationBar: const BottomNavigation(seleccao: 1),
       appBar: AppBar(
         title: _isSearching
             ? _buildSearchField()
@@ -177,7 +197,7 @@ class _PontosDeInteresseMainScreenState
         actions: _buildAppBarActions(),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator( color: Colors.red,))
           : listaPontosDeInteresseFiltrados.isEmpty
               ? Container(
                   height: altura * 0.8,
@@ -191,7 +211,7 @@ class _PontosDeInteresseMainScreenState
                   ),
                 )
               : Container(
-                  margin: EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(10),
                   color: containerColorPontosDeInteresse,
                   child: ListView.builder(
                     itemCount: listaPontosDeInteresseFiltrados.length,
@@ -204,7 +224,6 @@ class _PontosDeInteresseMainScreenState
                           pontoInteresse: pontoDeInteresse,
                         ),
                         onTap: () {
-                          debugPrint("Working");
                           Navigator.pushNamed(
                               context, '/consultarPontoInteresse',
                               arguments: {'PontoInteresse': pontoDeInteresse});
