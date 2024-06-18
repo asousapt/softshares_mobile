@@ -106,14 +106,3 @@ List<DropdownMenuItem> getListaCatDropdown(List<Categoria> categorias) {
     );
   }).toList();
 }
-
-List<Categoria> categoriasTeste = [
-  const Categoria(1, "Gastronomia", "cor1", "garfo"),
-  const Categoria(2, "Desporto", "cor2", "futebol"),
-  const Categoria(3, "Atividade Ar Livre", "cor3", "arvore"),
-  const Categoria(4, "Alojamento", "cor3", "casa"),
-  const Categoria(5, "Saúde", "cor3", "cruz"),
-  const Categoria(6, "Ensino", "cor3", "escola"),
-  const Categoria(7, "Infraestruturas", "cor3", "infra"),
-  const Categoria(0, "Todas", "corTodas", "todos"),
-];
