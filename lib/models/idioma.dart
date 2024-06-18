@@ -1,6 +1,3 @@
-import 'package:softshares_mobile/services/api_service.dart';
-import 'package:softshares_mobile/services/database_service.dart';
-
 class Idioma {
   final int? idiomaid;
   final String descricao;

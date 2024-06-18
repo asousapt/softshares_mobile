@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
@@ -26,9 +27,9 @@ import 'package:softshares_mobile/screens/mensagensGrupos/listar_grupos.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/mensagem_detalhe.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/mensagens_main.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/nova_mensagem.dart';
-import 'package:softshares_mobile/screens/pontos_interesse.dart/consultar_ponto_interesse.dart';
-import 'package:softshares_mobile/screens/pontos_interesse.dart/criar_ponto_interesse.dart';
-import 'package:softshares_mobile/screens/pontos_interesse.dart/pontos_interesse.main.dart';
+import 'package:softshares_mobile/screens/pontos_interesse/consultar_ponto_interesse.dart';
+import 'package:softshares_mobile/screens/pontos_interesse/criar_ponto_interesse.dart';
+import 'package:softshares_mobile/screens/pontos_interesse/pontos_interesse.main.dart';
 import 'package:softshares_mobile/screens/topicos/criar_topico.dart';
 import 'package:softshares_mobile/screens/topicos/topico_details.dart';
 import 'package:softshares_mobile/screens/topicos/topicos_main.dart';
@@ -81,6 +82,8 @@ class _MyAppState extends State<MyApp> {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString("idioma", localAdefinir);
+    final int idiomaId = await idiomaRepository.getIdiomaId(localAdefinir);
+    await prefs.setInt("idiomaId", idiomaId);
 
     setState(() {
       local = localAdefinir;
@@ -156,9 +159,12 @@ class _MyAppState extends State<MyApp> {
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/consultarEvento') {
-          final arguments = settings.arguments as Evento;
+          final arguments = settings.arguments as Map<String, dynamic>;
           return MaterialPageRoute(
-            builder: (context) => ConsultEventScreen(evento: arguments),
+            builder: (context) => ConsultEventScreen(
+              evento: arguments['evento'] as Evento,
+              categorias: arguments['categorias'] as List<Categoria>,
+            ),
           );
         } else if (settings.name == '/mensagem_detalhe') {
           final arguments = settings.arguments as Map<String, dynamic>;

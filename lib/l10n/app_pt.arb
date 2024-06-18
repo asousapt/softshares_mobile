@@ -146,5 +146,7 @@
   "addMembros": "Adicionar Membros",
   "galeriaVazia": "Galeria vazia",
   "sairGrupo": "Sair do grupo", 
-  "galeria": "Galeria"
+  "galeria": "Galeria", 
+  "todos": "Todos", 
+  "poloSeleccionado": "Polo Seleccionado"
 }

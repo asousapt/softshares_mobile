@@ -1,6 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/categoria_repository.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
@@ -29,21 +30,36 @@ class _PontosDeInteresseMainScreenState
   ApiService api = ApiService();
   bool defaultValues = false;
   List<Categoria> categorias = [];
+  List<Categoria> categoriasFiltro = [];
 
   @override
   void initState() {
     super.initState();
     api.setAuthToken('tokenFixo');
     //api.fetchAuthToken(endpoint, credentials)
+    carregaCategorias();
+    fetchPontosDeInteresse();
+  }
 
-    if (defaultValues) {
-      listaPontosDeInteresse = pontosDeInteresseTeste;
-      listaPontosDeInteresseFiltrados = pontosDeInteresseTeste;
-      categorias = categoriasTeste;
-    } else {
-      fetchPontosDeInteresse();
-      fetchCategorias();
-    }
+  // Carrega as categorias da base de dados local
+  Future<void> carregaCategorias() async {
+    final prefs = await SharedPreferences.getInstance();
+    final idiomaId = prefs.getInt("idiomaId") ?? 1;
+    CategoriaRepository categoriaRepository = CategoriaRepository();
+    List<Categoria> categoriasdb =
+        await categoriaRepository.fetchCategoriasDB(idiomaId);
+    categoriasFiltro = List.from(categoriasdb);
+    Categoria todos = Categoria(
+        categoriaId: 0,
+        descricao: AppLocalizations.of(context)!.todos,
+        icone: "",
+        cor: "",
+        idiomaId: idiomaId);
+
+    categoriasFiltro.add(todos);
+    setState(() {
+      categorias = categoriasdb;
+    });
   }
 
   Future<void> fetchPontosDeInteresse() async {
@@ -52,44 +68,29 @@ class _PontosDeInteresseMainScreenState
       final lista = await api.getRequest('pontoInteresse/');
       final listaFormatted = lista['data'];
       if (listaFormatted is! List) {
-      throw Exception("Failed to load data: Expected a list in 'data'");
-    }
+        throw Exception("Failed to load data: Expected a list in 'data'");
+      }
 
       // Parse the JSON data into a list of PontoInteresse objects
-      List<PontoInteresse> listaUpdated = listaFormatted.map<PontoInteresse>((item) {
-      try {
-        return PontoInteresse.fromJson(item);
-      } catch (e) {
-        print("Error parsing item: $item");
-        print("Error details: $e");
-        rethrow;
-      }
-    }).toList();
+      List<PontoInteresse> listaUpdated =
+          listaFormatted.map<PontoInteresse>((item) {
+        try {
+          return PontoInteresse.fromJson(item);
+        } catch (e) {
+          print("Error parsing item: $item");
+          print("Error details: $e");
+          rethrow;
+        }
+      }).toList();
       setState(() {
         listaPontosDeInteresse = List.from(listaUpdated);
         listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
+        _isLoading = false;
       });
     } catch (e) {
       print("Error fetching data1: $e");
       // Handle error appropriately
     }
-  }
-
-  Future<void> fetchCategorias() async {
-    try {
-      final lista = await api.getRequest('categoria/');
-
-      List<Categoria> listaUpdated = (lista as List)
-          .map((item) => Categoria.fromJson(item))
-          .toList();
-      print(lista);
-      setState(() {
-        categorias = List.from(listaUpdated);
-      });
-    } catch (e) {
-      print("Error fetching data2: $e");
-    }
-    _isLoading = false;
   }
 
   void limparFiltro() {
@@ -123,7 +124,7 @@ class _PontosDeInteresseMainScreenState
           filtraPorTexto(value);
           print("Value is: " + value);
         },
-        itemBuilder: (BuildContext context) => getCatLista(categorias),
+        itemBuilder: (BuildContext context) => getCatLista(categoriasFiltro),
       ),
     ];
   }
@@ -176,6 +177,7 @@ class _PontosDeInteresseMainScreenState
   Widget build(BuildContext context) {
     double altura = MediaQuery.of(context).size.height;
     double largura = MediaQuery.of(context).size.width;
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
@@ -197,7 +199,10 @@ class _PontosDeInteresseMainScreenState
         actions: _buildAppBarActions(),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator( color: Colors.red,))
+          ? Center(
+              child: CircularProgressIndicator(
+              color: Theme.of(context).canvasColor,
+            ))
           : listaPontosDeInteresseFiltrados.isEmpty
               ? Container(
                   height: altura * 0.8,

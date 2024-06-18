@@ -20,6 +20,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   Utilizador? user;
   Utilizador? userIni;
+  String fotoUrl = "";
 
   @override
   void initState() {
@@ -34,7 +35,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         widget.utilizador.poloId,
         widget.utilizador.preferencias,
         widget.utilizador.funcaoId,
-        widget.utilizador.departamentoId);
+        widget.utilizador.departamentoId,
+        widget.utilizador.fotoUrl);
   }
 
   // faz a validação dos dados antes de gravar
@@ -144,7 +146,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               UserProfileWidget(
-                  nome: nomeCompleto, descricao: "Chefe de Vendas - Marketing"),
+                  nome: nomeCompleto,
+                  descricao: "Chefe de Vendas - Marketing",
+                  fotoUrl: user!.fotoUrl!),
               Expanded(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,

@@ -4,22 +4,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 
 class EventItem extends StatelessWidget {
-  EventItem({
+  const EventItem({
     super.key,
     required this.evento,
+    required this.categorias,
+    required this.idioma,
   });
 
   final Evento evento;
-
-  List<Categoria> categorias = [
-    Categoria(1, "Gastronomia", "cor1", "garfo"),
-    Categoria(2, "Desporto", "cor2", "futebol"),
-    Categoria(3, "Atividade Ar Livre", "cor3", "arvore"),
-    Categoria(4, "Alojamento", "cor3", "casa"),
-    Categoria(5, "Saúde", "cor3", "cruz"),
-    Categoria(6, "Ensino", "cor3", "escola"),
-    Categoria(7, "Infraestruturas", "cor3", "infra"),
-  ];
+  final List<Categoria> categorias;
+  final String idioma;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +22,17 @@ class EventItem extends StatelessWidget {
     String participantes = "${evento.numeroInscritos.toString()}/$vagas";
 
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        //prepara argumentos para a rota
+        Map<String, dynamic> args = {
+          "evento": evento,
+          "categorias": categorias,
+        };
+        Navigator.of(context).pushNamed(
+          "/consultarEvento",
+          arguments: args,
+        );
+      },
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(8),
@@ -92,13 +96,13 @@ class EventItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        evento.dataFormatada('pt'),
+                        evento.dataFormatada(idioma),
                         style: const TextStyle(
                           color: Color.fromRGBO(123, 123, 123, 1),
                         ),
                       ),
                       Text(
-                        evento.horaFormatada('pt'),
+                        evento.horaFormatada(idioma),
                         style: const TextStyle(
                           color: Color.fromRGBO(123, 123, 123, 1),
                         ),

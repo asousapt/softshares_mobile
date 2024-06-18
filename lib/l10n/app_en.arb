@@ -145,5 +145,7 @@
   "addMembros": "Add Members", 
   "galeriaVazia": "Empty Gallery", 
   "sairGrupo": "Salir del Grupo", 
-  "galeria": "Gallery"
+  "galeria": "Gallery", 
+  "todos": "All", 
+  "poloSeleccionado": "Selected Office"
 }

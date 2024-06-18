@@ -6,10 +6,12 @@ class UserProfileWidget extends StatelessWidget {
     super.key,
     required this.nome,
     required this.descricao,
+    required this.fotoUrl,
   });
 
   final String nome;
   final String descricao;
+  final String fotoUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +23,9 @@ class UserProfileWidget extends StatelessWidget {
           height: 150,
           child: Stack(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 180,
-                backgroundImage:
-                    AssetImage('assets/profile_image.jpg'), //Falta a imagem
+                backgroundImage: NetworkImage(fotoUrl),
               ),
               Positioned(
                 bottom: 0,

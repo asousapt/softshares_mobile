@@ -45,6 +45,21 @@ class DatabaseService {
       cidadeid $idType
     )''');
 
+    await db.execute('''CREATE TABLE categoria (
+      categoriaId $idType,
+      descricao $textType, 
+      cor $textType, 
+      icone $textType, 
+      idiomaId $idType
+    )''');
+
+    await db.execute('''CREATE TABLE subcategoria (
+      subcategoriaId $idType,
+      categoriaId $idType,
+      descricao $textType,
+      idiomaId $idType
+    )''');
+
     print('Tables created');
   }
 
@@ -61,6 +76,21 @@ class DatabaseService {
             cidadeid $idType
       )''');
       print('Table polo created in upgrade');
+      await db.execute('''CREATE TABLE IF NOT EXISTS categoria (
+      categoriaId $idType,
+      descricao $textType, 
+      cor $textType, 
+      icone $textType, 
+      idiomaId $idType
+    )''');
+      print('Table categoria created in upgrade');
+
+      await db.execute('''CREATE TABLE IF NOT EXISTS subcategoria (
+      subcategoriaId $idType,
+      categoriaId $idType,
+      descricao $textType,
+      idiomaId $idType
+    )''');
     }
   }
 

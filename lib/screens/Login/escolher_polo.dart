@@ -86,6 +86,8 @@ class __EcraEscolherPoloState extends State<EcraEscolherPolo> {
                                             .getInstance();
                                         await prefs.setInt(
                                             "poloId", polos[index].poloid);
+                                        await prefs.setString(
+                                            "polo", polos[index].descricao);
                                         Navigator.pushNamed(context, "/home");
                                       },
                                       title: Text(polos[index].descricao),

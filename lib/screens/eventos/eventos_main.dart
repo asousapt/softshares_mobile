@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/categoria_repository.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/widgets/eventos/event_card_item.dart';
 import 'package:softshares_mobile/widgets/eventos/evento_card_eventos.dart';
@@ -28,17 +30,25 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
   Color containerColorEventos = Colors.transparent;
   Color containerColorInscritos = Colors.transparent;
   bool _isLoading = false;
+  List<Categoria> categorias = [];
+  List<Categoria> categoriasFiltro = [];
 
-  List<Categoria> categorias = [
-    Categoria(1, "Gastronomia", "cor1", "garfo"),
-    Categoria(2, "Desporto", "cor2", "futebol"),
-    Categoria(3, "Atividade Ar Livre", "cor3", "arvore"),
-    Categoria(4, "Alojamento", "cor3", "casa"),
-    Categoria(5, "Saúde", "cor3", "cruz"),
-    Categoria(6, "Ensino", "cor3", "escola"),
-    Categoria(7, "Infraestruturas", "cor3", "infra"),
-    Categoria(0, "Todas", "corTodas", "todos"),
-  ];
+  // Busca as categorias do idioma selecionado
+  Future<void> carregaCategorias() async {
+    final prefs = await SharedPreferences.getInstance();
+    final idiomaId = prefs.getInt("idiomaId") ?? 1;
+    CategoriaRepository categoriaRepository = CategoriaRepository();
+    categorias = await categoriaRepository.fetchCategoriasDB(idiomaId);
+    categoriasFiltro = List.from(categorias);
+    Categoria todos = Categoria(
+        categoriaId: 0,
+        descricao: AppLocalizations.of(context)!.todos,
+        icone: "",
+        cor: "",
+        idiomaId: idiomaId);
+
+    categoriasFiltro.add(todos);
+  }
 
   // Busca os eventos futuros
   Future<List<Evento>> fetchEventos() async {
@@ -264,6 +274,9 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
 
   @override
   void initState() {
+    carregaCategorias().then((_) {
+      actualizaOsContadoresDeEventos();
+    });
     super.initState();
     actualizaOsContadoresDeEventos().then((_) {
       setState(() {
@@ -321,7 +334,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
         onSelected: (String value) {
           filtraPorCategoria(value);
         },
-        itemBuilder: (BuildContext context) => getCatLista(categorias),
+        itemBuilder: (BuildContext context) => getCatLista(categoriasFiltro),
       ),
     ];
   }
@@ -457,7 +470,20 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
                               return ListView(
                                 scrollDirection: Axis.horizontal,
                                 children: eventosInscrito.map((e) {
-                                  return EventCardItem(evento: e);
+                                  return InkWell(
+                                    child: EventCardItem(evento: e),
+                                    onTap: () {
+                                      Map<String, dynamic> args = {
+                                        "evento": e,
+                                        "categorias": categorias,
+                                      };
+                                      Navigator.pushNamed(
+                                        context,
+                                        '/consultarEvento',
+                                        arguments: args,
+                                      );
+                                    },
+                                  );
                                 }).toList(),
                               );
                             }
@@ -496,9 +522,15 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
                                   child: EventItemCard(
                                       evento: e, categorias: categorias),
                                   onTap: () {
+                                    Map<String, dynamic> args = {
+                                      "evento": e,
+                                      "categorias": categorias,
+                                    };
                                     Navigator.pushNamed(
-                                        context, '/consultarEvento',
-                                        arguments: e);
+                                      context,
+                                      '/consultarEvento',
+                                      arguments: args,
+                                    );
                                   },
                                 );
                               }).toList(),
