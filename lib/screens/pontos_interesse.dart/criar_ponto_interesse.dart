@@ -402,7 +402,13 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
                                 SizedBox(width: largura * 0.02),
                                 FilledButton(
                                   onPressed: () {
-                                    String mensagem = "Criar ponto";
+                                    final titulo = _tituloController.text;
+                                    final descricao = _descricao.text;
+                                    final local = _localizacaoController.text;
+                                    final cat = _categoriaId;
+                                    final sub = _subCategoriaId;
+
+                                    String mensagem = "${AppLocalizations.of(context)!.titulo} : $titulo \n ${AppLocalizations.of(context)!.localizacao} : $local \n ${AppLocalizations.of(context)!.descricao} : $descricao \n${AppLocalizations.of(context)!.categoria} : $cat\n ${AppLocalizations.of(context)!.subCategoria} : $sub\n";
 
                                     if (forms.isEmpty || forms.length == 1) {
                                       Future<bool> confirma = confirmExit(
@@ -415,19 +421,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
                                       confirma.then((value) => {
                                             if (value)
                                               {
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ConfiguracaoFormularioScreen(
-                                                      adicionaFormulario:
-                                                          _adicionaFormulario,
-                                                      formId: forms.isEmpty
-                                                          ? 1
-                                                          : forms.last.formId +
-                                                              1,
-                                                    ),
-                                                  ),
-                                                )
+                                                
                                               }
                                             else
                                               {

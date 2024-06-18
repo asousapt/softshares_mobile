@@ -36,27 +36,61 @@ class PontoInteresse {
       this.criador});
 
   factory PontoInteresse.fromJson(Map<String, dynamic> json) {
+
+    final pontoInteresseId = json['pontointeresseid'] as int?;
+    final subCategoriaId = json['subcategoriaid'] as int?;
+    final titulo = json['titulo'] as String?;
+    final descricao = json['descricao'] as String?;
+    final aprovado = json['aprovado'] as bool?;
+    final dataAprovacao = json['dataaprovacao'] != null
+        ? DateTime.parse(json['dataaprovacao'])
+        : null;
+    final utilizadorAprova = json['utilizadoraprova'] as int?;
+    final localizacao = json['localizacao'] as String?;
+    final latitude = json['latitude'] as String?;
+    final longitude = json['longitude'] as String?;
+    final idiomaId = json['idiomaid'] as int?;
+    final cidadeId = json['cidadeid'] as int?;
+    final dataCriacao = json['datacriacao'] != null
+        ? DateTime.parse(json['datacriacao'])
+        : null;
+    final dataAlteracao = json['dataalteracao'] != null
+        ? DateTime.parse(json['dataalteracao'])
+        : null;
+    final criador = json['utilizadorcriou_utilizador'] != null
+        ? jsonToUtilizador(json['utilizadorcriou_utilizador'])
+        : null;
+    if (pontoInteresseId == null ||
+          subCategoriaId == null ||
+          titulo == null ||
+          descricao == null ||
+          localizacao == null ||
+          idiomaId == null ||
+          cidadeId == null ||
+          dataCriacao == null) {
+        throw Exception('Missing required field');
+      }
+
     return PontoInteresse(
-      pontoInteresseId: json['pontointeresseid'],
-      subCategoriaId: json['subcategoriaid'],
-      titulo: json['titulo'],
-      descricao: json['descricao'],
-      aprovado: json['aprovado'],
-      dataAprovacao: json['dataaprovacao'] != null
-          ? DateTime.parse(json['dataaprovacao'])
-          : null,
-      utilizadorAprova: json['utilizadoraprova'],
-      localizacao: json['localizacao'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-      idiomaId: json['idiomaid'],
-      cidadeId: json['cidadeid'],
-      dataCriacao: DateTime.parse(json['datacriacao']),
-      dataAlteracao: json['dataalteracao'] != null
-          ? DateTime.parse(json['dataalteracao'])
-          : null,
-      criador: jsonToUtilizador(json['utilizadorcriou_utilizador'])
-    );
+        pontoInteresseId: json['pontointeresseid'],
+        subCategoriaId: json['subcategoriaid'],
+        titulo: json['titulo'],
+        descricao: json['descricao'],
+        aprovado: json['aprovado'],
+        dataAprovacao: json['dataaprovacao'] != null
+            ? DateTime.parse(json['dataaprovacao'])
+            : null,
+        utilizadorAprova: json['utilizadoraprova'],
+        localizacao: json['localizacao'],
+        latitude: json['latitude'],
+        longitude: json['longitude'],
+        idiomaId: json['idiomaid'],
+        cidadeId: json['cidadeid'],
+        dataCriacao: DateTime.parse(json['datacriacao']),
+        dataAlteracao: json['dataalteracao'] != null
+            ? DateTime.parse(json['dataalteracao'])
+            : null,
+        criador: jsonToUtilizador(json['utilizadorcriou_utilizador']));
   }
 
   Map<String, dynamic> toJson() {

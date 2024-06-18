@@ -51,20 +51,26 @@ class _PontosDeInteresseMainScreenState
       _isLoading = true;
       final lista = await api.getRequest('pontoInteresse/');
       final listaFormatted = lista['data'];
+      if (listaFormatted is! List) {
+      throw Exception("Failed to load data: Expected a list in 'data'");
+    }
 
       // Parse the JSON data into a list of PontoInteresse objects
-      List<PontoInteresse> listaUpdated = (listaFormatted as List)
-          .map((item) => PontoInteresse.fromJson(item))
-          .toList();
-
+      List<PontoInteresse> listaUpdated = listaFormatted.map<PontoInteresse>((item) {
+      try {
+        return PontoInteresse.fromJson(item);
+      } catch (e) {
+        print("Error parsing item: $item");
+        print("Error details: $e");
+        rethrow;
+      }
+    }).toList();
       setState(() {
         listaPontosDeInteresse = List.from(listaUpdated);
         listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
       });
-      print("Agora mostra lista");
-      print(lista);
     } catch (e) {
-      print("Error fetching data: $e");
+      print("Error fetching data1: $e");
       // Handle error appropriately
     }
   }
@@ -76,8 +82,12 @@ class _PontosDeInteresseMainScreenState
       List<Categoria> listaUpdated = (lista as List)
           .map((item) => Categoria.fromJson(item))
           .toList();
+      print(lista);
+      setState(() {
+        categorias = List.from(listaUpdated);
+      });
     } catch (e) {
-      print("Error fetching data: $e");
+      print("Error fetching data2: $e");
     }
     _isLoading = false;
   }

@@ -150,17 +150,30 @@ Future<List<Utilizador>> fetchUtilizadores() async {
 
 // Funcao que transforma um json num Utilizador
 Utilizador jsonToUtilizador(Map<String, dynamic> json) {
+
+  final utilizadorId = json['utilizadorid'];
+  final pNome = json['pnome'];
+  final uNome = json['unome'];
+  final email = json['email'];
+  final sobre = json['sobre'];
+  final poloId = json['poloid'];
+  final preferencias = json['preferencias'] != null ? List<int>.from(json['preferencias']) : null;
+  final funcaoId = json['funcaoid'];
+  final departamentoId = json['departamentoid'];
+  final fotoUrl = json['fotoUrl'];
+
+
   return Utilizador(
-    json['utilizadorid'],
-    json['pnome'],
-    json['unome'],
-    json['email'],
-    json['sobre'],
-    json['poloId'],
+    json['utilizadorid'] as int,
+    json['pnome'] as String,
+    json['unome'] as String,
+    json['email'] as String,
+    json['sobre'] as String?,
+    json['poloid'] as int,
     json['preferencias'] != null ? List<int>.from(json['preferencias']) : null,
-    json['funcaoId'],
-    json['departamentoId'],
-    json['fotoUrl'],
+    json['funcaoid'] as int?,
+    json['departamentoid'] as int?,
+    json['fotourl'] as String?,
   );
 }
 
