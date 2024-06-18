@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/departamento_repository.dart';
+import 'package:softshares_mobile/Repositories/funcao_repositry.dart';
 import 'package:softshares_mobile/Repositories/polo_repository.dart';
 import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/custom_tab.dart';
@@ -16,6 +18,7 @@ class TabPerfil extends StatefulWidget {
   const TabPerfil({super.key, required this.utilizador});
 
   final Utilizador utilizador;
+
   @override
   State<StatefulWidget> createState() {
     return _TabPerfilState();
@@ -36,79 +39,68 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
   Departamento? _departamento;
   Polo? _polo;
   Funcao? _funcao;
-
   List<Subcategoria> subcategorias = [];
-
-  List<Departamento> departamentos = [
-    Departamento(1, 'Administração'),
-    Departamento(2, 'Financeiro'),
-    Departamento(3, 'Logistica'),
-    Departamento(4, 'RH'),
-  ];
-  List<Funcao> funcoes = [
-    Funcao(1, 'Gestor'),
-    Funcao(2, 'Programador'),
-    Funcao(3, 'Técnico de RH'),
-    Funcao(4, 'Administrativo'),
-  ];
+  List<Departamento> departamentos = [];
+  List<Funcao> funcoes = [];
 
   @override
   void initState() {
     super.initState();
-    carregaDadosIniciais().then((value) {
-      setState(() {
-        _pnome.text = widget.utilizador.pNome;
-        _unome.text = widget.utilizador.uNome;
-        _email.text = widget.utilizador.email;
-        _sobre.text = widget.utilizador.sobre!;
-        _departamento = departamentos.firstWhere((element) =>
-            element.departamentoId == widget.utilizador.departamentoId);
-        _polo = polos.firstWhere(
-            (element) => element.poloid == widget.utilizador.poloId);
-        _funcao = funcoes.firstWhere(
-            (element) => element.funcaoId == widget.utilizador.funcaoId);
-        subcatFav = widget.utilizador.preferencias!.isNotEmpty
-            ? widget.utilizador.preferencias
-            : [];
-      });
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    await carregaDadosIniciais();
+    setState(() {
+      _pnome.text = widget.utilizador.pNome;
+      _unome.text = widget.utilizador.uNome;
+      _email.text = widget.utilizador.email;
+      _sobre.text = widget.utilizador.sobre ?? '';
+      _departamento = departamentos.firstWhere((element) =>
+          element.departamentoId == widget.utilizador.departamentoId);
+      _polo = polos
+          .firstWhere((element) => element.poloid == widget.utilizador.poloId);
+      _funcao = funcoes.firstWhere(
+          (element) => element.funcaoId == widget.utilizador.funcaoId);
+      subcatFav = widget.utilizador.preferencias?.isNotEmpty ?? false
+          ? widget.utilizador.preferencias
+          : [];
+      _isLoading = false;
     });
   }
 
   Future<void> carregaDadosIniciais() async {
     final prefs = await SharedPreferences.getInstance();
     final idiomaId = prefs.getInt("idiomaId") ?? 1;
-    PoloRepository poloRepository = PoloRepository();
-    polos = await poloRepository.fetchPolosFromDb();
-    SubcategoriaRepository subcategoriaRepository = SubcategoriaRepository();
-    subcategorias = await subcategoriaRepository.fetchSubcategoriasDB(idiomaId);
-
-    setState(() {
-      _isLoading = false;
-    });
+    polos = await _poloRepository.fetchPolosFromDb();
+    subcategorias =
+        await SubcategoriaRepository().fetchSubcategoriasDB(idiomaId);
+    departamentos =
+        await DepartamentoRepository().fetchDepartamentosDB(idiomaId);
+    funcoes = await FuncaoRepository().fetchFuncoesDB(idiomaId);
   }
 
   // faz a mudança de departamento
-  void _mudaDepartamento(value) {
+  void _mudaDepartamento(Departamento? value) {
     setState(() {
       _departamento = value;
-      widget.utilizador.departamentoId =
-          _departamento == null ? 0 : _departamento!.departamentoId;
+      widget.utilizador.departamentoId = _departamento?.departamentoId ?? 0;
     });
   }
 
   // muda a funcao do utilizador
-  void _mudaFuncao(value) {
+  void _mudaFuncao(Funcao? value) {
     setState(() {
       _funcao = value;
-      widget.utilizador.funcaoId = _funcao == null ? 0 : _funcao!.funcaoId;
+      widget.utilizador.funcaoId = _funcao?.funcaoId ?? 0;
     });
   }
 
-  //muda o polo do utilizador
-  void _mudaPolo(value) {
+  // muda o polo do utilizador
+  void _mudaPolo(Polo? value) {
     setState(() {
       _polo = value;
-      widget.utilizador.poloId = _polo == null ? 0 : _polo!.poloid;
+      widget.utilizador.poloId = _polo?.poloid ?? 0;
     });
   }
 
@@ -124,21 +116,13 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _poloRepository.fetchPolosFromDb(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
+    return _isLoading
+        ? Center(
             child: CircularProgressIndicator(
               color: Theme.of(context).canvasColor,
             ),
-          );
-        } else if (snapshot.hasError) {
-          return const Center(
-            child: Text('Erro ao carregar os polos'),
-          );
-        } else {
-          return DefaultTabController(
+          )
+        : DefaultTabController(
             initialIndex: 0,
             length: 2,
             child: Column(
@@ -311,8 +295,5 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
               ],
             ),
           );
-        }
-      },
-    );
   }
 }

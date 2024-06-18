@@ -7,9 +7,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
+import 'package:softshares_mobile/Repositories/departamento_repository.dart';
+import 'package:softshares_mobile/Repositories/funcao_repositry.dart';
 import 'package:softshares_mobile/Repositories/polo_repository.dart';
 import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
+import 'package:softshares_mobile/models/departamento.dart';
 import 'package:softshares_mobile/models/polo.dart';
 import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
@@ -259,7 +262,7 @@ class _EcraLoginState extends State<EcraLogin> {
                                     decoration: const InputDecoration(
                                       labelText: "Email",
                                       prefixIcon:
-                                        Icon(Icons.account_circle_outlined),
+                                          Icon(Icons.account_circle_outlined),
                                     ),
                                     validator: (value) {
                                       if (value == null ||
@@ -279,10 +282,10 @@ class _EcraLoginState extends State<EcraLogin> {
                                     autocorrect: false,
                                     controller: controlPass,
                                     decoration: InputDecoration(
-                                      label: Text(
-                                          AppLocalizations.of(context)!.password),
-                                      prefixIcon:
-                                          const Icon(Icons.lock_outline_rounded),
+                                      label: Text(AppLocalizations.of(context)!
+                                          .password),
+                                      prefixIcon: const Icon(
+                                          Icons.lock_outline_rounded),
                                       suffixIcon: IconButton(
                                         icon: Icon(passwordVisible
                                             ? Icons.visibility
@@ -335,34 +338,47 @@ class _EcraLoginState extends State<EcraLogin> {
                                         /*if (_formKey.currentState!.validate()) {
                                           Navigator.pushNamed(context, '/home');
                                         }*/
-                                        final prefs =
-                                          await SharedPreferences.getInstance();
-                                      Utilizador util = Utilizador(
-                                        1, // utilizadorId
-                                        'John', // pNome
-                                        'Doe', // uNome
-                                        'john.doe@example.com', // email
-                                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', // sobre
-                                        5, // poloId
-                                        [1, 2, 3], // preferencias
-                                        1, // funcaoId
-                                        1,
-                                        'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200',
-                                      );
-                                      Map<String, dynamic> utilJson =
-                                          utilizadorToJson(util);
-                                      await prefs.setString("utilizadorObj",
-                                          jsonEncode(utilJson));
-                                      await carregaPolos();
-                                      await carregaCategorias();
-                                      SubcategoriaRepository
-                                          subcategoriaRepository =
-                                          SubcategoriaRepository();
-                                      await subcategoriaRepository
-                                          .carregaSubategorias(context);
+                                        final prefs = await SharedPreferences
+                                            .getInstance();
+                                        Utilizador util = Utilizador(
+                                          1, // utilizadorId
+                                          'John', // pNome
+                                          'Doe', // uNome
+                                          'john.doe@example.com', // email
+                                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', // sobre
+                                          5, // poloId
+                                          [1, 2, 3], // preferencias
+                                          1, // funcaoId
+                                          4,
+                                          'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200',
+                                        );
+                                        Map<String, dynamic> utilJson =
+                                            util.toJson();
+                                        await prefs.setString("utilizadorObj",
+                                            jsonEncode(utilJson));
 
-                                      Navigator.pushNamed(
-                                          context, '/escolherPolo');
+                                        await carregaPolos();
+                                        await carregaCategorias();
+                                        SubcategoriaRepository
+                                            subcategoriaRepository =
+                                            SubcategoriaRepository();
+                                        await subcategoriaRepository
+                                            .carregaSubategorias(context);
+                                        DepartamentoRepository
+                                            departamentoRepository =
+                                            DepartamentoRepository();
+                                        await departamentoRepository
+                                            .carregaDepartamentos(context);
+                                        FuncaoRepository funcaoRepositry =
+                                            FuncaoRepository();
+                                        await funcaoRepositry
+                                            .carregaFuncoes(context);
+                                        String? teste =
+                                            prefs.getString("utilizadorObj");
+                                        print(teste!);
+
+                                        Navigator.pushNamed(
+                                            context, '/escolherPolo');
                                       },
                                       child: Text(
                                           AppLocalizations.of(context)!.login),
@@ -387,12 +403,13 @@ class _EcraLoginState extends State<EcraLogin> {
                                               context, "/recuperarPass");
                                         },
                                         child: Text(
-                                          AppLocalizations.of(context)!.clickHere,
+                                          AppLocalizations.of(context)!
+                                              .clickHere,
                                           style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                               decoration:
-                                                TextDecoration.underline),
+                                                  TextDecoration.underline),
                                         ),
                                       ),
                                     ],
@@ -414,10 +431,10 @@ class _EcraLoginState extends State<EcraLogin> {
                                             child: AspectRatio(
                                               aspectRatio: 1.0,
                                               child: Container(
-                                                padding:
-                                                    EdgeInsets.all(altura * 0.01),
+                                                padding: EdgeInsets.all(
+                                                    altura * 0.01),
                                                 child:
-                                                  CountryFlag.fromCountryCode(
+                                                    CountryFlag.fromCountryCode(
                                                   'PT',
                                                   height: largura * 0.03,
                                                   width: largura * 0.03,
@@ -437,9 +454,10 @@ class _EcraLoginState extends State<EcraLogin> {
                                             child: AspectRatio(
                                               aspectRatio: 1.0,
                                               child: Container(
-                                                padding: const EdgeInsets.all(8),
+                                                padding:
+                                                    const EdgeInsets.all(8),
                                                 child:
-                                                  CountryFlag.fromCountryCode(
+                                                    CountryFlag.fromCountryCode(
                                                   'ES',
                                                   height: largura * 0.03,
                                                   width: largura * 0.03,
@@ -459,9 +477,10 @@ class _EcraLoginState extends State<EcraLogin> {
                                             child: AspectRatio(
                                               aspectRatio: 1.0,
                                               child: Container(
-                                                padding: const EdgeInsets.all(8),
+                                                padding:
+                                                    const EdgeInsets.all(8),
                                                 child:
-                                                  CountryFlag.fromCountryCode(
+                                                    CountryFlag.fromCountryCode(
                                                   'GB',
                                                   height: largura * 0.03,
                                                   width: largura * 0.03,
@@ -487,7 +506,8 @@ class _EcraLoginState extends State<EcraLogin> {
                                           vertical: altura * 0.02),
                                     ),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         const Icon(FontAwesomeIcons.facebook),
                                         SizedBox(width: largura * 0.02),
@@ -505,7 +525,8 @@ class _EcraLoginState extends State<EcraLogin> {
                                       ),
                                     ),
                                     child: const Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Icon(FontAwesomeIcons.google),
                                         SizedBox(width: 4),
@@ -518,7 +539,7 @@ class _EcraLoginState extends State<EcraLogin> {
                             ),
                           ],
                         ),
-                        ],
+                      ],
                     ),
                   ),
                 ),

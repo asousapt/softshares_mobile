@@ -38,6 +38,38 @@ class Utilizador {
   String getNomeCompleto() {
     return "$pNome $uNome";
   }
+
+  // Utilizador para JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'utilizadorId': utilizadorId,
+      'pNome': pNome,
+      'uNome': uNome,
+      'email': email,
+      'sobre': sobre,
+      'poloId': poloId,
+      'preferencias': preferencias,
+      'funcaoId': funcaoId,
+      'departamentoId': departamentoId,
+      'fotoUrl': fotoUrl,
+    };
+  }
+
+  // Utilizador from JSON
+  factory Utilizador.fromJson(Map<String, dynamic> json) {
+    return Utilizador(
+      json['utilizadorId'],
+      json['pNome'],
+      json['uNome'],
+      json['email'],
+      json['sobre'],
+      json['poloId'],
+      List<int>.from(json['preferencias']),
+      json['funcaoId'],
+      json['departamentoId'],
+      json['fotoUrl'],
+    );
+  }
 }
 
 // List of Utilizador instances
@@ -146,57 +178,4 @@ Future<List<Utilizador>> fetchUtilizadores() async {
       "https://via.placeholder.com/150",
     ),
   ];
-}
-
-// Funcao que transforma um json num Utilizador
-Utilizador jsonToUtilizador(Map<String, dynamic> json) {
-
-  final utilizadorId = json['utilizadorid'];
-  final pNome = json['pnome'];
-  final uNome = json['unome'];
-  final email = json['email'];
-  final sobre = json['sobre'];
-  final poloId = json['poloid'];
-  final preferencias = json['preferencias'] != null ? List<int>.from(json['preferencias']) : null;
-  final funcaoId = json['funcaoid'];
-  final departamentoId = json['departamentoid'];
-  final fotoUrl = json['fotoUrl'];
-
-
-  return Utilizador(
-    json['utilizadorid'] as int,
-    json['pnome'] as String,
-    json['unome'] as String,
-    json['email'] as String,
-    json['sobre'] as String?,
-    json['poloid'] as int,
-    json['preferencias'] != null ? List<int>.from(json['preferencias']) : null,
-    json['funcaoid'] as int?,
-    json['departamentoid'] as int?,
-    json['fotourl'] as String?,
-  );
-}
-
-// Funcao que transforma um utilizador em JSON
-Map<String, dynamic> utilizadorToJson(Utilizador utilizador) {
-  return {
-    'utilizadorId': utilizador.utilizadorId,
-    'pNome': utilizador.pNome,
-    'uNome': utilizador.uNome,
-    'email': utilizador.email,
-    'sobre': utilizador.sobre,
-    'poloId': utilizador.poloId,
-    'preferencias': utilizador.preferencias,
-    'funcaoId': utilizador.funcaoId,
-    'departamentoId': utilizador.departamentoId,
-    'fotoUrl': utilizador.fotoUrl,
-  };
-}
-
-List<Utilizador> jsonToUtilizadores(List<dynamic> json) {
-  List<Utilizador> utilizadores = [];
-  for (var utilizador in json) {
-    utilizadores.add(jsonToUtilizador(utilizador));
-  }
-  return utilizadores;
 }

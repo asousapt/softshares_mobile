@@ -36,7 +36,6 @@ class PontoInteresse {
       this.criador});
 
   factory PontoInteresse.fromJson(Map<String, dynamic> json) {
-
     final pontoInteresseId = json['pontointeresseid'] as int?;
     final subCategoriaId = json['subcategoriaid'] as int?;
     final titulo = json['titulo'] as String?;
@@ -58,18 +57,18 @@ class PontoInteresse {
         ? DateTime.parse(json['dataalteracao'])
         : null;
     final criador = json['utilizadorcriou_utilizador'] != null
-        ? jsonToUtilizador(json['utilizadorcriou_utilizador'])
+        ? Utilizador.fromJson(json['utilizadorcriou_utilizador'])
         : null;
     if (pontoInteresseId == null ||
-          subCategoriaId == null ||
-          titulo == null ||
-          descricao == null ||
-          localizacao == null ||
-          idiomaId == null ||
-          cidadeId == null ||
-          dataCriacao == null) {
-        throw Exception('Missing required field');
-      }
+        subCategoriaId == null ||
+        titulo == null ||
+        descricao == null ||
+        localizacao == null ||
+        idiomaId == null ||
+        cidadeId == null ||
+        dataCriacao == null) {
+      throw Exception('Missing required field');
+    }
 
     return PontoInteresse(
         pontoInteresseId: json['pontointeresseid'],
@@ -90,7 +89,7 @@ class PontoInteresse {
         dataAlteracao: json['dataalteracao'] != null
             ? DateTime.parse(json['dataalteracao'])
             : null,
-        criador: jsonToUtilizador(json['utilizadorcriou_utilizador']));
+        criador: Utilizador.fromJson(json['utilizadorcriou_utilizador']));
   }
 
   Map<String, dynamic> toJson() {

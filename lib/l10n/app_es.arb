@@ -146,5 +146,6 @@
   "galeriaVazia": "Galeria vazia", 
   "galeria": "Galeria", 
   "todos": "Todos", 
-  "poloSeleccionado": "Oficina Seleccionada"
+  "poloSeleccionado": "Oficina Seleccionada", 
+  "sairGrupo": "Dejar Grupo"
 }

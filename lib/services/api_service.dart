@@ -38,6 +38,7 @@ class ApiService {
     if (_authToken == null) {
       throw Exception('Auth token is not set. Please authenticate first.');
     }
+
     final response = await http.get(
       Uri.parse('$_baseUrl/$endpoint'),
       headers: <String, String>{
@@ -48,8 +49,7 @@ class ApiService {
       },
     );
     if (response.statusCode == 200) {
-      print("Devolve dados");
-      return json.decode(response.body);
+      return jsonDecode(response.body) as Map<String, dynamic>;
     } else {
       throw Exception('Failed to load data');
     }

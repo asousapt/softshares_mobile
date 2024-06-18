@@ -21,7 +21,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 2, // Increment the version number
+      version: 2,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -60,6 +60,18 @@ class DatabaseService {
       idiomaId $idType
     )''');
 
+    await db.execute('''CREATE TABLE departamento (
+      departamentoId $idType,
+      descricao $textType,
+      idiomaId $idType
+    )''');
+
+    await db.execute('''CREATE TABLE funcao (
+      funcaoId $idType,
+      descricao $textType,
+      idiomaId $idType
+    )''');
+
     print('Tables created');
   }
 
@@ -91,6 +103,22 @@ class DatabaseService {
       descricao $textType,
       idiomaId $idType
     )''');
+
+      print('Table subcategoria created in upgrade');
+
+      await db.execute('''CREATE TABLE IF NOT EXISTS departamento (
+      departamentoId $idType,
+      descricao $textType,
+      idiomaId $idType
+    )''');
+      print('Table departamento created in upgrade');
+
+      await db.execute('''CREATE TABLE IF NOT EXISTS funcao (
+      funcaoId $idType,
+      descricao $textType,
+      idiomaId $idType
+    )''');
+      print('Table funcao created in upgrade');
     }
   }
 

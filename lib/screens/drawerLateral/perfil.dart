@@ -27,16 +27,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     userIni = widget.utilizador;
     user = Utilizador(
-        widget.utilizador.utilizadorId,
-        widget.utilizador.pNome,
-        widget.utilizador.uNome,
-        widget.utilizador.email,
-        widget.utilizador.sobre,
-        widget.utilizador.poloId,
-        widget.utilizador.preferencias,
-        widget.utilizador.funcaoId,
-        widget.utilizador.departamentoId,
-        widget.utilizador.fotoUrl);
+      widget.utilizador.utilizadorId,
+      widget.utilizador.pNome,
+      widget.utilizador.uNome,
+      widget.utilizador.email,
+      widget.utilizador.sobre,
+      widget.utilizador.poloId,
+      widget.utilizador.preferencias,
+      widget.utilizador.funcaoId,
+      widget.utilizador.departamentoId,
+      widget.utilizador.fotoUrl,
+    );
   }
 
   // faz a validação dos dados antes de gravar
