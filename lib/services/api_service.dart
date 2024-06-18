@@ -1,12 +1,11 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  //Android emulators use a special network address (10.0.2.2) to refer to your computer's localhost.
-  final String _baseUrl = "http://192.168.1.84:8000";
-  //final String _baseUrl = "http://10.0.2.2:8000";
-  /*Quando já tivermos o servidor online mudamos
-  final String _baseUrl = "http://endereço do servidor";*/
+  // Configure on dotenv file
+  final String _baseUrl = (dotenv.env['API_URL'] as String);
+
   String? _authToken;
 
   void setAuthToken(String token) {

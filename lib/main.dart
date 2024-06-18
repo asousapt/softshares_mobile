@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/models/categoria.dart';
@@ -44,7 +45,7 @@ void main() async {
 
   // Ensure the database is initialized before use
   await dbService.database;
-
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 

@@ -107,9 +107,8 @@ class PontoInteresse {
       'cidadeid': pontoInteresse.cidadeId,
       'datacriacao': pontoInteresse.dataCriacao.toIso8601String(),
       'dataalteracao': pontoInteresse.dataAlteracao?.toIso8601String(),
-      'utilizadorcriou_utilizador': pontoInteresse.criador != null
-          ? utilizadorToJson(pontoInteresse.criador!)
-          : null,
+      'utilizadorcriou_utilizador':
+          pontoInteresse.criador ?? pontoInteresse.criador!.toJson(),
     };
   }
 }
