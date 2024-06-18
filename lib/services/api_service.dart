@@ -81,7 +81,7 @@ class ApiService {
       Uri.parse('$_baseUrl/$endpoint'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': '$_authToken',
       },
       body: jsonEncode(data),
     );

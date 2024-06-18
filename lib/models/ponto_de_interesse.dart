@@ -92,22 +92,24 @@ class PontoInteresse {
         criador: Utilizador.fromJson(json['utilizadorcriou_utilizador']));
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> pontoInteresseToJson(PontoInteresse pontoInteresse) {
     return {
-      'pontoInteresseId': pontoInteresseId,
-      'subCategoriaId': subCategoriaId,
-      'titulo': titulo,
-      'descricao': descricao,
-      'aprovado': aprovado,
-      'dataAprovacao': dataAprovacao?.toIso8601String(),
-      'utilizadorAprova': utilizadorAprova,
-      'localizacao': localizacao,
-      'latitude': latitude,
-      'longitude': longitude,
-      'idiomaId': idiomaId,
-      'cidadeId': cidadeId,
-      'dataCriacao': dataCriacao.toIso8601String(),
-      'dataAlteracao': dataAlteracao?.toIso8601String(),
+      'subcategoriaid': pontoInteresse.subCategoriaId,
+      'titulo': pontoInteresse.titulo,
+      'descricao': pontoInteresse.descricao,
+      'aprovado': pontoInteresse.aprovado,
+      'dataaprovacao': pontoInteresse.dataAprovacao?.toIso8601String(),
+      'utilizadoraprova': pontoInteresse.utilizadorAprova,
+      'localizacao': pontoInteresse.localizacao,
+      'latitude': pontoInteresse.latitude,
+      'longitude': pontoInteresse.longitude,
+      'idiomaid': pontoInteresse.idiomaId,
+      'cidadeid': pontoInteresse.cidadeId,
+      'datacriacao': pontoInteresse.dataCriacao.toIso8601String(),
+      'dataalteracao': pontoInteresse.dataAlteracao?.toIso8601String(),
+      'utilizadorcriou_utilizador': pontoInteresse.criador != null
+          ? utilizadorToJson(pontoInteresse.criador!)
+          : null,
     };
   }
 }
