@@ -147,5 +147,7 @@
   "sairGrupo": "Salir del Grupo", 
   "galeria": "Gallery", 
   "todos": "All", 
-  "poloSeleccionado": "Selected Office"
+  "poloSeleccionado": "Selected Office", 
+  "camara": "Camera", 
+  "removerFoto": "Remove Picture"
 }

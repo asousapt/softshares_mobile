@@ -30,8 +30,8 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
   Future<List<Mensagem>> fetchMensagens() async {
     await Future.delayed(Duration(seconds: 2));
 
-    List<Mensagem> mensagens = [
-      Mensagem(
+    List<Mensagem> mensagens = [];
+    /*Mensagem(
         mensagemId: 1,
         mensagemTexto: 'Hello John!',
         remetente: Utilizador(1, 'Alice', 'Johnson',
@@ -66,7 +66,7 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
         anexos: [],
         vista: false,
       ),
-    ];
+    ]; */
     return mensagens;
   }
 

@@ -27,16 +27,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     userIni = widget.utilizador;
     user = Utilizador(
-      widget.utilizador.utilizadorId,
-      widget.utilizador.pNome,
-      widget.utilizador.uNome,
-      widget.utilizador.email,
-      widget.utilizador.sobre,
-      widget.utilizador.poloId,
-      widget.utilizador.preferencias,
-      widget.utilizador.funcaoId,
-      widget.utilizador.departamentoId,
-      widget.utilizador.fotoUrl,
+      utilizadorId: widget.utilizador.utilizadorId,
+      pNome: widget.utilizador.pNome,
+      uNome: widget.utilizador.uNome,
+      email: widget.utilizador.email,
+      sobre: widget.utilizador.sobre,
+      poloId: widget.utilizador.poloId,
+      preferencias: widget.utilizador.preferencias,
+      funcaoId: widget.utilizador.funcaoId,
+      departamentoId: widget.utilizador.departamentoId,
+      fotoUrl: widget.utilizador.fotoUrl,
+      fotoEnvio: widget.utilizador.fotoEnvio,
     );
   }
 
@@ -147,9 +148,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               UserProfileWidget(
-                  nome: nomeCompleto,
-                  descricao: "Chefe de Vendas - Marketing",
-                  fotoUrl: user!.fotoUrl!),
+                nome: nomeCompleto,
+                descricao: "Chefe de Vendas - Marketing",
+                fotoUrl: user!.fotoUrl!,
+                iniciais: user!.getIniciais(),
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,

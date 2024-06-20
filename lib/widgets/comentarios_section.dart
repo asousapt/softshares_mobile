@@ -18,13 +18,13 @@ class CommentSection extends StatefulWidget {
 class _CommentSectionState extends State<CommentSection> {
   void _adicionaSubcomentario(Commentario commentario, String texto) {
     setState(() {
-      commentario.subcomentarios.add(Commentario(
+      /*commentario.subcomentarios.add(Commentario(
         comentarioid: 0,
         comentario: texto,
         autor: Utilizador(1, 'User', 'Surname', 'email@example.com',
             'some info', 1, [], 1, 1), // Replace with actual user
         data: DateTime.now(),
-      ));
+      ));*/
     });
   }
 

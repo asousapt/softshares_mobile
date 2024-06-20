@@ -147,5 +147,7 @@
   "galeria": "Galeria", 
   "todos": "Todos", 
   "poloSeleccionado": "Oficina Seleccionada", 
-  "sairGrupo": "Dejar Grupo"
+  "sairGrupo": "Dejar Grupo", 
+  "camara": "Cámara",
+    "removerFoto": "Quitar imagen"
 }

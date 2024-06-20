@@ -189,6 +189,7 @@ class _TopicoDetailsScreenState extends State<TopicoDetailsScreen> {
                         child: SingleChildScrollView(
                             child: CommentSection(
                           comentarios: [
+                            /*
                             Commentario(
                               comentarioid: 1,
                               comentario: 'This is the first comment.',
@@ -358,6 +359,7 @@ class _TopicoDetailsScreenState extends State<TopicoDetailsScreen> {
                                 ),
                               ],
                             ),
+                          */
                           ],
                         )),
                       ),

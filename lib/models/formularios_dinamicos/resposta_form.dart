@@ -92,8 +92,8 @@ class RespostaDetalhe {
   }) async {
     await Future.delayed(Duration(seconds: 2)); // Simulate network delay
 
-    List<RespostaDetalhe> dummyRespostas = [
-      RespostaDetalhe(
+    List<RespostaDetalhe> dummyRespostas = [];
+    /*RespostaDetalhe(
         perguntaId: 1,
         resposta: 'John Doe',
         pergunta: Pergunta(
@@ -230,7 +230,7 @@ class RespostaDetalhe {
         utilizador: Utilizador(2, 'Jane', 'Smith', 'jane.smith@example.com',
             'Sobre Jane', 2, [3, 4], 2, 2),
       ),
-    ];
+    ];*/
 
     return dummyRespostas;
   }

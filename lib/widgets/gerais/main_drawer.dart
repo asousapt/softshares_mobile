@@ -27,7 +27,6 @@ class _MainDrawerState extends State<MainDrawer> {
     final prefs = await SharedPreferences.getInstance();
     String? util = prefs.getString('utilizadorObj');
     polo_a_ver = prefs.getString('polo') ?? "";
-    print("user   " + util.toString());
     if (util != null) {
       Map<String, dynamic> user = jsonDecode(util);
       setState(() {
@@ -56,8 +55,7 @@ class _MainDrawerState extends State<MainDrawer> {
                     "${AppLocalizations.of(context)!.poloSeleccionado}: $polo_a_ver"),
                 currentAccountPicture: CircleAvatar(
                   radius: 180,
-                  backgroundImage: NetworkImage(utilizador!
-                      .fotoUrl!), // Replace with your actual image URL
+                  backgroundImage: NetworkImage(utilizador!.fotoUrl!),
                 ),
               ),
             ListTile(

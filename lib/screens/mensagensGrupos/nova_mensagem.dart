@@ -38,7 +38,7 @@ class _NovaMensagemState extends State<NovaMensagem> {
     await Future.delayed(Duration(seconds: 2));
 
     return [
-      Utilizador(
+      /* Utilizador(
           1,
           'João',
           'Silva',
@@ -82,7 +82,7 @@ class _NovaMensagemState extends State<NovaMensagem> {
         4,
         2,
         "https://via.placeholder.com/150",
-      ),
+      ),*/
     ];
   }
 
