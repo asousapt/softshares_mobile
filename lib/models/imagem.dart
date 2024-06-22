@@ -16,18 +16,19 @@ class Imagem {
   // Imagem from JSON
   factory Imagem.fromJson(Map<String, dynamic> json) {
     return Imagem(
-      nome: json['name'],
-      base64: json['url'],
-      tamanho: json['size'],
+      nome: json['name'] ?? json['nome'],
       url: json['url'],
+      tamanho: json['size'] ?? json['tamanho'],
+      base64: "",
     );
   }
 
   // Imagem to JSON
   Map<String, dynamic> toJson() {
+    String uriBase64 = "data:image/jpeg;base64,$base64";
     return {
       'nome': nome,
-      'base64': base64,
+      'base64': uriBase64,
       'tamanho': tamanho,
     };
   }

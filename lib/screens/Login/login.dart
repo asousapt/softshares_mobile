@@ -352,6 +352,7 @@ class _EcraLoginState extends State<EcraLogin> {
 
                                         Map<String, dynamic> utilJson =
                                             util.toJson();
+
                                         await prefs.setString("utilizadorObj",
                                             jsonEncode(utilJson));
 

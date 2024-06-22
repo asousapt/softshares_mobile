@@ -28,8 +28,10 @@ class _MainDrawerState extends State<MainDrawer> {
     final prefs = await SharedPreferences.getInstance();
     String? util = prefs.getString('utilizadorObj');
     polo_a_ver = prefs.getString('polo') ?? "";
+
     if (util != null) {
       Map<String, dynamic> user = jsonDecode(util);
+
       setState(() {
         utilizador = Utilizador.fromJson(user);
         iniciais = utilizador!.getIniciais();

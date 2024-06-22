@@ -1,24 +1,21 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:softshares_mobile/models/imagem.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/utils.dart';
 import 'package:softshares_mobile/widgets/gerais/tirar_foto.dart';
 
 class UserProfileWidget extends StatefulWidget {
-  const UserProfileWidget({
+  UserProfileWidget({
     super.key,
-    required this.nome,
-    required this.descricao,
-    required this.fotoUrl,
-    required this.iniciais,
+    required this.utilizador,
   });
 
-  final String nome;
-  final String descricao;
-  final String fotoUrl;
-  final String iniciais;
+  final Utilizador utilizador;
 
   @override
   State<StatefulWidget> createState() => _UserProfileWidgetState();
@@ -27,21 +24,32 @@ class UserProfileWidget extends StatefulWidget {
 class _UserProfileWidgetState extends State<UserProfileWidget> {
   late String fotoUrl;
   String? base64Image;
+  late Imagem imagem;
 
   @override
   void initState() {
     super.initState();
-    fotoUrl = widget.fotoUrl;
+    fotoUrl = widget.utilizador.fotoUrl ?? '';
+    imagem =
+        widget.utilizador.fotoEnvio ?? Imagem(nome: "", base64: "", tamanho: 0);
     if (fotoUrl.isNotEmpty) {
       _initBase64Image(fotoUrl);
     }
   }
 
+  // Inicializa a base64Image
   Future<void> _initBase64Image(String imageUrl) async {
-    base64Image = await convertImageUrlToBase64(imageUrl);
-    setState(() {});
+    Imagem? carregaImagem = await convertImageUrlToBase64(imageUrl);
+    setState(() {
+      if (carregaImagem != null) {
+        base64Image = carregaImagem.base64;
+        widget.utilizador.fotoEnvio = carregaImagem;
+        print("Imagem carregada com sucesso: ${carregaImagem.nome}");
+      }
+    });
   }
 
+  // carrega o selector para escolher a fonte da imagem
   Future<void> _showImageSourceActionSheet(BuildContext context) async {
     final ImagePicker picker = ImagePicker();
     await showModalBottomSheet(
@@ -56,7 +64,7 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
               final XFile? image =
                   await picker.pickImage(source: ImageSource.gallery);
               if (image != null) {
-                _updateFotoUrl(image.path);
+                _updateFotoUrl(image);
               }
             },
           ),
@@ -71,17 +79,18 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
                   builder: (context) => TirarFoto(cam: cameras),
                 ),
               );
+              print("Foto tirada: $newFotoUrl");
               if (newFotoUrl != null) {
-                _updateFotoUrl(newFotoUrl);
+                _updateFotoUrl(newFotoUrl as XFile?);
               }
             },
           ),
           ListTile(
             leading: const Icon(Icons.delete),
             title: Text(AppLocalizations.of(context)!.removerFoto),
-            onTap: () {
+            onTap: () async {
               Navigator.pop(context);
-              _updateFotoUrl('');
+              _updateFotoUrl(null);
             },
           ),
         ],
@@ -90,11 +99,27 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
   }
 
   // Reseta a fotoUrl e base64Image
-  void _updateFotoUrl(String newFotoUrl) {
-    setState(() {
-      fotoUrl = newFotoUrl;
-      base64Image = null;
-    });
+  void _updateFotoUrl(XFile? newFotoUrl) async {
+    if (newFotoUrl == null) {
+      setState(() {
+        fotoUrl = '';
+        base64Image = null;
+        widget.utilizador.fotoEnvio = Imagem(nome: "", tamanho: 0, base64: "");
+      });
+    } else {
+      // Ler a imagem como bytes
+      final bytes = await newFotoUrl.readAsBytes();
+
+      // Faz encode dos bytes para base64
+      final base64String = base64Encode(bytes);
+
+      setState(() {
+        fotoUrl = newFotoUrl.path;
+        base64Image = null;
+        widget.utilizador.fotoEnvio = Imagem(
+            nome: newFotoUrl.name, tamanho: bytes.length, base64: base64String);
+      });
+    }
   }
 
   @override
@@ -102,9 +127,9 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
     double largura = MediaQuery.of(context).size.width;
     double altura = MediaQuery.of(context).size.height;
 
-    final String nome = widget.nome;
-    final String descricao = widget.descricao;
-    final String iniciais = widget.iniciais;
+    final String nome = widget.utilizador.getNomeCompleto();
+    final String descricao = "descricao do utilizador";
+    final String iniciais = widget.utilizador.getIniciais();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

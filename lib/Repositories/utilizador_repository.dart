@@ -20,4 +20,24 @@ class UtilizadorRepository {
       throw Exception('Failed to load utilizador: $e');
     }
   }
+
+  // Update utilizador
+  Future<int> updateUtilizador(Utilizador utilizador) async {
+    apiService.setAuthToken("tokenFixo");
+
+    print(utilizador.toJsonEnvio());
+    try {
+      String caminho =
+          "utilizadores/update/mobile/${utilizador.utilizadorId.toString()}";
+      var response = await apiService.putRequest(caminho, utilizador.toJsonEnvio());
+
+      if (int.parse(response['data']) > 0) {
+        return int.parse(response['data']);
+      } else {
+        throw Exception('Failed to update utilizador');
+      }
+    } catch (e) {
+      throw Exception('Failed to update utilizador: $e');
+    }
+  }
 }

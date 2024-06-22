@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:softshares_mobile/models/imagem.dart';
 
 class Utilizador {
@@ -29,18 +31,6 @@ class Utilizador {
     this.idiomaId,
   });
 
-  Utilizador.envio(
-    this.utilizadorId,
-    this.pNome,
-    this.uNome,
-    this.email,
-    this.sobre,
-    this.poloId,
-    this.funcaoId,
-    this.departamentoId,
-    this.fotoEnvio,
-  );
-
   // retorna o nome completo do utilizador
   String getNomeCompleto() {
     return "$pNome $uNome";
@@ -69,6 +59,26 @@ class Utilizador {
     };
   }
 
+  Map<String, dynamic> toJsonEnvio() {
+    List<Map<String, dynamic>> listaImagens = [];
+    if (fotoEnvio != null) {
+      listaImagens.add(fotoEnvio!.toJson());
+    }
+
+    return {
+      'pnome': pNome,
+      'unome': uNome,
+      'email': email,
+      'sobre': sobre,
+      'poloid': poloId,
+      'preferencias': preferencias,
+      'funcaoid': funcaoId,
+      'departamentoid': departamentoId,
+      'imagem': jsonEncode(listaImagens),
+      'idiomaid': idiomaId,
+    };
+  }
+
   // Utilizador from JSON
   factory Utilizador.fromJson(Map<String, dynamic> json) {
     return Utilizador(
@@ -86,8 +96,11 @@ class Utilizador {
       funcaoId: json['funcaoid'],
       departamentoId: json['departamentoid'],
       fotoUrl: json['fotoUrl'],
-      fotoEnvio:
-          json['fotoEnvio'] != null ? Imagem.fromJson(json['fotoEnvio']) : null,
+      fotoEnvio: json['imagem'] != null
+          ? Imagem.fromJson(json['imagem'])
+          : json['fotoEnvio'] != null
+              ? Imagem.fromJson(json['fotoEnvio'])
+              : null,
       idiomaId: json['idiomaid'],
     );
   }

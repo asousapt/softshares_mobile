@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/utilizador_repository.dart';
+import 'package:softshares_mobile/models/imagem.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/tab_perfil.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/perfil_img.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
@@ -7,7 +12,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key, required this.utilizador});
+  const ProfileScreen({
+    Key? key,
+    required this.utilizador,
+  }) : super(key: key);
 
   final Utilizador utilizador;
 
@@ -21,11 +29,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Utilizador? user;
   Utilizador? userIni;
   String fotoUrl = "";
+  bool isSaving = false;
 
   @override
   void initState() {
     super.initState();
     userIni = widget.utilizador;
+
     user = Utilizador(
       utilizadorId: widget.utilizador.utilizadorId,
       pNome: widget.utilizador.pNome,
@@ -38,6 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       departamentoId: widget.utilizador.departamentoId,
       fotoUrl: widget.utilizador.fotoUrl,
       fotoEnvio: widget.utilizador.fotoEnvio,
+      idiomaId: widget.utilizador.idiomaId,
     );
   }
 
@@ -90,23 +101,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String nomeCompleto = user!.getNomeCompleto();
-
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) async {
         if (!didPop) {
-          if (objectosIguais(userIni!, user!) == true) {
+          if (objectosIguais(userIni!, user!)) {
             Navigator.of(context).pop();
           } else {
-            // vamos mostrar uma validacao para saber se ficamos ou nao neste ecra
-            Future<bool> confirma = confirmExit(context);
-
-            confirma.then((value) {
-              if (value) {
-                Navigator.of(context).pop();
-              }
-            });
+            // show confirmation dialog
+            bool confirm = await confirmExit(context);
+            if (confirm) {
+              Navigator.of(context).pop();
+            }
           }
         }
       },
@@ -117,19 +123,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
               icon: const FaIcon(
                 FontAwesomeIcons.check,
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (validadados()) {
-                  // faz a alteração do objecto passado do widget anterior
-                  widget.utilizador.departamentoId = user!.departamentoId;
-                  widget.utilizador.email = user!.email;
-                  widget.utilizador.funcaoId = user!.funcaoId;
-                  widget.utilizador.pNome = user!.pNome;
-                  widget.utilizador.poloId = user!.poloId;
-                  widget.utilizador.preferencias = user!.preferencias;
-                  widget.utilizador.sobre = user!.sobre;
-                  widget.utilizador.uNome = user!.uNome;
-                  //fecha o ecra anterior
-                  Navigator.pop(context);
+                  // muda o estado para mostrar o loading
+                  setState(() {
+                    isSaving = true;
+                  });
+
+                  user!.fotoUrl = fotoUrl;
+
+                  UtilizadorRepository utilizadorRepository =
+                      UtilizadorRepository();
+                  await utilizadorRepository
+                      .updateUtilizador(user!)
+                      .then((value) async {
+                    if (value > 0) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content:
+                              Text(AppLocalizations.of(context)!.dadosGravados),
+                        ),
+                      );
+                      Utilizador utilizadorRefresh = await utilizadorRepository
+                          .getUtilizador(user!.utilizadorId.toString());
+
+                      Map<String, dynamic> utilJson =
+                          utilizadorRefresh.toJson();
+                      print(utilJson);
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString(
+                          'utilizadorObj', jsonEncode(utilJson));
+
+                      // muda o estado para ocultar o loading
+                      setState(() {
+                        isSaving = false;
+                      });
+                      Navigator.of(context).pop();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content:
+                              Text(AppLocalizations.of(context)!.ocorreuErro),
+                        ),
+                      );
+                      // muda o estado para ocultar o loading
+                      setState(() {
+                        isSaving = false;
+                      });
+                    }
+                  });
+
+                  // Navigator.pop(context);
                 }
               },
             ),
@@ -143,25 +187,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
             top: 15,
             bottom: 20,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: Stack(
             children: [
-              UserProfileWidget(
-                nome: nomeCompleto,
-                descricao: "Chefe de Vendas - Marketing",
-                fotoUrl: user!.fotoUrl!,
-                iniciais: user!.getIniciais(),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  UserProfileWidget(
+                    utilizador: user!,
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Container(
+                        color: Theme.of(context).canvasColor,
+                        child: TabPerfil(utilizador: user!),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Container(
-                    color: Theme.of(context).canvasColor,
-                    child: TabPerfil(utilizador: user!),
+              if (isSaving)
+                Container(
+                  color: Colors.white.withOpacity(0.4),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                        color: Theme.of(context).canvasColor),
                   ),
                 ),
-              ),
             ],
           ),
         ),

@@ -6,7 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 class TirarFoto extends StatefulWidget {
-  const TirarFoto({Key? key, required this.cam});
+  const TirarFoto({super.key, required this.cam});
 
   final List<CameraDescription> cam;
 
@@ -107,7 +107,7 @@ class _TirarFotoState extends State<TirarFoto> {
             await foto.saveTo(filePath);
 
             // Return to previous screen (LoginScreen) with the captured photo path
-            Navigator.pop(context, filePath);
+            Navigator.pop(context, foto);
           } catch (e) {
             print('Erro ao capturar foto: $e');
           }

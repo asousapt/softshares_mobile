@@ -150,5 +150,6 @@
   "todos": "Todos", 
   "poloSeleccionado": "Polo Seleccionado", 
   "camara": "Câmara", 
-  "removerFoto": "Remover Foto"
+  "removerFoto": "Remover Foto", 
+  "dadosGravados": "Dados guardados com sucesso!"
 }

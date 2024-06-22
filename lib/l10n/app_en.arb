@@ -149,5 +149,6 @@
   "todos": "All", 
   "poloSeleccionado": "Selected Office", 
   "camara": "Camera", 
-  "removerFoto": "Remove Picture"
+  "removerFoto": "Remove Picture", 
+  "dadosGravados": "Data saved with success!"
 }

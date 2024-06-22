@@ -91,4 +91,26 @@ class ApiService {
       throw Exception('Failed to post data');
     }
   }
+
+// makes a PUT request
+  Future<dynamic> putRequest(String endpoint, Map<String, dynamic> data) async {
+    if (_authToken == null) {
+      throw Exception('Auth token is not set. Please authenticate first.');
+    }
+    print('$_baseUrl/$endpoint');
+    final response = await http.put(
+      Uri.parse('$_baseUrl/$endpoint'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': '$_authToken',
+      },
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to put data');
+    }
+  }
 }

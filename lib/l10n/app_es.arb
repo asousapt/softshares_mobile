@@ -149,5 +149,6 @@
   "poloSeleccionado": "Oficina Seleccionada", 
   "sairGrupo": "Dejar Grupo", 
   "camara": "Cámara",
-    "removerFoto": "Quitar imagen"
+  "removerFoto": "Quitar imagen", 
+  "dadosGravados": "¡Datos guardados con éxito!"
 }
