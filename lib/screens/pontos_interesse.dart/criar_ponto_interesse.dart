@@ -1,15 +1,18 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/categoria_repository.dart';
+import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
 import 'package:softshares_mobile/l10n/app_localizations_extension.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/formulario_cfg.dart';
-import '../../time_utils.dart';
+import 'package:softshares_mobile/time_utils.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
-import '../../services/api_service.dart';
+import 'package:softshares_mobile/services/api_service.dart';
 
 class CriarPontoInteresseScreen extends StatefulWidget {
   const CriarPontoInteresseScreen({super.key});
@@ -499,4 +502,4 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       ),
     );
   }
-}
+}*/

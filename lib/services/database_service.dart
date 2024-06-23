@@ -9,7 +9,10 @@ class DatabaseService {
   DatabaseService._init();
 
   Future<Database> get database async {
-    if (_database != null) return _database!;
+    if (_database != null) {
+      print("Já tinha bd");
+      return _database!;
+    }
 
     _database = await _initDB('softshares.db');
     return _database!;
@@ -130,5 +133,14 @@ class DatabaseService {
   Future<void> close() async {
     final db = await instance.database;
     await db.close();
+  }
+
+  Future<void> deleteDB() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'softshares.db');
+
+    await deleteDatabase(path);
+    print('Database deleted');
+    _database = null;
   }
 }

@@ -58,13 +58,13 @@ class Utilizador {
   // Utilizador from JSON
   factory Utilizador.fromJson(Map<String, dynamic> json) {
     return Utilizador(
-      json['utilizadorId'],
-      json['pNome'],
-      json['uNome'],
-      json['email'],
+      json['utilizadorId'] ?? 0,
+      json['pNome'] ?? '',
+      json['uNome'] ?? '',
+      json['email'] ?? '',
       json['sobre'],
-      json['poloId'],
-      List<int>.from(json['preferencias']),
+      json['poloId'] ?? 0,
+      json['preferencias'] != null ? List<int>.from(json['preferencias']) : null,
       json['funcaoId'],
       json['departamentoId'],
       json['fotoUrl'],

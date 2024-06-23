@@ -11,29 +11,31 @@ class PontoInteresse {
   final String localizacao;
   final String? latitude;
   final String? longitude;
-
   final int idiomaId;
   final int cidadeId;
   final DateTime dataCriacao;
   final DateTime? dataAlteracao;
   final Utilizador? criador;
+  final double? avaliacao;
 
-  PontoInteresse(
-      {required this.pontoInteresseId,
-      required this.subCategoriaId,
-      required this.titulo,
-      required this.descricao,
-      this.aprovado,
-      this.dataAprovacao,
-      this.utilizadorAprova,
-      required this.localizacao,
-      this.latitude,
-      this.longitude,
-      required this.idiomaId,
-      required this.cidadeId,
-      required this.dataCriacao,
-      this.dataAlteracao,
-      this.criador});
+  PontoInteresse({
+    required this.pontoInteresseId,
+    required this.subCategoriaId,
+    required this.titulo,
+    required this.descricao,
+    this.aprovado,
+    this.dataAprovacao,
+    this.utilizadorAprova,
+    required this.localizacao,
+    this.latitude,
+    this.longitude,
+    required this.idiomaId,
+    required this.cidadeId,
+    required this.dataCriacao,
+    this.dataAlteracao,
+    this.criador,
+    this.avaliacao,
+  });
 
   factory PontoInteresse.fromJson(Map<String, dynamic> json) {
     final pontoInteresseId = json['pontointeresseid'] as int?;
@@ -59,6 +61,10 @@ class PontoInteresse {
     final criador = json['utilizadorcriou_utilizador'] != null
         ? Utilizador.fromJson(json['utilizadorcriou_utilizador'])
         : null;
+    final avaliacao = json['avgavaliacao'] != null 
+      ? double.tryParse(json['avgavaliacao']) 
+      : null;
+
     if (pontoInteresseId == null ||
         subCategoriaId == null ||
         titulo == null ||
@@ -67,52 +73,53 @@ class PontoInteresse {
         idiomaId == null ||
         cidadeId == null ||
         dataCriacao == null) {
+      print('JSON data: $json');
       throw Exception('Missing required field');
     }
 
     return PontoInteresse(
-        pontoInteresseId: json['pontointeresseid'],
-        subCategoriaId: json['subcategoriaid'],
-        titulo: json['titulo'],
-        descricao: json['descricao'],
-        aprovado: json['aprovado'],
-        dataAprovacao: json['dataaprovacao'] != null
-            ? DateTime.parse(json['dataaprovacao'])
-            : null,
-        utilizadorAprova: json['utilizadoraprova'],
-        localizacao: json['localizacao'],
-        latitude: json['latitude'],
-        longitude: json['longitude'],
-        idiomaId: json['idiomaid'],
-        cidadeId: json['cidadeid'],
-        dataCriacao: DateTime.parse(json['datacriacao']),
-        dataAlteracao: json['dataalteracao'] != null
-            ? DateTime.parse(json['dataalteracao'])
-            : null,
-        criador: Utilizador.fromJson(json['utilizadorcriou_utilizador']));
+      pontoInteresseId: pontoInteresseId,
+      subCategoriaId: subCategoriaId,
+      titulo: titulo,
+      descricao: descricao,
+      aprovado: aprovado,
+      dataAprovacao: dataAprovacao,
+      utilizadorAprova: utilizadorAprova,
+      localizacao: localizacao,
+      latitude: latitude,
+      longitude: longitude,
+      idiomaId: idiomaId,
+      cidadeId: cidadeId,
+      dataCriacao: dataCriacao,
+      dataAlteracao: dataAlteracao,
+      criador: criador,
+      avaliacao: avaliacao,
+    );
   }
 
-  Map<String, dynamic> pontoInteresseToJson(PontoInteresse pontoInteresse) {
+  Map<String, dynamic> toJson() {
     return {
-      'subcategoriaid': pontoInteresse.subCategoriaId,
-      'titulo': pontoInteresse.titulo,
-      'descricao': pontoInteresse.descricao,
-      'aprovado': pontoInteresse.aprovado,
-      'dataaprovacao': pontoInteresse.dataAprovacao?.toIso8601String(),
-      'utilizadoraprova': pontoInteresse.utilizadorAprova,
-      'localizacao': pontoInteresse.localizacao,
-      'latitude': pontoInteresse.latitude,
-      'longitude': pontoInteresse.longitude,
-      'idiomaid': pontoInteresse.idiomaId,
-      'cidadeid': pontoInteresse.cidadeId,
-      'datacriacao': pontoInteresse.dataCriacao.toIso8601String(),
-      'dataalteracao': pontoInteresse.dataAlteracao?.toIso8601String(),
-      'utilizadorcriou_utilizador':
-          pontoInteresse.criador ?? pontoInteresse.criador!.toJson(),
+      'pontointeresseid': pontoInteresseId,
+      'subcategoriaid': subCategoriaId,
+      'titulo': titulo,
+      'descricao': descricao,
+      'aprovado': aprovado,
+      'dataaprovacao': dataAprovacao?.toIso8601String(),
+      'utilizadoraprova': utilizadorAprova,
+      'localizacao': localizacao,
+      'latitude': latitude,
+      'longitude': longitude,
+      'idiomaid': idiomaId,
+      'cidadeid': cidadeId,
+      'datacriacao': dataCriacao.toIso8601String(),
+      'dataalteracao': dataAlteracao?.toIso8601String(),
+      'utilizadorcriou_utilizador': criador?.toJson(),
+      'avgavaliacao': avaliacao,
     };
   }
 }
 
+// Sample data with the new 'avaliacao' attribute
 final List<PontoInteresse> pontosDeInteresseTeste = [
   PontoInteresse(
     pontoInteresseId: 1,
@@ -130,6 +137,7 @@ final List<PontoInteresse> pontosDeInteresseTeste = [
     cidadeId: 101,
     dataCriacao: DateTime(2023, 1, 10),
     criador: utilizadores[0],
+    avaliacao: 4.5,
   ),
   PontoInteresse(
     pontoInteresseId: 2,
@@ -147,6 +155,7 @@ final List<PontoInteresse> pontosDeInteresseTeste = [
     cidadeId: 101,
     dataCriacao: DateTime(2023, 2, 15),
     criador: utilizadores[1],
+    avaliacao: 4.7,
   ),
   PontoInteresse(
     pontoInteresseId: 3,
@@ -163,6 +172,7 @@ final List<PontoInteresse> pontosDeInteresseTeste = [
     cidadeId: 102,
     dataCriacao: DateTime(2023, 3, 25),
     criador: utilizadores[2],
+    avaliacao: 4.8,
   ),
   PontoInteresse(
     pontoInteresseId: 4,
@@ -179,5 +189,6 @@ final List<PontoInteresse> pontosDeInteresseTeste = [
     cidadeId: 103,
     dataCriacao: DateTime(2023, 4, 30),
     criador: utilizadores[3],
+    avaliacao: 4.9,
   ),
 ];

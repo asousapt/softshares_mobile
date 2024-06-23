@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
@@ -11,6 +13,8 @@ import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dar
 import 'package:softshares_mobile/screens/formularios_dinamicos/resposta_individual.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/tabela_respostas.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/custom_tab.dart';
+import 'package:softshares_mobile/widgets/pontos__de_interesse/escolherRating.dart';
+import 'package:softshares_mobile/widgets/pontos__de_interesse/estrelas.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:softshares_mobile/widgets/gerais/text_tools.dart';
 import 'package:softshares_mobile/widgets/comentarios_section.dart';
@@ -18,6 +22,7 @@ import 'package:softshares_mobile/models/comentario.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
+import 'dart:convert';
 
 class ConsultPontoInteresseScreen extends StatefulWidget {
   const ConsultPontoInteresseScreen({
@@ -38,54 +43,15 @@ class _ConsultPontoInteresseScreenState
   PontoInteresse? pontoInteresse;
   List<Categoria> categorias = [];
   bool _isLoading = true;
+  String? comentarioAtual;
+  int rating = 0;
+  bool invalidRating = false;
+  Utilizador? user;
 
-  List<Widget> rating(double ratingLocal) {
-    // Garantir que a classificação esteja dentro do intervalo de 0 a 5
-    if (ratingLocal < 0 || ratingLocal > 5) {
-      return <Widget>[const Text("Erro nos ratings, valor inválido(<0 ou 5<)")];
-    }
-
-    List<Widget> estrelas = [];
-
-    // Número de estrelas cheias
-    int estrelasCheias = ratingLocal.floor();
-    // Verificar se há meia estrela
-    bool temMeiaEstrela = (ratingLocal - estrelasCheias) >= 0.5;
-
-    // Adicionar estrelas cheias
-    for (int i = 0; i < estrelasCheias; i++) {
-      estrelas.add(const Icon(
-        Icons.star,
-        size: 30.0,
-        color: Colors.amber,
-      ));
-    }
-
-    // Adicionar meia estrela, se aplicável
-    if (temMeiaEstrela) {
-      estrelas.add(const Icon(
-        Icons.star_half,
-        size: 30.0,
-        color: Colors.amber,
-      ));
-    }
-
-    // Adicionar estrelas vazias restantes
-    int estrelasVazias = 5 - estrelas.length;
-    for (int i = 0; i < estrelasVazias; i++) {
-      estrelas.add(const Icon(
-        Icons.star_border,
-        size: 30.0,
-        color: Colors.amber,
-      ));
-    }
-
-    return estrelas;
-  }
-
-  Future<void> carregaCategorias() async {
+  Future<void> carregaDados() async {
     final prefs = await SharedPreferences.getInstance();
     final idiomaId = prefs.getInt("idiomaId") ?? 1;
+    user = jsonDecode(prefs.getString('utilizadorObj')!);
 
     CategoriaRepository categoriaRepository = CategoriaRepository();
     List<Categoria> categoriasdb =
@@ -98,9 +64,26 @@ class _ConsultPontoInteresseScreenState
 
   int utilizadorId = 1;
 
+  atualizarRating(int aval) {
+    setState(() {
+      rating = aval;
+    });
+  }
+
+  void enviarAvaliacao() {
+    if (comentarioAtual == null) {
+      //API para enviar comentário atual
+    }
+    if (rating == 0) {
+      invalidRating == true;
+    } else {
+      //Código para enviar rating
+    }
+  }
+
   @override
   void initState() {
-    carregaCategorias();
+    carregaDados();
     pontoInteresse = widget.pontoInteresse;
     super.initState();
   }
@@ -164,19 +147,14 @@ class _ConsultPontoInteresseScreenState
                               ),
                             ),
                             SizedBox(height: altura * 0.02),
-                            Row(children: [
-                              Text(
-                                pontoInteresse!.titulo,
-                                style: const TextStyle(
-                                    fontSize: 22, fontWeight: FontWeight.bold),
+                            Text(
+                              pontoInteresse!.titulo,
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
                               ),
-                              Spacer(),
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: rating(
-                                      4) //Função que devolve o número de estrelas em forma de icone, depois será substituido pelo valor recebido pela Base de Dados
-                                  )
-                            ]),
+                            ),
+                            EstrelasRating(rating: pontoInteresse!.avaliacao!),
                             SizedBox(height: altura * 0.02),
                             Row(
                               children: [
@@ -221,9 +199,18 @@ class _ConsultPontoInteresseScreenState
                                     ),
                                   ),
                                 ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: RatingPicker(
+                                      initialRating: 1,
+                                      onRatingSelected: atualizarRating),
+                                ),
                                 ElevatedButton(
                                   onPressed: () {
-                                    // Define the button action here
+                                    enviarAvaliacao();
                                   },
                                   child: Text(
                                       AppLocalizations.of(context)!.avaliar),
@@ -233,131 +220,12 @@ class _ConsultPontoInteresseScreenState
                             const Divider(
                               color: Color.fromRGBO(29, 90, 161, 1),
                             ),
-                            const Text("Comentários de outros utilizadores"),
+                            Text(AppLocalizations.of(context)!.outrosComentarios),
                             SizedBox(
                               height: altura * 0.5,
                               child: SingleChildScrollView(
                                 child: CommentSection(
-                                  comentarios: [
-                                    Commentario(
-                                      comentarioid: 1,
-                                      comentario: 'This is the first comment.',
-                                      autor: Utilizador(
-                                          3,
-                                          'Alice',
-                                          'Johnson',
-                                          'alice.johnson@example.com',
-                                          'Some info',
-                                          3,
-                                          [1, 2],
-                                          3,
-                                          3),
-                                      data: DateTime.now()
-                                          .subtract(const Duration(days: 1)),
-                                    ),
-                                    Commentario(
-                                      comentarioid: 4,
-                                      comentario: 'This is the second comment.',
-                                      autor: Utilizador(
-                                          3,
-                                          'Alice',
-                                          'Johnson',
-                                          'alice.johnson@example.com',
-                                          'Some info',
-                                          3,
-                                          [1, 2],
-                                          3,
-                                          3),
-                                      data: DateTime.now()
-                                          .subtract(Duration(days: 2)),
-                                    ),
-                                    Commentario(
-                                      comentarioid: 6,
-                                      comentario:
-                                          'This is the third comment with no subcomments.',
-                                      autor: Utilizador(
-                                          3,
-                                          'Alice',
-                                          'Johnson',
-                                          'alice.johnson@example.com',
-                                          'Some info',
-                                          3,
-                                          [1, 2],
-                                          3,
-                                          3),
-                                      data: DateTime.now()
-                                          .subtract(Duration(days: 3)),
-                                    ),
-                                    Commentario(
-                                      comentarioid: 7,
-                                      comentario: 'This is the fourth comment.',
-                                      autor: Utilizador(
-                                          3,
-                                          'Alice',
-                                          'Johnson',
-                                          'alice.johnson@example.com',
-                                          'Some info',
-                                          3,
-                                          [1, 2],
-                                          3,
-                                          3),
-                                      data: DateTime.now()
-                                          .subtract(Duration(days: 4)),
-                                      subcomentarios: [
-                                        Commentario(
-                                          comentarioid: 8,
-                                          comentario:
-                                              'Subcomment to the fourth comment.',
-                                          autor: Utilizador(
-                                              3,
-                                              'Alice',
-                                              'Johnson',
-                                              'alice.johnson@example.com',
-                                              'Some info',
-                                              3,
-                                              [1, 2],
-                                              3,
-                                              3),
-                                          data: DateTime.now().subtract(
-                                              Duration(days: 4, hours: 1)),
-                                        ),
-                                        Commentario(
-                                          comentarioid: 9,
-                                          comentario:
-                                              'Another subcomment to the fourth comment.',
-                                          autor: Utilizador(
-                                              3,
-                                              'Alice',
-                                              'Johnson',
-                                              'alice.johnson@example.com',
-                                              'Some info',
-                                              3,
-                                              [1, 2],
-                                              3,
-                                              3),
-                                          data: DateTime.now().subtract(
-                                              Duration(days: 4, hours: 2)),
-                                        ),
-                                        Commentario(
-                                          comentarioid: 10,
-                                          comentario:
-                                              'Yet another subcomment to the fourth comment.',
-                                          autor: Utilizador(
-                                              3,
-                                              'Alice',
-                                              'Johnson',
-                                              'alice.johnson@example.com',
-                                              'Some info',
-                                              3,
-                                              [1, 2],
-                                              3,
-                                              3),
-                                          data: DateTime.now().subtract(
-                                              Duration(days: 4, hours: 3)),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                  comentarios: comentariosTeste
                                 ),
                               ),
                             )
