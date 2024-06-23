@@ -113,6 +113,7 @@ class Evento {
           ? List<int>.from(json['participantes'])
           : [],
       categoria: json['categoriaid'],
+      imagem: json['imagens'] != null ? List<String>.from(json['imagens']) : [],
     );
   }
 

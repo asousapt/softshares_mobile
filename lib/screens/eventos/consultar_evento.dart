@@ -1,14 +1,18 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/evento_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/resposta_individual.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/tabela_respostas.dart';
+import 'package:softshares_mobile/widgets/gerais/galeria_widget.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/custom_tab.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class ConsultEventScreen extends StatefulWidget {
   const ConsultEventScreen({
@@ -31,107 +35,42 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
   bool isSecondTabEnabled = false;
   String idioma = "";
   bool _isLoading = true;
-
-  int utilizadorId = 1;
+  late int utilizadorId;
 
   @override
   void initState() {
-    getIdioma();
-    evento = widget.evento;
-    isSecondTabEnabled = evento!.utilizadorCriou == utilizadorId;
     super.initState();
+    initialize();
   }
 
-  Future<void> getIdioma() async {
-    final prefs = await SharedPreferences.getInstance();
-    idioma = prefs.getString("idioma") ?? "pt";
+  // Inicializa o estado do ecrã
+  Future<void> initialize() async {
+    await getIdioma();
+    evento = widget.evento;
+    print("latitude: ${evento!.latitude}, longitude: ${evento!.longitude}");
+    isSecondTabEnabled = evento!.utilizadorCriou == utilizadorId;
     setState(() {
       _isLoading = false;
     });
   }
 
-  // funcao que verifica se o utilizador pode inscrever-se no evento
-  bool podeInscrever(Evento evento) {
-    DateTime hoje = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-    );
-
-    if (evento.utilizadorCriou == utilizadorId) {
-      return false;
-    }
-
-    if (evento.utilizadoresInscritos!.contains(utilizadorId)) {
-      return false;
-    }
-
-    if (evento.dataLimiteInsc.isBefore(hoje)) {
-      return false;
-    }
-
-    if ((evento.dataLimiteInsc.isAfter(hoje) ||
-        evento.dataLimiteInsc.isAtSameMomentAs(hoje))) {
-      if (evento.numeroMaxPart == 0) {
-        return true;
-      } else if (evento.numeroInscritos < evento.numeroMaxPart) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    return false;
+  // Obtem o idioma e o utilizadorId
+  Future<void> getIdioma() async {
+    final prefs = await SharedPreferences.getInstance();
+    idioma = prefs.getString("idioma") ?? "pt";
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    utilizadorId = utilizador.utilizadorId;
   }
 
-  // Verifica se o utilizador pode cancelar a inscricao no evento
-  bool podeCancelarInscricao(Evento evento) {
-    DateTime hoje = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-    );
-
-    // utilizador nao pode cancelar se foi o criador do evento
-    if (evento.utilizadorCriou == utilizadorId) {
-      return false;
-    }
-
-    // o evento ja aconteceu
-    if (evento.dataLimiteInsc.isBefore(hoje)) {
-      return false;
-    }
-
-    if (evento.dataLimiteInsc.isAtSameMomentAs(hoje)) {
-      return false;
-    }
-
-    if (evento.dataLimiteInsc.isAfter(hoje) &&
-        !evento.utilizadoresInscritos!.contains(utilizadorId)) {
-      return false;
-    }
-
-    return true;
-  }
-
-  // Verifica se o evento pode ser cancelado pelo seu criador
-  bool podeCancelarEvento(Evento evento) {
-    DateTime hoje = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-    );
-
-    if (evento.dataLimiteInsc.isAfter(hoje) &&
-        evento.utilizadorCriou == utilizadorId) {
-      return true;
-    }
-    return false;
-  }
-
+  // renderiza o botao de inscrever, cancelar inscricao ou cancelar evento
   Widget? inscreveOuCancela(Evento evento, double altura) {
-    bool podeCancelarf = podeCancelarInscricao(evento);
-    bool podeInscreverf = podeInscrever(evento);
-    bool podeCancelarEventof = podeCancelarEvento(evento);
+    EventoRepository eventoRepository = EventoRepository();
+    bool podeCancelarf =
+        eventoRepository.podeCancelarInscricao(evento, utilizadorId);
+    bool podeInscreverf = eventoRepository.podeInscrever(evento, utilizadorId);
+    bool podeCancelarEventof =
+        eventoRepository.podeCancelarEvento(evento, utilizadorId);
 
     if (podeCancelarf == true && podeInscreverf == false) {
       return SizedBox(
@@ -299,16 +238,10 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                           ),
                                         ),
                                         SizedBox(height: altura * 0.02),
-                                        Center(
-                                          child: FadeInImage(
-                                            fit: BoxFit.cover,
-                                            height: altura * 0.2,
-                                            width: largura * 0.85,
-                                            placeholder:
-                                                MemoryImage(kTransparentImage),
-                                            image: NetworkImage(
-                                                "https://pplware.sapo.pt/wp-content/uploads/2022/02/s_22_plus_1.jpg "),
-                                          ),
+                                        GaleriaWidget(
+                                          urls: evento!.imagem != null
+                                              ? evento!.imagem!
+                                              : [],
                                         ),
                                         SizedBox(height: altura * 0.02),
                                         Row(
@@ -374,12 +307,31 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                         ),
                                         SizedBox(height: altura * 0.02),
                                         Center(
-                                          child: Container(
-                                            color: Colors.red,
+                                          child: SizedBox(
                                             height: altura * 0.25,
                                             width: largura * 0.85,
-                                            child: const Center(
-                                              child: Text("Mapa"),
+                                            child: GoogleMap(
+                                              markers: {
+                                                Marker(
+                                                  markerId: const MarkerId("1"),
+                                                  position: LatLng(
+                                                    double.parse(
+                                                        evento!.latitude),
+                                                    double.parse(
+                                                        evento!.longitude),
+                                                  ),
+                                                ),
+                                              },
+                                              initialCameraPosition:
+                                                  CameraPosition(
+                                                target: LatLng(
+                                                  double.parse(
+                                                      evento!.latitude),
+                                                  double.parse(
+                                                      evento!.longitude),
+                                                ),
+                                                zoom: 15,
+                                              ),
                                             ),
                                           ),
                                         ),

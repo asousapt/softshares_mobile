@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/utilizador_repository.dart';
-import 'package:softshares_mobile/models/imagem.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/tab_perfil.dart';
 import 'package:softshares_mobile/widgets/gerais/perfil/perfil_img.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
@@ -13,9 +11,9 @@ import 'package:softshares_mobile/widgets/gerais/dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
-    Key? key,
+    super.key,
     required this.utilizador,
-  }) : super(key: key);
+  });
 
   final Utilizador utilizador;
 

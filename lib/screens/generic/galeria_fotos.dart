@@ -15,28 +15,24 @@ class PhotoGalleryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: true,
-      bottom: true,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.imageGallery),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.imageGallery),
+      ),
+      body: PhotoViewGallery.builder(
+        itemCount: imageUrls.length,
+        builder: (context, index) {
+          return PhotoViewGalleryPageOptions(
+            imageProvider: NetworkImage(imageUrls[index]),
+            minScale: PhotoViewComputedScale.contained,
+            maxScale: PhotoViewComputedScale.covered * 2,
+          );
+        },
+        scrollPhysics: const BouncingScrollPhysics(),
+        backgroundDecoration: const BoxDecoration(
+          color: Colors.black,
         ),
-        body: PhotoViewGallery.builder(
-          itemCount: imageUrls.length,
-          builder: (context, index) {
-            return PhotoViewGalleryPageOptions(
-              imageProvider: NetworkImage(imageUrls[index]),
-              minScale: PhotoViewComputedScale.contained,
-              maxScale: PhotoViewComputedScale.covered * 2,
-            );
-          },
-          scrollPhysics: const BouncingScrollPhysics(),
-          backgroundDecoration: const BoxDecoration(
-            color: Colors.black,
-          ),
-          pageController: PageController(initialPage: initialIndex),
-        ),
+        pageController: PageController(initialPage: initialIndex),
       ),
     );
   }

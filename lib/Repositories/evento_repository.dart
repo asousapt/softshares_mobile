@@ -65,4 +65,82 @@ class EventoRepository {
       (index) => DateTime.utc(first.year, first.month, first.day + index),
     );
   }
+
+  // funcao que verifica se o utilizador pode inscrever-se no evento
+  bool podeInscrever(Evento evento, int utilizadorId) {
+    DateTime hoje = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+
+    if (evento.utilizadorCriou == utilizadorId) {
+      return false;
+    }
+
+    if (evento.utilizadoresInscritos!.contains(utilizadorId)) {
+      return false;
+    }
+
+    if (evento.dataLimiteInsc.isBefore(hoje)) {
+      return false;
+    }
+
+    if ((evento.dataLimiteInsc.isAfter(hoje) ||
+        evento.dataLimiteInsc.isAtSameMomentAs(hoje))) {
+      if (evento.numeroMaxPart == 0) {
+        return true;
+      } else if (evento.numeroInscritos < evento.numeroMaxPart) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  // Verifica se o utilizador pode cancelar a inscricao no evento
+  bool podeCancelarInscricao(Evento evento, int utilizadorId) {
+    DateTime hoje = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+
+    // utilizador nao pode cancelar se foi o criador do evento
+    if (evento.utilizadorCriou == utilizadorId) {
+      return false;
+    }
+
+    // o evento ja aconteceu
+    if (evento.dataLimiteInsc.isBefore(hoje)) {
+      return false;
+    }
+
+    if (evento.dataLimiteInsc.isAtSameMomentAs(hoje)) {
+      return false;
+    }
+
+    if (evento.dataLimiteInsc.isAfter(hoje) &&
+        !evento.utilizadoresInscritos!.contains(utilizadorId)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  // Verifica se o evento pode ser cancelado pelo seu criador
+  bool podeCancelarEvento(Evento evento, int utilizadorId) {
+    DateTime hoje = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+
+    if (evento.dataLimiteInsc.isAfter(hoje) &&
+        evento.utilizadorCriou == utilizadorId) {
+      return true;
+    }
+    return false;
+  }
 }
