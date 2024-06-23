@@ -52,8 +52,8 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
 
   // Busca os eventos futuros
   Future<List<Evento>> fetchEventos() async {
-    listaEventos = [
-      Evento(
+    listaEventos = [];
+    /*   Evento(
         1,
         "Conferência de Tecnologia 2024",
         1,
@@ -179,7 +179,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
         false,
         [1],
       ),
-    ];
+    ];*/
     setState(() {
       listaEvFiltrada = listaEventos;
     });
@@ -198,8 +198,8 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       throw Exception('Failed to load inscritos');
     }*/
 
-    eventosInscrito = [
-      Evento(
+    eventosInscrito = [];
+    /*   Evento(
         1,
         "Conferência de Tecnologia 2024",
         1,
@@ -241,7 +241,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
         true,
         [],
       ),
-    ];
+    ];*/
     return eventosInscrito;
   }
 

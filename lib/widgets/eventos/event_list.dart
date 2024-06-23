@@ -17,8 +17,16 @@ class EventListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double altura = MediaQuery.of(context).size.height;
+    double largura = MediaQuery.of(context).size.width;
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.symmetric(
+        horizontal: largura * 0.02,
+        vertical: altura * 0.01,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: ValueListenableBuilder<List<Evento>>(
         valueListenable: selectedEvents,
         builder: (context, value, _) {
@@ -26,18 +34,15 @@ class EventListView extends StatelessWidget {
             itemCount: value.length,
             itemBuilder: (context, index) {
               return Container(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 12.0,
-                  vertical: 4.0,
-                ),
                 decoration: BoxDecoration(
                   border: Border.all(),
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 child: Container(
                     decoration: BoxDecoration(
-                        color: Theme.of(context).canvasColor,
-                        borderRadius: BorderRadius.circular(15)),
+                      color: Theme.of(context).canvasColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: EventItem(
                       evento: value[index],
                       categorias: categorias,

@@ -62,7 +62,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
       return false;
     }
 
-    if (evento.utilizadoresInscritos.contains(utilizadorId)) {
+    if (evento.utilizadoresInscritos!.contains(utilizadorId)) {
       return false;
     }
 
@@ -106,7 +106,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
     }
 
     if (evento.dataLimiteInsc.isAfter(hoje) &&
-        !evento.utilizadoresInscritos.contains(utilizadorId)) {
+        !evento.utilizadoresInscritos!.contains(utilizadorId)) {
       return false;
     }
 
@@ -189,7 +189,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
   }
 
   Future<List<int>> getUtilizadoresInscritos() async {
-    return evento!.utilizadoresInscritos;
+    return evento!.utilizadoresInscritos!;
   }
 
   @override
@@ -397,7 +397,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                 ),
                               ),
                               // Tab de controlo de inscricoes
-                              evento!.utilizadoresInscritos.isEmpty
+                              evento!.utilizadoresInscritos!.isEmpty
                                   ? Center(
                                       child: Text(AppLocalizations.of(context)!
                                           .semInscricoes),
@@ -450,13 +450,13 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                                 } else {
                                                   return ListView.builder(
                                                     itemCount: evento!
-                                                        .utilizadoresInscritos
+                                                        .utilizadoresInscritos!
                                                         .length,
                                                     itemBuilder:
                                                         (context, index) {
                                                       return ListTile(
                                                         title: Text(
-                                                          "Utilizador ${evento!.utilizadoresInscritos[index]}",
+                                                          "Utilizador ${evento!.utilizadoresInscritos![index]}",
                                                         ),
                                                         // TODO: Alterar a imagem do utilizador
                                                         leading: CircleAvatar(

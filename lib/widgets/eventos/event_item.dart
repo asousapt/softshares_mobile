@@ -17,8 +17,12 @@ class EventItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double altura = MediaQuery.of(context).size.height;
+    double largura = MediaQuery.of(context).size.width;
+
     String vagas =
         evento.numeroMaxPart == 0 ? "-" : evento.numeroMaxPart.toString();
+    print(evento.numeroInscritos);
     String participantes = "${evento.numeroInscritos.toString()}/$vagas";
 
     return InkWell(
