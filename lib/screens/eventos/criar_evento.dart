@@ -11,6 +11,7 @@ import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/formulario_cfg.dart';
 import '../../time_utils.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
+import 'package:softshares_mobile/screens/generic/location_picker.dart';
 
 class CriarEventoScreen extends StatefulWidget {
   const CriarEventoScreen({super.key});
@@ -343,6 +344,11 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                       suffixIcon: IconButton(
                                         onPressed: () {
                                           //TODO: Implementar a selecção de localização do mapa
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                LocationPicker(),
+                                          ));
                                         },
                                         icon: const Icon(
                                             FontAwesomeIcons.locationDot),
