@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/imagem.dart';
 
 class Evento {
@@ -27,6 +29,8 @@ class Evento {
   final bool? aprovado;
   final DateTime? dataAprovacao;
   final int? poloId;
+  Formulario? formInsc;
+  Formulario? formQualidade;
 
   Evento({
     this.eventoId,
@@ -53,6 +57,7 @@ class Evento {
     this.aprovado = false,
     this.dataAprovacao,
     this.poloId,
+    this.formInsc,
   });
 
   // construtor para criar o evento a enviar para a API
@@ -81,6 +86,8 @@ class Evento {
     this.aprovado = false,
     this.dataAprovacao,
     this.poloId,
+    this.formInsc,
+    this.formQualidade,
   });
 
   // construtor para criar o evento a partir da API
@@ -138,6 +145,8 @@ class Evento {
       "imagens": imagens != null
           ? jsonEncode(imagens!.map((e) => e.toJson()).toList())
           : null,
+      'formInsc': formInsc != null ? formInsc!.toJson() : null,
+      'formQualidade': formQualidade != null ? formQualidade!.toJson() : null,
     };
   }
 

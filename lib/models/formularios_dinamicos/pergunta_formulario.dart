@@ -23,28 +23,31 @@ class Pergunta {
     required this.ordem,
   });
 
-  Pergunta.json(Map<String, dynamic> json)
-      : detalheId = json['detalheId'],
-        pergunta = json['pergunta'],
-        tipoDados = json['tipoDados'],
-        obrigatorio = json['obrigatorio'],
-        min = json['min'],
-        max = json['max'],
-        tamanho = json['tamanho'],
-        valoresPossiveis = json['valoresPossiveis'],
-        ordem = json['ordem'];
+  factory Pergunta.fromJson(Map<String, dynamic> json) {
+    return Pergunta(
+      detalheId: json['detalheId'],
+      pergunta: json['pergunta'],
+      tipoDados: json['tipoDados'],
+      obrigatorio: json['obrigatorio'],
+      min: json['min'],
+      max: json['max'],
+      tamanho: json['tamanho'],
+      valoresPossiveis: json['valoresPossiveis'].cast<String>(),
+      ordem: json['ordem'],
+    );
+  }
 
   Map<String, dynamic> toJson() {
-    return {
-      'detalheId': detalheId,
-      'pergunta': pergunta,
-      'tipoDados': tipoDados,
-      'obrigatorio': obrigatorio,
-      'min': min,
-      'max': max,
-      'tamanho': tamanho,
-      'valoresPossiveis': valoresPossiveis,
-      'ordem': ordem,
-    };
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['detalheId'] = detalheId;
+    data['pergunta'] = pergunta;
+    data['tipoDados'] = tipoDados;
+    data['obrigatorio'] = obrigatorio;
+    data['min'] = min;
+    data['max'] = max;
+    data['tamanho'] = tamanho;
+    data['valoresPossiveis'] = valoresPossiveis;
+    data['ordem'] = ordem;
+    return data;
   }
 }
