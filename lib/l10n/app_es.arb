@@ -150,5 +150,7 @@
   "sairGrupo": "Dejar Grupo", 
   "camara": "Cámara",
   "removerFoto": "Quitar imagen", 
-  "dadosGravados": "¡Datos guardados con éxito!"
+  "dadosGravados": "¡Datos guardados con éxito!", 
+  "seleccionar": "Seleccionar", 
+  "seleccionarLocalizacao": "Seleccione el lugar"
 }

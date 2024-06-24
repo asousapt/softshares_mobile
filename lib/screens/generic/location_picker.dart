@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LocationPicker extends StatefulWidget {
   const LocationPicker({super.key});
 
   @override
-  State<LocationPicker> createState() => _LocationPickerState();
+  State<LocationPicker> createState() {
+    return _LocationPickerState();
+  }
 }
 
 class _LocationPickerState extends State<LocationPicker> {
@@ -60,18 +63,21 @@ class _LocationPickerState extends State<LocationPicker> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Location Picker'),
+        title: Text(AppLocalizations.of(context)!.seleccionarLocalizacao),
       ),
       body: FutureBuilder<void>(
         future: _getLocation(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-                child: CircularProgressIndicator(
-              color: Theme.of(context).canvasColor,
-            ));
+              child: CircularProgressIndicator(
+                color: Theme.of(context).canvasColor,
+              ),
+            );
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(
+              child: Text(AppLocalizations.of(context)!.ocorreuErro),
+            );
           } else {
             return Padding(
               padding: EdgeInsets.symmetric(
@@ -166,13 +172,19 @@ class _LocationPickerState extends State<LocationPicker> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               ElevatedButton(
-                                onPressed: () {},
-                                child: Text("Cancelar"),
+                                onPressed: () {
+                                  Navigator.pop(context, null);
+                                },
+                                child: Text(
+                                    AppLocalizations.of(context)!.cancelar),
                               ),
                               SizedBox(width: largura * 0.02),
                               FilledButton(
-                                onPressed: () {},
-                                child: Text("Seleccionar"),
+                                onPressed: () {
+                                  Navigator.pop(context, value);
+                                },
+                                child: Text(
+                                    AppLocalizations.of(context)!.seleccionar),
                               ),
                             ],
                           ),

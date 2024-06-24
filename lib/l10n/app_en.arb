@@ -150,5 +150,7 @@
   "poloSeleccionado": "Selected Office", 
   "camara": "Camera", 
   "removerFoto": "Remove Picture", 
-  "dadosGravados": "Data saved with success!"
+  "dadosGravados": "Data saved with success!", 
+  "seleccionar": "Select", 
+  "seleccionarLocalizacao": "Select Location"
 }

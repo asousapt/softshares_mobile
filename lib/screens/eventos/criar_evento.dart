@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
 import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
@@ -44,6 +45,8 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
   List<Subcategoria>? subcategorias;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = true;
+  double latitude = 0.0;
+  double longitude = 0.0;
 
   Future<void> carregarCategoriasSubcats() async {
     final prefs = await SharedPreferences.getInstance();
@@ -342,13 +345,17 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                     controller: _localizacaoController,
                                     decoration: InputDecoration(
                                       suffixIcon: IconButton(
-                                        onPressed: () {
-                                          //TODO: Implementar a selecção de localização do mapa
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(
+                                        onPressed: () async {
+                                          LatLng? localizacao =
+                                              await Navigator.of(context)
+                                                  .push(MaterialPageRoute(
                                             builder: (context) =>
-                                                LocationPicker(),
+                                                const LocationPicker(),
                                           ));
+                                          if (localizacao != null) {
+                                            latitude = localizacao.latitude;
+                                            longitude = localizacao.longitude;
+                                          }
                                         },
                                         icon: const Icon(
                                             FontAwesomeIcons.locationDot),

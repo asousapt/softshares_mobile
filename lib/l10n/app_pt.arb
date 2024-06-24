@@ -151,5 +151,7 @@
   "poloSeleccionado": "Polo Seleccionado", 
   "camara": "Câmara", 
   "removerFoto": "Remover Foto", 
-  "dadosGravados": "Dados guardados com sucesso!"
+  "dadosGravados": "Dados guardados com sucesso!", 
+  "seleccionar": "Seleccionar", 
+  "seleccionarLocalizacao": "Seleccionar Localização"
 }
