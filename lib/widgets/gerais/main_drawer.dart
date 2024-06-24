@@ -116,7 +116,7 @@ class _MainDrawerState extends State<MainDrawer> {
               title: Text(AppLocalizations.of(context)!.seleccionarPolo),
             ),
             ListTile(
-              onTap: () {},
+              onTap: () {Navigator.pushNamed(context, "/definicoes");},
               contentPadding: const EdgeInsets.only(left: 15, top: 10),
               leading: const Icon(FontAwesomeIcons.gears),
               title: Text(AppLocalizations.of(context)!.definicoes),

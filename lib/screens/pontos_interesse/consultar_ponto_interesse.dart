@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
+import 'package:softshares_mobile/models/comentario.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
@@ -23,6 +24,7 @@ import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'dart:convert';
+import 'package:softshares_mobile/services/api_service.dart';
 
 class ConsultPontoInteresseScreen extends StatefulWidget {
   const ConsultPontoInteresseScreen({
@@ -47,11 +49,15 @@ class _ConsultPontoInteresseScreenState
   int rating = 0;
   bool invalidRating = false;
   Utilizador? user;
+  ApiService api = ApiService();
+  List<Commentario> comentarios = [];
 
   Future<void> carregaDados() async {
     final prefs = await SharedPreferences.getInstance();
+    api.setAuthToken("tokenFixo");
     final idiomaId = prefs.getInt("idiomaId") ?? 1;
-    user = jsonDecode(prefs.getString('utilizadorObj')!);
+    await fetchComentarios();
+    user = Utilizador.fromJson(jsonDecode(prefs.getString('utilizadorObj')!));
 
     CategoriaRepository categoriaRepository = CategoriaRepository();
     List<Categoria> categoriasdb =
@@ -78,6 +84,37 @@ class _ConsultPontoInteresseScreenState
       invalidRating == true;
     } else {
       //Código para enviar rating
+    }
+  }
+
+  Future<void> fetchComentarios() async {
+    try {
+      _isLoading = true;
+      final lista = await api.getRequest('comentario/');
+      final listaFormatted = lista['data'];
+      if (listaFormatted is! List) {
+        throw Exception("Failed to load data: Expected a list in 'data'");
+      }
+
+      // Parse the JSON data into a list of PontoInteresse objects
+      List<Commentario> listaUpdated =
+          listaFormatted.map<Commentario>((item) {
+        try {
+          return Commentario.fromJson(item);
+        } catch (e) {
+          print("Error parsing item2: $item");
+          print("Error details: $e");
+          rethrow;
+        }
+      }).toList();
+      setState(() {
+        comentarios = List.from(listaUpdated);
+        _isLoading = false;
+      });
+      print(comentarios);
+    } catch (e) {
+      print("Error fetching data1: $e");
+      // Handle error appropriately
     }
   }
 
@@ -225,7 +262,7 @@ class _ConsultPontoInteresseScreenState
                               height: altura * 0.5,
                               child: SingleChildScrollView(
                                 child: CommentSection(
-                                  comentarios: //comentariosTeste
+                                  comentarios: comentarios
                                 ),
                               ),
                             )

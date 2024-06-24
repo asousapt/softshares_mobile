@@ -502,8 +502,4 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       ),
     );
   }
-<<<<<<< HEAD
 }*/
-=======
-}
->>>>>>> 56fa83a87cdbb689c85554cb7231d020707dd69a

@@ -10,6 +10,7 @@ import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/Login/confirmar_id.dart';
+import 'package:softshares_mobile/screens/definicoes/Definicoes.dart';
 import 'package:softshares_mobile/screens/Login/escolher_polo.dart';
 import 'package:softshares_mobile/screens/Login/login.dart';
 import 'package:softshares_mobile/screens/Login/recuperar_pass.dart';
@@ -156,6 +157,7 @@ class _MyAppState extends State<MyApp> {
         '/pontosInteresse': (context) => const PontosDeInteresseMainScreen(),
         '/criarPontoInteresse': (context) => const CriarPontoInteresseScreen(),
         '/ListarGrupo': (context) => const ListarGrupoScreen(),
+        '/definicoes': (context) => DefinicoesScreen(mudaIdioma: _mudaIdioma)
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/consultarEvento') {
