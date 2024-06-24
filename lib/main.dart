@@ -42,7 +42,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final dbService = DatabaseService.instance;
-  //await dbService.deleteDB();
   // Ensure the database is initialized before use
   await dbService.database;
   await dotenv.load(fileName: ".env");
@@ -97,7 +96,6 @@ class _MyAppState extends State<MyApp> {
       final idiomas = await idiomaRepository.fetchIdiomas();
       final int numeroIdiomasAPI = idiomas.length;
       final int numeroIdiomasLocal = await idiomaRepository.numeroIdiomas();
-
 
       if (numeroIdiomasAPI != numeroIdiomasLocal) {
         await idiomaRepository.deleteAllIdiomas();

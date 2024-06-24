@@ -226,7 +226,7 @@ class CriarTopicoScreenState extends State<CriarTopicoScreen> {
                                     onPressed: () {
                                       // TODO: Implementar a lógica de guardar o tópico
                                       // Substituir o codigo do idioma,utilizador e anexos
-                                      Topico topico = Topico(
+                                      /*Topico topico = Topico(
                                         idiomaId: 1,
                                         imagem: [],
                                         titulo: _tituloController.text,
@@ -244,7 +244,7 @@ class CriarTopicoScreenState extends State<CriarTopicoScreen> {
                                             [1, 2],
                                             3,
                                             3),
-                                      );
+                                      ); */
                                       /* if (_formKey.currentState!.validate()) {
                                   Navigator.of(context)
                                       .pushReplacementNamed('/forum');

@@ -44,8 +44,8 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
   // Função que busca as mensagens
   Future<List<Mensagem>> fetchMensagens() async {
     await Future.delayed(Duration(seconds: 2));
-    List<Mensagem> messages = [
-      Mensagem(
+    List<Mensagem> messages = [];
+    /* Mensagem(
         mensagemId: 1,
         mensagemTexto: '',
         remetente: Utilizador(
@@ -224,7 +224,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
         anexos: [],
         vista: true,
       ),
-    ];
+    ];*/
     return messages;
   }
 
@@ -525,7 +525,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                         if (_messageController.text.trim().isNotEmpty ||
                             _selectedImages.isNotEmpty) {
                           setState(() {
-                            mensagens.add(
+                            /*mensagens.add(
                               Mensagem(
                                 mensagemId: mensagens.length + 1,
                                 mensagemTexto: _messageController.text.trim(),
@@ -557,7 +557,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                                     .toList(),
                                 vista: true,
                               ),
-                            );
+                            );*/
                             _messageController.clear();
                           });
                           // Faz scroll para a última mensagem

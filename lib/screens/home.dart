@@ -1,12 +1,14 @@
+import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
+import 'package:softshares_mobile/Repositories/evento_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
+import 'package:softshares_mobile/widgets/eventos/event_list.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/widgets/eventos/calendario.dart';
-import 'package:softshares_mobile/widgets/eventos/event_list.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -30,6 +32,17 @@ class _HomeScreenState extends State<HomeScreen> {
   String idioma = "pt";
   List<Categoria> categorias = [];
   bool isLoading = true;
+  List<Evento> eventos = [];
+  late Map<DateTime, List<Evento>> kEventSource;
+  late LinkedHashMap<DateTime, List<Evento>> _kEvents;
+
+  Future<void> carregaEventos() async {
+    EventoRepository eventoRepository = EventoRepository();
+    eventos = await eventoRepository.getEventos();
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   // carrega as categorias do idioma selecionado
   Future<void> buscarCategorias() async {
@@ -40,7 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
     categorias = await categoriaRepository.fetchCategoriasDB(idiomaId);
     setState(() {
       idioma = idiomaL;
-      isLoading = false;
     });
   }
 
@@ -48,8 +60,13 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     buscarCategorias();
-    _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+    carregaEventos().then((_) {
+      kEventSource = EventoRepository().getEventosMap(eventos);
+      _kEvents = EventoRepository().getEventosLinkedHashMap(kEventSource);
+      _selectedDay = _focusedDay;
+      _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+      isLoading = false;
+    });
   }
 
   @override
@@ -59,11 +76,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<Evento> _getEventsForDay(DateTime day) {
-    return kEvents[day] ?? [];
+    return _kEvents[day] ?? [];
   }
 
   List<Evento> _getEventsForRange(DateTime start, DateTime end) {
-    final days = daysInRange(start, end);
+    EventoRepository eventoRepository = EventoRepository();
+    final days = eventoRepository.daysInRange(start, end);
 
     return [
       for (final d in days) ..._getEventsForDay(d),
@@ -104,6 +122,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double altura = MediaQuery.of(context).size.height;
+    double largura = MediaQuery.of(context).size.width;
+
+    final kToday = DateTime.now();
+
     return Scaffold(
       drawer: const MainDrawer(),
       bottomNavigationBar: const BottomNavigation(seleccao: 0),
@@ -113,67 +136,51 @@ class _HomeScreenState extends State<HomeScreen> {
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(
-                  color: Theme.of(context).canvasColor),
+                color: Theme.of(context).canvasColor,
+              ),
             )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, left: 15),
-                  child: Text(
-                    AppLocalizations.of(context)!.comunidade,
-                    style: const TextStyle(
-                      color: Color.fromRGBO(217, 215, 215, 1),
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                TableCalendarWidget(
-                  eventLoader: _getEventsForDay,
-                  selectedDay: _selectedDay!,
-                  focusedDay: _focusedDay,
-                  calendarFormat: _calendarFormat,
-                  rangeStart: _rangeStart,
-                  rangeEnd: _rangeEnd,
-                  rangeSelectionMode: _rangeSelectionMode,
-                  onDaySelected: _onDaySelected,
-                  onRangeSelected: _onRangeSelected,
-                  onFormatChanged: (format) {
-                    if (_calendarFormat != format) {
+          : Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: largura * 0.01, vertical: altura * 0.01),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  TableCalendarWidget(
+                    idioma: idioma,
+                    selectedDay: _selectedDay ?? kToday,
+                    focusedDay: _focusedDay,
+                    calendarFormat: _calendarFormat,
+                    rangeSelectionMode: _rangeSelectionMode,
+                    rangeStart: _rangeStart,
+                    rangeEnd: _rangeEnd,
+                    onDaySelected: _onDaySelected,
+                    onRangeSelected: _onRangeSelected,
+                    onFormatChanged: (format) {
                       setState(() {
                         _calendarFormat = format;
                       });
-                    }
-                  },
-                  onPageChanged: (focusedDay) {
-                    _focusedDay = focusedDay;
-                  },
-                  categorias: categorias,
-                ),
-                const SizedBox(height: 15),
-                Padding(
-                  padding: const EdgeInsets.only(left: 15, bottom: 10),
-                  child: Text(
-                    AppLocalizations.of(context)!.eventos,
-                    style: const TextStyle(
-                      color: Color.fromRGBO(217, 215, 215, 1),
-                      fontSize: 21,
-                      fontWeight: FontWeight.bold,
+                    },
+                    onPageChanged: (focusedDay) {
+                      _focusedDay = focusedDay;
+                    },
+                    eventLoader: _getEventsForDay,
+                    categorias: categorias,
+                  ),
+                  const SizedBox(height: 8.0),
+                  Expanded(
+                    child: ValueListenableBuilder<List<Evento>>(
+                      valueListenable: _selectedEvents,
+                      builder: (context, value, _) {
+                        return EventListView(
+                          selectedEvents: _selectedEvents,
+                          categorias: categorias,
+                          idioma: idioma,
+                        );
+                      },
                     ),
                   ),
-                ),
-                Expanded(
-                  child: EventListView(
-                    selectedEvents: _selectedEvents,
-                    categorias: categorias,
-                    idioma: idioma,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }

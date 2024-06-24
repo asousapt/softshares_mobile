@@ -11,6 +11,7 @@ import 'package:softshares_mobile/Repositories/departamento_repository.dart';
 import 'package:softshares_mobile/Repositories/funcao_repositry.dart';
 import 'package:softshares_mobile/Repositories/polo_repository.dart';
 import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
+import 'package:softshares_mobile/Repositories/utilizador_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/departamento.dart';
 import 'package:softshares_mobile/models/polo.dart';
@@ -340,20 +341,18 @@ class _EcraLoginState extends State<EcraLogin> {
                                         }*/
                                         final prefs = await SharedPreferences
                                             .getInstance();
-                                        Utilizador util = Utilizador(
-                                          1, // utilizadorId
-                                          'John', // pNome
-                                          'Doe', // uNome
-                                          'john.doe@example.com', // email
-                                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', // sobre
-                                          5, // poloId
-                                          [1, 2, 3], // preferencias
-                                          1, // funcaoId
-                                          4,
-                                          'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200',
-                                        );
+
+                                        UtilizadorRepository
+                                            utilizadorRepository =
+                                            UtilizadorRepository();
+
+                                        Utilizador util =
+                                            await utilizadorRepository
+                                                .getUtilizador("37");
+
                                         Map<String, dynamic> utilJson =
                                             util.toJson();
+
                                         await prefs.setString("utilizadorObj",
                                             jsonEncode(utilJson));
 
@@ -373,9 +372,6 @@ class _EcraLoginState extends State<EcraLogin> {
                                             FuncaoRepository();
                                         await funcaoRepositry
                                             .carregaFuncoes(context);
-                                        String? teste =
-                                            prefs.getString("utilizadorObj");
-                                        print(teste!);
 
                                         Navigator.pushNamed(
                                             context, '/escolherPolo');

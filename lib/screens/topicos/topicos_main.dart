@@ -50,8 +50,8 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
   Future<List<Topico>> fetchTopicos() async {
     await Future.delayed(Duration(seconds: 2));
 
-    List<Topico> topicos = [
-      Topico(
+    List<Topico> topicos = [];
+    /* Topico(
         topicoId: 1,
         categoria: 1,
         subcategoria: 201,
@@ -124,7 +124,7 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
         idiomaId: 1,
         imagem: [],
       ),
-    ];
+    ];*/
     return topicos;
   }
 

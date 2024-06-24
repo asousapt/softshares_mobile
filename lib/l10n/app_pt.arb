@@ -148,5 +148,8 @@
   "sairGrupo": "Sair do grupo", 
   "galeria": "Galeria", 
   "todos": "Todos", 
-  "poloSeleccionado": "Polo Seleccionado"
+  "poloSeleccionado": "Polo Seleccionado", 
+  "camara": "Câmara", 
+  "removerFoto": "Remover Foto", 
+  "dadosGravados": "Dados guardados com sucesso!"
 }

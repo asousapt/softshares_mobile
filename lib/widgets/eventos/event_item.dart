@@ -17,8 +17,12 @@ class EventItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double altura = MediaQuery.of(context).size.height;
+    double largura = MediaQuery.of(context).size.width;
+
     String vagas =
         evento.numeroMaxPart == 0 ? "-" : evento.numeroMaxPart.toString();
+
     String participantes = "${evento.numeroInscritos.toString()}/$vagas";
 
     return InkWell(
@@ -35,7 +39,10 @@ class EventItem extends StatelessWidget {
       },
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.symmetric(
+            vertical: altura * 0.01,
+            horizontal: largura * 0.02,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -46,7 +53,7 @@ class EventItem extends StatelessWidget {
                         (element) => element.categoriaId == evento.categoria,
                       )
                       .getIcone(),
-                  const SizedBox(width: 8),
+                  SizedBox(width: largura * 0.02),
                   Expanded(
                     child: Text(
                       evento.titulo,
@@ -62,7 +69,7 @@ class EventItem extends StatelessWidget {
                   Row(
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(right: 5),
+                        margin: EdgeInsets.only(right: largura * 0.01),
                         child: Text(participantes),
                       ),
                       const FaIcon(
@@ -74,7 +81,7 @@ class EventItem extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 3),
+              SizedBox(height: altura * 0.01),
               Text(
                 evento.localizacao,
                 style: const TextStyle(color: Color.fromRGBO(123, 123, 123, 1)),
@@ -82,7 +89,7 @@ class EventItem extends StatelessWidget {
               const Divider(
                 indent: 15,
                 endIndent: 15,
-                color: Color.fromRGBO(223, 223, 223, 1),
+                color: Color.fromRGBO(123, 123, 123, 1),
                 thickness: 2,
               ),
               Row(
@@ -91,7 +98,7 @@ class EventItem extends StatelessWidget {
                     FontAwesomeIcons.calendar,
                     color: Color.fromRGBO(123, 123, 123, 1),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: largura * 0.02),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

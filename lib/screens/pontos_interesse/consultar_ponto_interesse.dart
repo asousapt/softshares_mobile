@@ -225,7 +225,7 @@ class _ConsultPontoInteresseScreenState
                               height: altura * 0.5,
                               child: SingleChildScrollView(
                                 child: CommentSection(
-                                  comentarios: comentariosTeste
+                                  comentarios: //comentariosTeste
                                 ),
                               ),
                             )

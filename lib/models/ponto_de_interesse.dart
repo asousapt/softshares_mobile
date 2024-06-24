@@ -73,7 +73,6 @@ class PontoInteresse {
         idiomaId == null ||
         cidadeId == null ||
         dataCriacao == null) {
-      print('JSON data: $json');
       throw Exception('Missing required field');
     }
 
@@ -119,7 +118,6 @@ class PontoInteresse {
   }
 }
 
-// Sample data with the new 'avaliacao' attribute
 final List<PontoInteresse> pontosDeInteresseTeste = [
   PontoInteresse(
     pontoInteresseId: 1,

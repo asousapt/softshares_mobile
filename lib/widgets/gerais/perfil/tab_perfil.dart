@@ -29,7 +29,6 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
   final TextEditingController _pnome = TextEditingController();
   final TextEditingController _unome = TextEditingController();
   final TextEditingController _email = TextEditingController();
-  final TextEditingController _passwd = TextEditingController();
   final TextEditingController _sobre = TextEditingController();
   List<int>? subcatFav;
   final PoloRepository _poloRepository = PoloRepository();
@@ -109,7 +108,6 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
     _pnome.dispose();
     _unome.dispose();
     _email.dispose();
-    _passwd.dispose();
     _sobre.dispose();
     super.dispose();
   }
@@ -189,17 +187,9 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                                 label: Text("Email"),
                               ),
                             ),
-                            TextFormField(
-                              readOnly: true,
-                              controller: _passwd,
-                              decoration: InputDecoration(
-                                label: Text(
-                                    AppLocalizations.of(context)!.password),
-                              ),
-                            ),
                             const SizedBox(height: 24),
                             TextFormField(
-                              minLines: 3,
+                              minLines: 4,
                               maxLines: 6,
                               maxLength: 140,
                               keyboardType: TextInputType.text,
@@ -227,12 +217,13 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                                 children: [
                                   // Dropdown de seleccao do polo
                                   DropdownGenereica(
-                                    items: polos,
-                                    onChanged: _mudaPolo,
-                                    titulo: AppLocalizations.of(context)!.polo,
-                                    value: _polo,
-                                    getText: (polo) => polo.descricao,
-                                  ),
+                                      items: polos,
+                                      onChanged: _mudaPolo,
+                                      titulo:
+                                          AppLocalizations.of(context)!.polo,
+                                      value: _polo,
+                                      getText: (polo) => polo.descricao,
+                                      readOnly: true),
                                   const SizedBox(height: 24),
                                   //DropDown departamento
                                   DropdownGenereica(

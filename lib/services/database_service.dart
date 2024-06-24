@@ -9,10 +9,7 @@ class DatabaseService {
   DatabaseService._init();
 
   Future<Database> get database async {
-    if (_database != null) {
-      print("Já tinha bd");
-      return _database!;
-    }
+    if (_database != null) return _database!;
 
     _database = await _initDB('softshares.db');
     return _database!;

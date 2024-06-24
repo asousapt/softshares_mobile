@@ -1,11 +1,11 @@
+import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'dart:collection';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:softshares_mobile/models/imagem.dart';
 
 class Evento {
-  final int eventoId;
+  final int? eventoId;
   final String titulo;
-  final int categoria;
+  final int? categoria;
   final int subcategoria;
   final String descricao;
   final int numeroMaxPart;
@@ -17,33 +17,129 @@ class Evento {
   final DateTime dataInicio;
   final DateTime dataFim;
   final DateTime dataLimiteInsc;
-  final List<String> imagem;
+  final List<String>? imagem;
   final int utilizadorCriou;
   final int cidadeid;
   final bool cancelado;
-  final List<int> utilizadoresInscritos;
+  final List<int>? utilizadoresInscritos;
+  List<Imagem>? imagens;
+  final int? utilizadorAprovou;
+  final bool? aprovado;
+  final DateTime? dataAprovacao;
+  final int? poloId;
 
-  const Evento(
+  Evento({
     this.eventoId,
-    this.titulo,
+    required this.titulo,
     this.categoria,
-    this.subcategoria,
-    this.descricao,
-    this.numeroMaxPart,
-    this.numeroInscritos,
-    this.nmrConvidados,
-    this.localizacao,
-    this.latitude,
-    this.longitude,
-    this.dataInicio,
-    this.dataFim,
-    this.dataLimiteInsc,
+    required this.subcategoria,
+    required this.descricao,
+    required this.numeroMaxPart,
+    required this.numeroInscritos,
+    required this.nmrConvidados,
+    required this.localizacao,
+    required this.latitude,
+    required this.longitude,
+    required this.dataInicio,
+    required this.dataFim,
+    required this.dataLimiteInsc,
     this.imagem,
-    this.utilizadorCriou,
-    this.cidadeid,
-    this.cancelado,
-    this.utilizadoresInscritos,
-  );
+    required this.utilizadorCriou,
+    required this.cidadeid,
+    required this.cancelado,
+    required this.utilizadoresInscritos,
+    this.imagens,
+    this.utilizadorAprovou,
+    this.aprovado = false,
+    this.dataAprovacao,
+    this.poloId,
+  });
+
+  // construtor para criar o evento a enviar para a API
+  Evento.criar({
+    this.eventoId = 0,
+    required this.titulo,
+    this.categoria,
+    required this.subcategoria,
+    required this.descricao,
+    required this.numeroMaxPart,
+    required this.nmrConvidados,
+    required this.localizacao,
+    required this.latitude,
+    required this.longitude,
+    required this.dataInicio,
+    required this.dataFim,
+    required this.dataLimiteInsc,
+    this.imagem,
+    required this.utilizadorCriou,
+    required this.cidadeid,
+    required this.cancelado,
+    required this.utilizadoresInscritos,
+    this.numeroInscritos = 0,
+    this.imagens,
+    this.utilizadorAprovou,
+    this.aprovado = false,
+    this.dataAprovacao,
+    this.poloId,
+  });
+
+  // construtor para criar o evento a partir da API
+  // Factory constructor to create an Evento instance from JSON
+  factory Evento.fromJson(Map<String, dynamic> json) {
+    return Evento(
+      eventoId: json['eventoid'],
+      titulo: json['titulo'],
+      descricao: json['descricao'],
+      dataInicio: DateTime.parse(json['datainicio']),
+      dataFim: DateTime.parse(json['datafim']),
+      dataLimiteInsc: DateTime.parse(json['dataliminscricao']),
+      cancelado: json['cancelado'],
+      numeroMaxPart: json['nmrmaxparticipantes'],
+      localizacao: json['localizacao'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      cidadeid: json['cidadeid'],
+      utilizadorCriou: json['utilizadorcriou'],
+      utilizadorAprovou: json['utilizadoraprovou'],
+      aprovado: json['aprovado'] ?? false,
+      dataAprovacao: json['dataaprovacao'] != null
+          ? DateTime.parse(json['dataaprovacao'])
+          : null,
+      subcategoria: json['subcategoriaid'],
+      poloId: json['poloid'],
+      numeroInscritos: json['numinscritos'],
+      nmrConvidados: 0,
+      utilizadoresInscritos: json['participantes'] != null
+          ? List<int>.from(json['participantes'])
+          : [],
+      categoria: json['categoriaid'],
+      imagem: json['imagens'] != null ? List<String>.from(json['imagens']) : [],
+    );
+  }
+
+  // ToJson para envio para a API
+  Map<String, dynamic> toJsonCriar() {
+    return {
+      "titulo": titulo,
+      "categoria": categoria,
+      "subcategoria": subcategoria,
+      "descricao": descricao,
+      "numeroMaxPart": numeroMaxPart,
+      "nmrConvidados": nmrConvidados,
+      "localizacao": localizacao,
+      "latitude": latitude,
+      "longitude": longitude,
+      "dataInicio": dataInicio.toIso8601String(),
+      "dataFim": dataFim.toIso8601String(),
+      "dataLimiteInsc": dataLimiteInsc.toIso8601String(),
+      "utilizadorCriou": utilizadorCriou,
+      "cidadeid": cidadeid,
+      "cancelado": cancelado,
+      "imagens": imagens != null
+          ? jsonEncode(imagens!.map((e) => e.toJson()).toList())
+          : null,
+    };
+  }
 
   String dataFormatada(String local) {
     String dataF = "";
@@ -65,167 +161,3 @@ class Evento {
     return "${DateFormat.jm(local).format(dataInicio)} - ${DateFormat.jm(local).format(dataFim)}";
   }
 }
-
-// carregamento do Evento
-final kEvents = LinkedHashMap<DateTime, List<Evento>>(
-  equals: isSameDay,
-  hashCode: getHashCode,
-)..addAll(_kEventSource);
-
-final Map<DateTime, List<Evento>> _kEventSource = {
-  DateTime(2024, 6, 15): [
-    Evento(
-      1,
-      "Conferência de Tecnologia 2024",
-      1,
-      0,
-      "Junte-se a nós para a maior conferência de tecnologia do ano!",
-      1000,
-      500,
-      0,
-      "Virtual",
-      "",
-      "",
-      DateTime(2024, 06, 15, 10, 0), // June 15, 2024, 10:00 AM
-      DateTime(2024, 06, 15, 18, 0), // June 15, 2024, 6:00 PM
-      DateTime(2024, 06, 14), // Example for dataLimiteInsc
-      [],
-      1,
-      1,
-      false,
-      [1, 2, 3, 4, 5],
-    ),
-  ],
-  DateTime(2024, 7, 20): [
-    Evento(
-      2,
-      "Festival de Música 2024",
-      2,
-      0,
-      "Viva um fim de semana de música, comida e diversão!",
-      5000,
-      3000,
-      0,
-      "Central Park, Nova York",
-      "",
-      "",
-      DateTime(2024, 07, 20, 12, 0), // July 20, 2024, 12:00 PM
-      DateTime(2024, 07, 22, 22, 0), // July 22, 2024, 10:00 PM
-      DateTime(2024, 07, 19), // Example for dataLimiteInsc
-      [],
-      2,
-      2,
-      true,
-      [],
-    ),
-  ],
-  DateTime(2024, 8, 10): [
-    Evento(
-      3,
-      "Cimeira de Startups 2024",
-      1,
-      0,
-      "Conecte-se com investidores e empreendedores na Cimeira de Startups!",
-      800,
-      400,
-      0,
-      "San Francisco, Califórnia",
-      "",
-      "",
-      DateTime(2024, 08, 10, 9, 0), // August 10, 2024, 9:00 AM
-      DateTime(2024, 08, 12, 17, 0), // August 12, 2024, 5:00 PM
-      DateTime(2024, 08, 9), // Example for dataLimiteInsc
-      [],
-      2,
-      2,
-      false,
-      [1],
-    ),
-  ],
-  DateTime(2024, 9, 5): [
-    Evento(
-      4,
-      "Feira de Livros 2024",
-      3,
-      0,
-      "Explore uma variedade de livros de diferentes gêneros na Feira de Livros!",
-      500,
-      200,
-      0,
-      "Centro de Convenções, São Paulo",
-      "",
-      "",
-      DateTime(2024, 09, 5, 10, 0), // September 5, 2024, 10:00 AM
-      DateTime(2024, 09, 10, 20, 0), // September 10, 2024, 8:00 PM
-      DateTime(2024, 09, 4), // Example for dataLimiteInsc
-      [],
-      2,
-      2,
-      false,
-      [],
-    ),
-  ],
-  DateTime(2024, 10, 15): [
-    Evento(
-      5,
-      "Exposição de Arte Contemporânea 2024",
-      4,
-      0,
-      "Descubra obras de arte modernas e inovadoras na Exposição de Arte Contemporânea!",
-      300,
-      150,
-      0,
-      "Galeria de Arte Moderna, Lisboa",
-      "",
-      "",
-      DateTime(2024, 10, 15, 12, 0), // October 15, 2024, 12:00 PM
-      DateTime(2024, 10, 20, 18, 0), // October 20, 2024, 6:00 PM
-      DateTime(2024, 10, 14), // Example for dataLimiteInsc
-      [],
-      2,
-      3,
-      false,
-      [],
-    ),
-  ],
-  DateTime(2024, 11, 8): [
-    Evento(
-      6,
-      "Conferência de Saúde Mental 2024",
-      5,
-      0,
-      "Participe de palestras e workshops sobre saúde mental na Conferência de Saúde Mental!",
-      600,
-      300,
-      0,
-      "Online",
-      "",
-      "",
-      DateTime(2024, 11, 8, 9, 0), // November 8, 2024, 9:00 AM
-      DateTime(2024, 11, 10, 17, 0), // November 10, 2024, 5:00 PM
-      DateTime(2024, 11, 7), // Example for dataLimiteInsc
-      [],
-      2,
-      2,
-      false,
-      [1],
-    ),
-  ],
-};
-
-int getHashCode(DateTime key) {
-  return key.day * 1000000 + key.month * 10000 + key.year;
-}
-
-/// Returns a list of [DateTime] objects from [first] to [last], inclusive.
-List<DateTime> daysInRange(DateTime first, DateTime last) {
-  final dayCount = last.difference(first).inDays + 1;
-  return List.generate(
-    dayCount,
-    (index) => DateTime.utc(first.year, first.month, first.day + index),
-  );
-}
-
-final kToday = DateTime.now();
-final kFirstDay = DateTime(kToday.year, kToday.month - 3, kToday.day);
-final kLastDay = DateTime(kToday.year, kToday.month + 3, kToday.day);
