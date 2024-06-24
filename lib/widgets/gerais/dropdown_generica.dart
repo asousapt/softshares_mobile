@@ -9,11 +9,14 @@ class DropdownGenereica<T> extends StatelessWidget {
     required this.getText,
     required this.titulo,
     this.readOnly = false,
+  });
+
   final List<T>? items;
   final String Function(T) getText;
   final void Function(T?)? onChanged;
   final String titulo;
   final bool readOnly;
+  final T? value;
 
   @override
   Widget build(BuildContext context) {

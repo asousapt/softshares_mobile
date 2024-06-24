@@ -47,6 +47,7 @@ class _ConsultPontoInteresseScreenState
   int rating = 0;
   bool invalidRating = false;
   Utilizador? user;
+  List<Commentario> comentariosTeste = [];
 
   Future<void> carregaDados() async {
     final prefs = await SharedPreferences.getInstance();
@@ -220,13 +221,13 @@ class _ConsultPontoInteresseScreenState
                             const Divider(
                               color: Color.fromRGBO(29, 90, 161, 1),
                             ),
-                            Text(AppLocalizations.of(context)!.outrosComentarios),
+                            Text(AppLocalizations.of(context)!
+                                .outrosComentarios),
                             SizedBox(
                               height: altura * 0.5,
                               child: SingleChildScrollView(
                                 child: CommentSection(
-                                  comentarios: //comentariosTeste
-                                ),
+                                    comentarios: comentariosTeste),
                               ),
                             )
                           ],
