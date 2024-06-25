@@ -75,7 +75,7 @@ class ApiService {
     if (_authToken == null) {
       throw Exception('Auth token is not set. Please authenticate first.');
     }
-
+    print('$_baseUrl/$endpoint');
     final response = await http.post(
       Uri.parse('$_baseUrl/$endpoint'),
       headers: <String, String>{

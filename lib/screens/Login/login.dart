@@ -7,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
+import 'package:softshares_mobile/Repositories/cidade_repository.dart';
 import 'package:softshares_mobile/Repositories/departamento_repository.dart';
 import 'package:softshares_mobile/Repositories/funcao_repositry.dart';
 import 'package:softshares_mobile/Repositories/polo_repository.dart';
@@ -336,6 +337,7 @@ class _EcraLoginState extends State<EcraLogin> {
                                     width: double.infinity,
                                     child: FilledButton(
                                       onPressed: () async {
+                                        final context = this.context;
                                         /*if (_formKey.currentState!.validate()) {
                                           Navigator.pushNamed(context, '/home');
                                         }*/
@@ -361,20 +363,26 @@ class _EcraLoginState extends State<EcraLogin> {
                                         SubcategoriaRepository
                                             subcategoriaRepository =
                                             SubcategoriaRepository();
-                                        await subcategoriaRepository
-                                            .carregaSubategorias(context);
-                                        DepartamentoRepository
-                                            departamentoRepository =
-                                            DepartamentoRepository();
-                                        await departamentoRepository
-                                            .carregaDepartamentos(context);
-                                        FuncaoRepository funcaoRepositry =
-                                            FuncaoRepository();
-                                        await funcaoRepositry
-                                            .carregaFuncoes(context);
+                                        if (mounted) {
+                                          await subcategoriaRepository
+                                              .carregaSubategorias(context);
+                                          DepartamentoRepository
+                                              departamentoRepository =
+                                              DepartamentoRepository();
+                                          await departamentoRepository
+                                              .carregaDepartamentos(context);
+                                          FuncaoRepository funcaoRepositry =
+                                              FuncaoRepository();
+                                          await funcaoRepositry
+                                              .carregaFuncoes(context);
+                                          CidadeRepository cidadeRepository =
+                                              CidadeRepository();
+                                          await cidadeRepository
+                                              .carregaCidades(context);
 
-                                        Navigator.pushNamed(
-                                            context, '/escolherPolo');
+                                          Navigator.pushNamed(
+                                              context, '/escolherPolo');
+                                        }
                                       },
                                       child: Text(
                                           AppLocalizations.of(context)!.login),

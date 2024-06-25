@@ -22,7 +22,7 @@ class Evento {
   final List<String>? imagem;
   final int utilizadorCriou;
   final int cidadeid;
-  final bool cancelado;
+  final bool? cancelado;
   final List<int>? utilizadoresInscritos;
   List<Imagem>? imagens;
   final int? utilizadorAprovou;
@@ -78,8 +78,8 @@ class Evento {
     this.imagem,
     required this.utilizadorCriou,
     required this.cidadeid,
-    required this.cancelado,
-    required this.utilizadoresInscritos,
+    this.cancelado,
+    this.utilizadoresInscritos,
     this.numeroInscritos = 0,
     this.imagens,
     this.utilizadorAprovou,
@@ -128,20 +128,19 @@ class Evento {
   Map<String, dynamic> toJsonCriar() {
     return {
       "titulo": titulo,
-      "categoria": categoria,
-      "subcategoria": subcategoria,
+      "poloId": poloId,
+      "subcategoriaId": subcategoria,
       "descricao": descricao,
-      "numeroMaxPart": numeroMaxPart,
+      "nmrMaxParticipantes": numeroMaxPart,
       "nmrConvidados": nmrConvidados,
       "localizacao": localizacao,
       "latitude": latitude,
       "longitude": longitude,
       "dataInicio": dataInicio.toIso8601String(),
       "dataFim": dataFim.toIso8601String(),
-      "dataLimiteInsc": dataLimiteInsc.toIso8601String(),
+      "dataLimInscricao": dataLimiteInsc.toIso8601String(),
       "utilizadorCriou": utilizadorCriou,
-      "cidadeid": cidadeid,
-      "cancelado": cancelado,
+      "cidadeID": cidadeid,
       "imagens": imagens != null
           ? jsonEncode(imagens!.map((e) => e.toJson()).toList())
           : null,

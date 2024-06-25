@@ -1,15 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
+import 'package:softshares_mobile/Repositories/evento_repository.dart';
 import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
 import 'package:softshares_mobile/l10n/app_localizations_extension.dart';
 import 'package:softshares_mobile/models/categoria.dart';
+import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/subcategoria.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/formulario_cfg.dart';
+import 'package:softshares_mobile/services/open_route_service.dart';
 import '../../time_utils.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
 import 'package:softshares_mobile/screens/generic/location_picker.dart';
@@ -47,6 +53,8 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
   bool _isLoading = true;
   double latitude = 0.0;
   double longitude = 0.0;
+  int utilizadorId = 0;
+  int poloId = 0;
 
   Future<void> carregarCategoriasSubcats() async {
     final prefs = await SharedPreferences.getInstance();
@@ -57,6 +65,13 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     SubcategoriaRepository subcategoriaRepository = SubcategoriaRepository();
     List<Subcategoria> subcategoriasL =
         await subcategoriaRepository.fetchSubcategoriasDB(idiomaId);
+
+    // Carrega ytilizadorId
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    utilizadorId = utilizador.utilizadorId;
+    poloId = utilizador.poloId;
+
     setState(() {
       categorias = categoriasL;
       subcategorias = subcategoriasL;
@@ -733,7 +748,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       ElevatedButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           if (_tituloController
                                                   .text.isNotEmpty ||
                                               _localizacaoController
@@ -772,7 +787,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                       ),
                                       SizedBox(width: largura * 0.02),
                                       FilledButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           String mensagem = "";
 
                                           if (forms.isEmpty) {
@@ -794,6 +809,8 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                               mensagem,
                                             );
 
+                                            EventoRepository eventoRepository;
+                                            Evento eventoCriar;
                                             confirma.then((value) => {
                                                   if (value)
                                                     {
@@ -816,7 +833,59 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                                     }
                                                   else
                                                     {
-                                                      // TODO: IMPLEMENTAR ENVIO
+                                                      print(
+                                                          "A criar evento sem form "),
+                                                      // Envio sem formularios
+                                                      eventoCriar =
+                                                          Evento.criar(
+                                                        poloId: poloId,
+                                                        titulo:
+                                                            _tituloController
+                                                                .text,
+                                                        subcategoria: int.parse(
+                                                            _subCategoriaId!),
+                                                        descricao:
+                                                            _descricao.text,
+                                                        numeroMaxPart:
+                                                            nmrMaxParticipantes!,
+                                                        numeroInscritos: 0,
+                                                        nmrConvidados:
+                                                            permiteConvidados!
+                                                                ? nmrConvidados!
+                                                                : 0,
+                                                        localizacao:
+                                                            _localizacaoController
+                                                                .text,
+                                                        latitude: latitude
+                                                            .toStringAsFixed(6),
+                                                        longitude: longitude
+                                                            .toStringAsFixed(6),
+                                                        dataInicio:
+                                                            DateTime.parse(
+                                                                _dateIni.text +
+                                                                    " " +
+                                                                    _timeIni
+                                                                        .text),
+                                                        dataFim: DateTime.parse(
+                                                            _dateFim.text +
+                                                                " " +
+                                                                _timeFim.text),
+                                                        dataLimiteInsc:
+                                                            DateTime.parse(
+                                                                _dataLimiteInscricao
+                                                                        .text +
+                                                                    " 00:00:00"),
+                                                        utilizadorCriou:
+                                                            utilizadorId,
+                                                        cidadeid: 1,
+                                                        formInsc: null,
+                                                        formQualidade: null,
+                                                      ),
+                                                      eventoRepository =
+                                                          EventoRepository(),
+                                                      eventoRepository
+                                                          .criarEvento(
+                                                              eventoCriar)
                                                     }
                                                 });
                                           } else {

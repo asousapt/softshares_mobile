@@ -27,6 +27,14 @@ class EventoRepository {
     }
   }
 
+  // Pedido de insercao de um novo evento
+  Future<void> criarEvento(Evento evento) async {
+    _apiService.setAuthToken("tokenFixo");
+    final response =
+        await _apiService.postRequest("evento/add/", evento.toJsonCriar());
+    print(response);
+  }
+
   // retorna os eventos de um dia especifico (usado no table_calendar)
   Map<DateTime, List<Evento>> getEventosMap(List<Evento> eventos) {
     final Map<DateTime, List<Evento>> eventSource = {};

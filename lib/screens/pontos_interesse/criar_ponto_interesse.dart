@@ -1,19 +1,15 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
 import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
-import 'package:softshares_mobile/l10n/app_localizations_extension.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
-import 'package:softshares_mobile/screens/formularios_dinamicos/formulario_cfg.dart';
-import 'package:softshares_mobile/time_utils.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
 import 'package:softshares_mobile/services/api_service.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/pergunta_formulario.dart';
@@ -104,14 +100,14 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   Future<void> carregarDados() async {
     final prefs = await SharedPreferences.getInstance();
     final int idiomaId = prefs.getInt("idiomaId") ?? 1;
-    user = jsonDecode(prefs.getString('utilizadorObj')!) ;
+    user = jsonDecode(prefs.getString('utilizadorObj')!);
     CategoriaRepository categoriaRepository = CategoriaRepository();
     List<Categoria> categoriasL =
         await categoriaRepository.fetchCategoriasDB(idiomaId);
     SubcategoriaRepository subcategoriaRepository = SubcategoriaRepository();
     List<Subcategoria> subcategoriasL =
         await subcategoriaRepository.fetchSubcategoriasDB(idiomaId);
-    
+
     setState(() {
       categorias = categoriasL;
       subcategorias = subcategoriasL;

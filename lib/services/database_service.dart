@@ -72,6 +72,11 @@ class DatabaseService {
       idiomaId $idType
     )''');
 
+    await db.execute('''CREATE TABLE cidade (
+      cidadeid $idType,
+      nome $textType
+    )''');
+
     print('Tables created');
   }
 
@@ -119,6 +124,12 @@ class DatabaseService {
       idiomaId $idType
     )''');
       print('Table funcao created in upgrade');
+
+      await db.execute('''CREATE TABLE IF NOT EXISTS cidade (
+      cidadeid $idType,
+      nome $textType
+    )''');
+      print('Table cidade created in upgrade');
     }
   }
 

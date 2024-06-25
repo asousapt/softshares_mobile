@@ -1,21 +1,13 @@
 import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
-import 'package:softshares_mobile/screens/formularios_dinamicos/resposta_individual.dart';
-import 'package:softshares_mobile/screens/formularios_dinamicos/tabela_respostas.dart';
-import 'package:softshares_mobile/widgets/gerais/perfil/custom_tab.dart';
 import 'package:softshares_mobile/widgets/pontos__de_interesse/escolherRating.dart';
 import 'package:softshares_mobile/widgets/pontos__de_interesse/estrelas.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:softshares_mobile/widgets/gerais/text_tools.dart';
 import 'package:softshares_mobile/widgets/comentarios_section.dart';
 import 'package:softshares_mobile/models/comentario.dart';
