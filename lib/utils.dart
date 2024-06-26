@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:camera/camera.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:softshares_mobile/models/imagem.dart';
@@ -24,4 +25,25 @@ Future<Imagem?> convertImageUrlToBase64(String imageUrl) async {
     print('Erro ao converter para base64: $e');
     return null;
   }
+}
+
+Future<List<Imagem>> convertListXfiletoImagem(List<XFile> xFiles) async {
+  List<Imagem> imagens = [];
+
+  for (XFile xFile in xFiles) {
+    final bytes = await xFile.readAsBytes();
+    final base64String = base64Encode(bytes);
+    final nome = path.basename(xFile.path);
+    final tamanho = bytes.length;
+
+    imagens.add(
+      Imagem(
+        nome: nome,
+        base64: base64String,
+        tamanho: tamanho,
+      ),
+    );
+  }
+
+  return imagens;
 }

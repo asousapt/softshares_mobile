@@ -126,6 +126,13 @@ class Evento {
 
   // ToJson para envio para a API
   Map<String, dynamic> toJsonCriar() {
+    List<Map<String, dynamic>> listaImagens = [];
+    if (imagens != null) {
+      for (Imagem img in imagens!) {
+        listaImagens.add(img.toJson());
+      }
+      print(jsonEncode(listaImagens));
+    }
     return {
       "titulo": titulo,
       "poloId": poloId,
@@ -141,9 +148,7 @@ class Evento {
       "dataLimInscricao": dataLimiteInsc.toIso8601String(),
       "utilizadorCriou": utilizadorCriou,
       "cidadeID": cidadeid,
-      "imagens": imagens != null
-          ? jsonEncode(imagens!.map((e) => e.toJson()).toList())
-          : null,
+      "imagens": jsonEncode(listaImagens),
       'formInsc': formInsc != null ? formInsc!.toJson() : null,
       'formQualidade': formQualidade != null ? formQualidade!.toJson() : null,
     };

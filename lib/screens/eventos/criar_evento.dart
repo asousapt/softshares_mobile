@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -12,10 +12,12 @@ import 'package:softshares_mobile/l10n/app_localizations_extension.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
+import 'package:softshares_mobile/models/imagem.dart';
 import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/formulario_cfg.dart';
-import 'package:softshares_mobile/services/open_route_service.dart';
+import 'package:softshares_mobile/utils.dart';
+import 'package:softshares_mobile/widgets/gerais/foto_picker.dart';
 import '../../time_utils.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
 import 'package:softshares_mobile/screens/generic/location_picker.dart';
@@ -55,6 +57,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
   double longitude = 0.0;
   int utilizadorId = 0;
   int poloId = 0;
+  List<XFile> images = [];
 
   Future<void> carregarCategoriasSubcats() async {
     final prefs = await SharedPreferences.getInstance();
@@ -84,6 +87,13 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
   DateTime last = DateTime(DateTime.now().year + 1);
 
   TimeOfDay timeOfDay = TimeOfDay.now();
+
+  void _updateImages(List<XFile> newImages) {
+    setState(() {
+      images = newImages;
+      print("tamanho: ${images.length}");
+    });
+  }
 
   @override
   void initState() {
@@ -333,6 +343,12 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  FotoPicker(
+                                    pickedImages: images,
+                                    onImagesPicked: _updateImages,
+                                  ),
+                                  SizedBox(height: altura * 0.02),
+
                                   Text(
                                     AppLocalizations.of(context)!
                                         .detalhesEvento,
@@ -810,7 +826,14 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                             );
 
                                             EventoRepository eventoRepository;
+
                                             Evento eventoCriar;
+
+                                            final List<Imagem> imagens = images
+                                                    .isNotEmpty
+                                                ? await convertListXfiletoImagem(
+                                                    images)
+                                                : [];
                                             confirma.then((value) => {
                                                   if (value)
                                                     {
@@ -838,6 +861,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                                       // Envio sem formularios
                                                       eventoCriar =
                                                           Evento.criar(
+                                                        imagens: imagens,
                                                         poloId: poloId,
                                                         titulo:
                                                             _tituloController

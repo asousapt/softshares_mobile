@@ -158,7 +158,7 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
                                             "https://via.placeholder.com/150"),
                                   ),
                                   SizedBox(height: altura * 0.02),
-                                  FotoPicker(onImagesPicked: _onImagesPicked),
+                                  //FotoPicker(onImagesPicked: _onImagesPicked),
                                   TextFormField(
                                     controller: _nomeController,
                                     maxLength: 60,
