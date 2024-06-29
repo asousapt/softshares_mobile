@@ -147,7 +147,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       Map<String, dynamic> utilJson =
                           utilizadorRefresh.toJson();
-                      print(utilJson);
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.setString(
                           'utilizadorObj', jsonEncode(utilJson));

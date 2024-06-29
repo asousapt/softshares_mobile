@@ -47,3 +47,15 @@ Future<List<Imagem>> convertListXfiletoImagem(List<XFile> xFiles) async {
 
   return imagens;
 }
+
+// Função que converte uma lista de objetos para JSON
+List<Map<String, dynamic>> toJsonList<T>(
+    List<T>? items, Map<String, dynamic> Function(T) toJsonFunction) {
+  List<Map<String, dynamic>> itemList = [];
+  if (items != null) {
+    for (T item in items) {
+      itemList.add(toJsonFunction(item));
+    }
+  }
+  return itemList;
+}

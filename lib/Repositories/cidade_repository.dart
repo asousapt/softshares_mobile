@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:softshares_mobile/models/cidade.dart';
 import 'package:softshares_mobile/services/api_service.dart';
 import 'package:softshares_mobile/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:http/http.dart' as http;
 
 class CidadeRepository {
   final _apiService = ApiService();
@@ -74,6 +77,33 @@ class CidadeRepository {
         ),
       );
       print(e);
+    }
+  }
+
+  Future<int> obtemCidadeId(double latitude, double longitude) async {
+    String cidadeNome = "";
+    var request = http.Request(
+        'GET', Uri.parse('https://json.geoapi.pt/gps/$latitude,$longitude'));
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      String responseBody = await response.stream.bytesToString();
+      Map<String, dynamic> jsonResponse = jsonDecode(responseBody);
+      cidadeNome = jsonResponse['concelho'];
+      print(cidadeNome);
+    } else {
+      print(response.reasonPhrase);
+    }
+
+    final db = await _databaseService.database;
+    final cidade = await db.query('cidade',
+        columns: ['cidadeid'], where: 'nome = ?', whereArgs: [cidadeNome]);
+
+    if (cidade.isNotEmpty) {
+      return cidade.first['cidadeid'] as int;
+    } else {
+      return 0;
     }
   }
 }

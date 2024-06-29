@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
+import 'package:softshares_mobile/Repositories/cidade_repository.dart';
 import 'package:softshares_mobile/Repositories/evento_repository.dart';
 import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
 import 'package:softshares_mobile/l10n/app_localizations_extension.dart';
@@ -58,7 +59,9 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
   int utilizadorId = 0;
   int poloId = 0;
   List<XFile> images = [];
+  bool isSaving = false;
 
+  // Carrega as categorias e subcategorias
   Future<void> carregarCategoriasSubcats() async {
     final prefs = await SharedPreferences.getInstance();
     final int idiomaId = prefs.getInt("idiomaId") ?? 1;
@@ -69,7 +72,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     List<Subcategoria> subcategoriasL =
         await subcategoriaRepository.fetchSubcategoriasDB(idiomaId);
 
-    // Carrega ytilizadorId
+    // Carrega utilizador
     String util = prefs.getString("utilizadorObj") ?? "";
     Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
     utilizadorId = utilizador.utilizadorId;
@@ -91,7 +94,6 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
   void _updateImages(List<XFile> newImages) {
     setState(() {
       images = newImages;
-      print("tamanho: ${images.length}");
     });
   }
 
@@ -234,7 +236,6 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
   bool _adicionaFormulario(Formulario formulario) {
     // verifica se o formulário já existe na lista
     final index = forms.indexWhere((form) => form.formId == formulario.formId);
-    print(index);
 
     if (index != -1) {
       // A editar um formulário existente
@@ -313,627 +314,638 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
             AppLocalizations.of(context)!.criarEvento,
           ),
         ),
-        body: SafeArea(
-          top: true,
-          bottom: true,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: largura * 0.02, vertical: altura * 0.02),
-            child: _isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).canvasColor,
-                    ),
-                  )
-                : SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).canvasColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          margin: const EdgeInsets.all(10),
-                          child: Form(
-                            key: _formKey,
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  FotoPicker(
-                                    pickedImages: images,
-                                    onImagesPicked: _updateImages,
-                                  ),
-                                  SizedBox(height: altura * 0.02),
+        body: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: largura * 0.02, vertical: altura * 0.02),
+          child: _isLoading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).canvasColor,
+                  ),
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).canvasColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        margin: const EdgeInsets.all(10),
+                        child: Form(
+                          key: _formKey,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                FotoPicker(
+                                  pickedImages: images,
+                                  onImagesPicked: _updateImages,
+                                ),
+                                SizedBox(height: altura * 0.02),
 
-                                  Text(
-                                    AppLocalizations.of(context)!
-                                        .detalhesEvento,
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
+                                Text(
+                                  AppLocalizations.of(context)!.detalhesEvento,
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: altura * 0.02),
+                                TextFormField(
+                                  maxLength: 160,
+                                  controller: _tituloController,
+                                  decoration: InputDecoration(
+                                    label: Text(
+                                        AppLocalizations.of(context)!.titulo),
                                   ),
-                                  SizedBox(height: altura * 0.02),
-                                  TextFormField(
-                                    maxLength: 160,
-                                    controller: _tituloController,
-                                    decoration: InputDecoration(
-                                      label: Text(
-                                          AppLocalizations.of(context)!.titulo),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "${AppLocalizations.of(context)!.porfavorInsiraO} ${AppLocalizations.of(context)!.titulo}";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                TextFormField(
+                                  maxLength: 160,
+                                  controller: _localizacaoController,
+                                  decoration: InputDecoration(
+                                    suffixIcon: IconButton(
+                                      onPressed: () async {
+                                        LatLng? localizacao =
+                                            await Navigator.of(context)
+                                                .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LocationPicker(),
+                                        ));
+                                        if (localizacao != null) {
+                                          latitude = localizacao.latitude;
+                                          longitude = localizacao.longitude;
+                                        }
+                                      },
+                                      icon: const Icon(
+                                          FontAwesomeIcons.locationDot),
                                     ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return "${AppLocalizations.of(context)!.porfavorInsiraO} ${AppLocalizations.of(context)!.titulo}";
-                                      }
-                                      return null;
-                                    },
+                                    label: Text(AppLocalizations.of(context)!
+                                        .localizacao),
                                   ),
-                                  TextFormField(
-                                    maxLength: 160,
-                                    controller: _localizacaoController,
-                                    decoration: InputDecoration(
-                                      suffixIcon: IconButton(
-                                        onPressed: () async {
-                                          LatLng? localizacao =
-                                              await Navigator.of(context)
-                                                  .push(MaterialPageRoute(
-                                            builder: (context) =>
-                                                const LocationPicker(),
-                                          ));
-                                          if (localizacao != null) {
-                                            latitude = localizacao.latitude;
-                                            longitude = localizacao.longitude;
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "${AppLocalizations.of(context)!.porfavorInsiraA} ${AppLocalizations.of(context)!.localizacao}";
+                                    }
+                                    return null;
+                                  },
+                                ),
+
+                                SizedBox(height: altura * 0.02),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        readOnly: true,
+                                        decoration: InputDecoration(
+                                          labelStyle: const TextStyle(
+                                              overflow: TextOverflow.visible),
+                                          errorStyle: const TextStyle(
+                                              overflow: TextOverflow.visible),
+                                          labelText:
+                                              AppLocalizations.of(context)!
+                                                  .dataHoraIni,
+                                          border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                          ),
+                                          suffixIcon: IconButton(
+                                            onPressed: () {
+                                              _selectStartDate(context);
+                                            },
+                                            icon: const Icon(
+                                                FontAwesomeIcons.calendar),
+                                          ),
+                                        ),
+                                        controller: _dateIni,
+                                        validator: (value) {
+                                          if (value == null ||
+                                              value.isEmpty ||
+                                              _timeIni.text.isEmpty) {
+                                            return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataHoraIni}";
                                           }
+                                          return validaDatas("dataInicio");
                                         },
-                                        icon: const Icon(
-                                            FontAwesomeIcons.locationDot),
                                       ),
-                                      label: Text(AppLocalizations.of(context)!
-                                          .localizacao),
                                     ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return "${AppLocalizations.of(context)!.porfavorInsiraA} ${AppLocalizations.of(context)!.localizacao}";
-                                      }
-                                      return null;
-                                    },
-                                  ),
+                                    SizedBox(width: largura * 0.02),
+                                    Expanded(
+                                      child: TextFormField(
+                                        readOnly: true,
+                                        decoration: InputDecoration(
+                                          border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                          ),
+                                          suffixIcon: IconButton(
+                                            onPressed: () {
+                                              _selectStartTime(context);
+                                            },
+                                            icon: const Icon(
+                                                FontAwesomeIcons.clock),
+                                          ),
+                                        ),
+                                        controller: _timeIni,
+                                        validator: (value) {
+                                          if (value == null ||
+                                              value.isEmpty ||
+                                              _dateIni.text.isEmpty) {
+                                            return "";
+                                          }
 
-                                  SizedBox(height: altura * 0.02),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
+                                          return validaDatas("horaInicio");
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: altura * 0.02),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        readOnly: true,
+                                        decoration: InputDecoration(
+                                          labelText:
+                                              AppLocalizations.of(context)!
+                                                  .dataHoraFim,
+                                          border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                          ),
+                                          suffixIcon: IconButton(
+                                            onPressed: () {
+                                              _selectEndDate(context);
+                                            },
+                                            icon: const Icon(
+                                                FontAwesomeIcons.calendar),
+                                          ),
+                                        ),
+                                        controller: _dateFim,
+                                        validator: (value) {
+                                          if (value == null ||
+                                              value.isEmpty ||
+                                              _timeFim.text.isEmpty) {
+                                            return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataHoraFim}";
+                                          }
+
+                                          return validaDatas("dataFim");
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(width: largura * 0.02),
+                                    Expanded(
+                                      child: TextFormField(
+                                        readOnly: true,
+                                        decoration: InputDecoration(
+                                          border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                          ),
+                                          suffixIcon: IconButton(
+                                            onPressed: () {
+                                              _selectEndTime(context);
+                                            },
+                                            icon: const Icon(
+                                                FontAwesomeIcons.clock),
+                                          ),
+                                        ),
+                                        controller: _timeFim,
+                                        validator: (value) {
+                                          if (value == null ||
+                                              value.isEmpty ||
+                                              _dateFim.text.isEmpty) {
+                                            return "";
+                                          }
+
+                                          return validaDatas("horaFim");
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: altura * 0.02),
+                                TextFormField(
+                                  controller: _dataLimiteInscricao,
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    labelText: AppLocalizations.of(context)!
+                                        .dataLimiteInscricao,
+                                    border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20),
+                                      ),
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon:
+                                          const Icon(FontAwesomeIcons.calendar),
+                                      onPressed: () {
+                                        _selectDeadLineDate(context);
+                                      },
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    DateTime hoje = DateTime(
+                                        DateTime.now().year,
+                                        DateTime.now().month,
+                                        DateTime.now().day,
+                                        0,
+                                        0,
+                                        0);
+                                    if (value == null || value.isEmpty) {
+                                      return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataLimiteInscricao}";
+                                    }
+
+                                    if (DateTime.parse(value).isBefore(hoje)) {
+                                      return AppLocalizations.of(context)!
+                                          .dataLimiteAntHoje;
+                                    }
+
+                                    if (DateTime.parse(value).isAfter(
+                                        DateTime.parse(_dateIni.text))) {
+                                      return AppLocalizations.of(context)!
+                                          .dataLimiteSupInicio;
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                SizedBox(height: altura * 0.02),
+                                // Selecção de categoria
+                                DropdownButtonFormField(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  hint: Text(
+                                      AppLocalizations.of(context)!.categoria),
+                                  isExpanded: true,
+                                  value: _categoriaId.toString(),
+                                  items: getListaCatDropdown(categorias!),
+                                  onChanged: (value) {
+                                    setState(
+                                      () {
+                                        _categoriaId = value;
+                                        _subCategoriaId = subcategorias!
+                                            .where((e) =>
+                                                e.categoriaId ==
+                                                int.parse(value))
+                                            .first
+                                            .subcategoriaId
+                                            .toString();
+                                      },
+                                    );
+                                  },
+                                ),
+                                SizedBox(height: altura * 0.02),
+                                //selecção de subcategoria
+                                DropdownButton(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  borderRadius: BorderRadius.circular(20),
+                                  hint: Text(AppLocalizations.of(context)!
+                                      .subCategoria),
+                                  isExpanded: true,
+                                  value: _subCategoriaId.toString(),
+                                  items: getListaSubCatDropdown(
+                                      subcategorias!, int.parse(_categoriaId!)),
+                                  onChanged: (value) {
+                                    setState(
+                                      () {
+                                        _subCategoriaId = value;
+                                      },
+                                    );
+                                  },
+                                ),
+                                SizedBox(height: altura * 0.02),
+                                TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  controller: _nmrMaxParticipantes,
+                                  decoration: InputDecoration(
+                                    label: Text(AppLocalizations.of(context)!
+                                        .nmrMaxParticipantes),
+                                  ),
+                                  onChanged: (value) {
+                                    setState(
+                                      () {
+                                        nmrMaxParticipantes = int.parse(value);
+                                      },
+                                    );
+                                  },
+                                ),
+                                SizedBox(height: altura * 0.02),
+                                // Secção de convidados permitidos
+                                Row(
+                                  children: [
+                                    Checkbox(
+                                      tristate: false,
+                                      value: permiteConvidados,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          permiteConvidados = value;
+                                        });
+                                      },
+                                    ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        keyboardType: TextInputType.number,
+                                        controller: _nmrConvidados,
+                                        enabled: permiteConvidados,
+                                        decoration: InputDecoration(
+                                          label: Text(
+                                              AppLocalizations.of(context)!
+                                                  .nmrMaxConvidados),
+                                        ),
+                                        validator: (value) {
+                                          if (permiteConvidados == true &&
+                                              (value == null ||
+                                                  value.isEmpty)) {
+                                            return "${AppLocalizations.of(context)!.porfavorInsiraO}${AppLocalizations.of(context)!.nmrMaxConvidados}";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: altura * 0.02),
+                                TextFormField(
+                                  maxLines: 2,
+                                  controller: _descricao,
+                                  decoration: InputDecoration(
+                                    label: Text(AppLocalizations.of(context)!
+                                        .descricao),
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      descricao = value;
+                                    });
+                                  },
+                                  validator: (value) => value!.isEmpty
+                                      ? "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.descricao}"
+                                      : null,
+                                ),
+                                SizedBox(height: altura * 0.02),
+                                Text(
+                                  AppLocalizations.of(context)!.formularios,
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  ),
+                                  child: ListView(
+                                    shrinkWrap: true,
                                     children: [
-                                      Expanded(
-                                        child: TextFormField(
-                                          readOnly: true,
-                                          decoration: InputDecoration(
-                                            labelStyle: const TextStyle(
-                                                overflow: TextOverflow.visible),
-                                            errorStyle: const TextStyle(
-                                                overflow: TextOverflow.visible),
-                                            labelText:
-                                                AppLocalizations.of(context)!
-                                                    .dataHoraIni,
-                                            border: const OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(20),
-                                              ),
-                                            ),
-                                            suffixIcon: IconButton(
-                                              onPressed: () {
-                                                _selectStartDate(context);
-                                              },
-                                              icon: const Icon(
-                                                  FontAwesomeIcons.calendar),
-                                            ),
+                                      for (var form in forms)
+                                        ListTile(
+                                          title: Text(form.titulo),
+                                          subtitle: Text(
+                                              AppLocalizations.of(context)!
+                                                  .getEnumValue(
+                                                      form.tipoFormulario!)),
+                                          trailing: IconButton(
+                                            icon: const Icon(Icons.delete),
+                                            onPressed: () {
+                                              setState(() {
+                                                forms.remove(form);
+                                              });
+                                            },
                                           ),
-                                          controller: _dateIni,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty ||
-                                                _timeIni.text.isEmpty) {
-                                              return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataHoraIni}";
-                                            }
-                                            return validaDatas("dataInicio");
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(width: largura * 0.02),
-                                      Expanded(
-                                        child: TextFormField(
-                                          readOnly: true,
-                                          decoration: InputDecoration(
-                                            border: const OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(20),
-                                              ),
-                                            ),
-                                            suffixIcon: IconButton(
-                                              onPressed: () {
-                                                _selectStartTime(context);
-                                              },
-                                              icon: const Icon(
-                                                  FontAwesomeIcons.clock),
-                                            ),
-                                          ),
-                                          controller: _timeIni,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty ||
-                                                _dateIni.text.isEmpty) {
-                                              return "";
-                                            }
-
-                                            return validaDatas("horaInicio");
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: altura * 0.02),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Expanded(
-                                        child: TextFormField(
-                                          readOnly: true,
-                                          decoration: InputDecoration(
-                                            labelText:
-                                                AppLocalizations.of(context)!
-                                                    .dataHoraFim,
-                                            border: const OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(20),
-                                              ),
-                                            ),
-                                            suffixIcon: IconButton(
-                                              onPressed: () {
-                                                _selectEndDate(context);
-                                              },
-                                              icon: const Icon(
-                                                  FontAwesomeIcons.calendar),
-                                            ),
-                                          ),
-                                          controller: _dateFim,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty ||
-                                                _timeFim.text.isEmpty) {
-                                              return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataHoraFim}";
-                                            }
-
-                                            return validaDatas("dataFim");
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(width: largura * 0.02),
-                                      Expanded(
-                                        child: TextFormField(
-                                          readOnly: true,
-                                          decoration: InputDecoration(
-                                            border: const OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(20),
-                                              ),
-                                            ),
-                                            suffixIcon: IconButton(
-                                              onPressed: () {
-                                                _selectEndTime(context);
-                                              },
-                                              icon: const Icon(
-                                                  FontAwesomeIcons.clock),
-                                            ),
-                                          ),
-                                          controller: _timeFim,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty ||
-                                                _dateFim.text.isEmpty) {
-                                              return "";
-                                            }
-
-                                            return validaDatas("horaFim");
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: altura * 0.02),
-                                  TextFormField(
-                                    controller: _dataLimiteInscricao,
-                                    readOnly: true,
-                                    decoration: InputDecoration(
-                                      labelText: AppLocalizations.of(context)!
-                                          .dataLimiteInscricao,
-                                      border: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(20),
-                                        ),
-                                      ),
-                                      suffixIcon: IconButton(
-                                        icon: const Icon(
-                                            FontAwesomeIcons.calendar),
-                                        onPressed: () {
-                                          _selectDeadLineDate(context);
-                                        },
-                                      ),
-                                    ),
-                                    validator: (value) {
-                                      DateTime hoje = DateTime(
-                                          DateTime.now().year,
-                                          DateTime.now().month,
-                                          DateTime.now().day,
-                                          0,
-                                          0,
-                                          0);
-                                      if (value == null || value.isEmpty) {
-                                        return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.dataLimiteInscricao}";
-                                      }
-
-                                      if (DateTime.parse(value)
-                                          .isBefore(hoje)) {
-                                        return AppLocalizations.of(context)!
-                                            .dataLimiteAntHoje;
-                                      }
-
-                                      if (DateTime.parse(value).isAfter(
-                                          DateTime.parse(_dateIni.text))) {
-                                        return AppLocalizations.of(context)!
-                                            .dataLimiteSupInicio;
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: altura * 0.02),
-                                  // Selecção de categoria
-                                  DropdownButtonFormField(
-                                    padding: const EdgeInsets.only(
-                                        left: 10, right: 10),
-                                    hint: Text(AppLocalizations.of(context)!
-                                        .categoria),
-                                    isExpanded: true,
-                                    value: _categoriaId.toString(),
-                                    items: getListaCatDropdown(categorias!),
-                                    onChanged: (value) {
-                                      setState(
-                                        () {
-                                          _categoriaId = value;
-                                          _subCategoriaId = subcategorias!
-                                              .where((e) =>
-                                                  e.categoriaId ==
-                                                  int.parse(value))
-                                              .first
-                                              .subcategoriaId
-                                              .toString();
-                                        },
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(height: altura * 0.02),
-                                  //selecção de subcategoria
-                                  DropdownButton(
-                                    padding: const EdgeInsets.only(
-                                        left: 10, right: 10),
-                                    borderRadius: BorderRadius.circular(20),
-                                    hint: Text(AppLocalizations.of(context)!
-                                        .subCategoria),
-                                    isExpanded: true,
-                                    value: _subCategoriaId.toString(),
-                                    items: getListaSubCatDropdown(
-                                        subcategorias!,
-                                        int.parse(_categoriaId!)),
-                                    onChanged: (value) {
-                                      setState(
-                                        () {
-                                          _subCategoriaId = value;
-                                        },
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(height: altura * 0.02),
-                                  TextFormField(
-                                    keyboardType: TextInputType.number,
-                                    controller: _nmrMaxParticipantes,
-                                    decoration: InputDecoration(
-                                      label: Text(AppLocalizations.of(context)!
-                                          .nmrMaxParticipantes),
-                                    ),
-                                    onChanged: (value) {
-                                      setState(
-                                        () {
-                                          nmrMaxParticipantes =
-                                              int.parse(value);
-                                        },
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(height: altura * 0.02),
-                                  // Secção de convidados permitidos
-                                  Row(
-                                    children: [
-                                      Checkbox(
-                                        tristate: false,
-                                        value: permiteConvidados,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            permiteConvidados = value;
-                                          });
-                                        },
-                                      ),
-                                      Expanded(
-                                        child: TextFormField(
-                                          keyboardType: TextInputType.number,
-                                          controller: _nmrConvidados,
-                                          enabled: permiteConvidados,
-                                          decoration: InputDecoration(
-                                            label: Text(
-                                                AppLocalizations.of(context)!
-                                                    .nmrMaxConvidados),
-                                          ),
-                                          validator: (value) {
-                                            if (permiteConvidados == true &&
-                                                (value == null ||
-                                                    value.isEmpty)) {
-                                              return "${AppLocalizations.of(context)!.porfavorInsiraO}${AppLocalizations.of(context)!.nmrMaxConvidados}";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: altura * 0.02),
-                                  TextFormField(
-                                    maxLines: 2,
-                                    controller: _descricao,
-                                    decoration: InputDecoration(
-                                      label: Text(AppLocalizations.of(context)!
-                                          .descricao),
-                                    ),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        descricao = value;
-                                      });
-                                    },
-                                    validator: (value) => value!.isEmpty
-                                        ? "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.descricao}"
-                                        : null,
-                                  ),
-                                  SizedBox(height: altura * 0.02),
-                                  // LISTA DE FORMULARIOS
-                                  forms.isNotEmpty
-                                      ? Text(
-                                          AppLocalizations.of(context)!
-                                              .formularios,
-                                          style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      : const SizedBox(height: 0),
-                                  forms.isNotEmpty
-                                      ? Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                            ),
-                                          ),
-                                          child: ListView(
-                                            shrinkWrap: true,
-                                            children: [
-                                              for (var form in forms)
-                                                ListTile(
-                                                  title: Text(form.titulo),
-                                                  subtitle: Text(
-                                                      AppLocalizations.of(
-                                                              context)!
-                                                          .getEnumValue(form
-                                                              .tipoFormulario!)),
-                                                  trailing: IconButton(
-                                                    icon: const Icon(
-                                                        Icons.delete),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        forms.remove(form);
-                                                      });
-                                                    },
-                                                  ),
-                                                  onTap: () {
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ConfiguracaoFormularioScreen(
-                                                          adicionaFormulario:
-                                                              _adicionaFormulario,
-                                                          formulario: form,
-                                                          formId: form.formId,
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ConfiguracaoFormularioScreen(
+                                                  adicionaFormulario:
+                                                      _adicionaFormulario,
+                                                  formulario: form,
+                                                  formId: form.formId,
                                                 ),
-                                            ],
-                                          ),
-                                        )
-                                      : const SizedBox(height: 0),
-                                  SizedBox(height: altura * 0.02),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: () async {
-                                          if (_tituloController
-                                                  .text.isNotEmpty ||
-                                              _localizacaoController
-                                                  .text.isNotEmpty ||
-                                              _dateIni.text.isNotEmpty ||
-                                              _timeIni.text.isNotEmpty ||
-                                              _dateFim.text.isNotEmpty ||
-                                              _timeFim.text.isNotEmpty ||
-                                              _dataLimiteInscricao
-                                                  .text.isNotEmpty ||
-                                              _categoriaId!.isNotEmpty ||
-                                              _subCategoriaId!.isNotEmpty ||
-                                              _nmrMaxParticipantes
-                                                  .text.isNotEmpty ||
-                                              _descricao.text.isNotEmpty) {
-                                            Future<bool> confirma = confirmExit(
-                                              context,
-                                              AppLocalizations.of(context)!
-                                                  .sairSemGuardar,
-                                              AppLocalizations.of(context)!
-                                                  .dadosSeraoPerdidos,
+                                              ),
                                             );
+                                          },
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  style: ButtonStyle(
+                                    iconColor: WidgetStateProperty.all(
+                                        Theme.of(context).canvasColor),
+                                    backgroundColor: WidgetStateProperty.all(
+                                        Theme.of(context).primaryColor),
+                                  ),
+                                  onPressed: () {
+                                    // nAvega para o ecra de adicionar formulario dinâmico
+                                    // apenas no caso de ser inferior a 2 formulários
+                                    if (forms.length < 2) {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ConfiguracaoFormularioScreen(
+                                            adicionaFormulario:
+                                                _adicionaFormulario,
+                                            formId: forms.isEmpty
+                                                ? 1
+                                                : forms.last.formId + 1,
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      // caso ja tenha 2 formulários
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              AppLocalizations.of(context)!
+                                                  .maxForms),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  icon: const Icon(FontAwesomeIcons.plus),
+                                ),
+                                SizedBox(height: altura * 0.02),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    ElevatedButton(
+                                      // Botão de cancelar
+                                      onPressed: () async {
+                                        if (_tituloController.text.isNotEmpty ||
+                                            _localizacaoController
+                                                .text.isNotEmpty ||
+                                            _dateIni.text.isNotEmpty ||
+                                            _timeIni.text.isNotEmpty ||
+                                            _dateFim.text.isNotEmpty ||
+                                            _timeFim.text.isNotEmpty ||
+                                            _dataLimiteInscricao
+                                                .text.isNotEmpty ||
+                                            _categoriaId!.isNotEmpty ||
+                                            _subCategoriaId!.isNotEmpty ||
+                                            _nmrMaxParticipantes
+                                                .text.isNotEmpty ||
+                                            _descricao.text.isNotEmpty) {
+                                          Future<bool> confirma = confirmExit(
+                                            context,
+                                            AppLocalizations.of(context)!
+                                                .sairSemGuardar,
+                                            AppLocalizations.of(context)!
+                                                .dadosSeraoPerdidos,
+                                          );
 
-                                            confirma.then((value) {
-                                              if (value) {
-                                                Navigator.of(context).pop();
-                                              }
-                                            });
-                                          } else {
+                                          confirma.then((value) {
+                                            if (value) {
+                                              Navigator.of(context).pop();
+                                            }
+                                          });
+                                        } else {
+                                          Navigator.of(context).pop();
+                                        }
+                                      },
+                                      child: Text(AppLocalizations.of(context)!
+                                          .cancelar),
+                                    ),
+                                    SizedBox(width: largura * 0.02),
+                                    FilledButton(
+                                      // Botão de guardar
+                                      onPressed: () async {
+                                        EventoRepository eventoRepository =
+                                            EventoRepository();
+
+                                        if (_formKey.currentState!.validate() &&
+                                            images.isNotEmpty) {
+                                          setState(() {
+                                            isSaving = true;
+                                          });
+                                          // Converte as imagens para base64
+                                          List<Imagem> imagens = [];
+                                          imagens =
+                                              await convertListXfiletoImagem(
+                                                  images);
+                                          CidadeRepository cidadeRepository =
+                                              CidadeRepository();
+                                          int cidadeId = await cidadeRepository
+                                              .obtemCidadeId(
+                                                  latitude, longitude);
+                                          // cria o objeto evento para ser submetido
+                                          Evento eventoCriar = Evento.criar(
+                                            imagens: imagens,
+                                            poloId: poloId,
+                                            titulo: _tituloController.text,
+                                            subcategoria:
+                                                int.parse(_subCategoriaId!),
+                                            descricao: _descricao.text,
+                                            numeroMaxPart: nmrMaxParticipantes!,
+                                            numeroInscritos: 0,
+                                            nmrConvidados: permiteConvidados!
+                                                ? nmrConvidados!
+                                                : 0,
+                                            localizacao:
+                                                _localizacaoController.text,
+                                            latitude:
+                                                latitude.toStringAsFixed(6),
+                                            longitude:
+                                                longitude.toStringAsFixed(6),
+                                            dataInicio: DateTime.parse(
+                                                '${_dateIni.text} ${_timeIni.text}'),
+                                            dataFim: DateTime.parse(
+                                                '${_dateFim.text} ${_timeFim.text}'),
+                                            dataLimiteInsc: DateTime.parse(
+                                                '${_dataLimiteInscricao.text} 00:00:00'),
+                                            utilizadorCriou: utilizadorId,
+                                            cidadeid: cidadeId,
+                                            formInsc: forms
+                                                    .where((form) =>
+                                                        form.tipoFormulario ==
+                                                        TipoFormulario.inscr)
+                                                    .isNotEmpty
+                                                ? forms
+                                                    .where((form) =>
+                                                        form.tipoFormulario ==
+                                                        TipoFormulario.inscr)
+                                                    .first
+                                                : null,
+                                            formQualidade: forms
+                                                    .where((form) =>
+                                                        form.tipoFormulario ==
+                                                        TipoFormulario
+                                                            .qualidade)
+                                                    .isNotEmpty
+                                                ? forms
+                                                    .where((form) =>
+                                                        form.tipoFormulario ==
+                                                        TipoFormulario
+                                                            .qualidade)
+                                                    .first
+                                                : null,
+                                          );
+                                          // Cria o evento via API
+                                          eventoRepository
+                                              .criarEvento(eventoCriar);
+                                          setState(() {
+                                            isSaving = false;
+                                          });
+                                          if (mounted) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .savedWithSuccess),
+                                              ),
+                                            );
                                             Navigator.of(context).pop();
                                           }
-                                        },
-                                        child: Text(
-                                            AppLocalizations.of(context)!
-                                                .cancelar),
-                                      ),
-                                      SizedBox(width: largura * 0.02),
-                                      FilledButton(
-                                        onPressed: () async {
-                                          String mensagem = "";
-
-                                          if (forms.isEmpty) {
-                                            mensagem =
-                                                AppLocalizations.of(context)!
-                                                    .criarEventoSemForms;
-                                          } else if (forms.length == 1) {
-                                            mensagem =
-                                                AppLocalizations.of(context)!
-                                                    .maisForms;
-                                          }
-
-                                          if (forms.isEmpty ||
-                                              forms.length == 1) {
-                                            Future<bool> confirma = confirmExit(
-                                              context,
-                                              AppLocalizations.of(context)!
-                                                  .criarEvento,
-                                              mensagem,
-                                            );
-
-                                            EventoRepository eventoRepository;
-
-                                            Evento eventoCriar;
-
-                                            final List<Imagem> imagens = images
-                                                    .isNotEmpty
-                                                ? await convertListXfiletoImagem(
-                                                    images)
-                                                : [];
-                                            confirma.then((value) => {
-                                                  if (value)
-                                                    {
-                                                      Navigator.of(context)
-                                                          .push(
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ConfiguracaoFormularioScreen(
-                                                            adicionaFormulario:
-                                                                _adicionaFormulario,
-                                                            formId: forms
-                                                                    .isEmpty
-                                                                ? 1
-                                                                : forms.last
-                                                                        .formId +
-                                                                    1,
-                                                          ),
-                                                        ),
-                                                      )
-                                                    }
-                                                  else
-                                                    {
-                                                      print(
-                                                          "A criar evento sem form "),
-                                                      // Envio sem formularios
-                                                      eventoCriar =
-                                                          Evento.criar(
-                                                        imagens: imagens,
-                                                        poloId: poloId,
-                                                        titulo:
-                                                            _tituloController
-                                                                .text,
-                                                        subcategoria: int.parse(
-                                                            _subCategoriaId!),
-                                                        descricao:
-                                                            _descricao.text,
-                                                        numeroMaxPart:
-                                                            nmrMaxParticipantes!,
-                                                        numeroInscritos: 0,
-                                                        nmrConvidados:
-                                                            permiteConvidados!
-                                                                ? nmrConvidados!
-                                                                : 0,
-                                                        localizacao:
-                                                            _localizacaoController
-                                                                .text,
-                                                        latitude: latitude
-                                                            .toStringAsFixed(6),
-                                                        longitude: longitude
-                                                            .toStringAsFixed(6),
-                                                        dataInicio:
-                                                            DateTime.parse(
-                                                                _dateIni.text +
-                                                                    " " +
-                                                                    _timeIni
-                                                                        .text),
-                                                        dataFim: DateTime.parse(
-                                                            _dateFim.text +
-                                                                " " +
-                                                                _timeFim.text),
-                                                        dataLimiteInsc:
-                                                            DateTime.parse(
-                                                                _dataLimiteInscricao
-                                                                        .text +
-                                                                    " 00:00:00"),
-                                                        utilizadorCriou:
-                                                            utilizadorId,
-                                                        cidadeid: 1,
-                                                        formInsc: null,
-                                                        formQualidade: null,
-                                                      ),
-                                                      eventoRepository =
-                                                          EventoRepository(),
-                                                      eventoRepository
-                                                          .criarEvento(
-                                                              eventoCriar)
-                                                    }
-                                                });
-                                          } else {
-                                            // TODO: IMPLEMENTAR ENVIO
-                                            for (var form in forms) {
-                                              print(form.titulo);
-                                            }
-                                          }
-                                        },
-                                        child: Text(
-                                            AppLocalizations.of(context)!
-                                                .guardar),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .preenchaCampos),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child: Text(AppLocalizations.of(context)!
+                                          .guardar),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      if (isSaving)
+                        Container(
+                          color: Colors.white.withOpacity(0.4),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                                color: Theme.of(context).canvasColor),
+                          ),
+                        ),
+                    ],
                   ),
-          ),
+                ),
         ),
       ),
     );

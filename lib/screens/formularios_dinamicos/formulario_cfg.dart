@@ -170,9 +170,9 @@ class _ConfiguracaoFormularioScreenState
                     SizedBox(height: altura * 0.01),
                     IconButton(
                       style: ButtonStyle(
-                        iconColor: MaterialStateProperty.all(
+                        iconColor: WidgetStateProperty.all(
                             Theme.of(context).canvasColor),
-                        backgroundColor: MaterialStateProperty.all(
+                        backgroundColor: WidgetStateProperty.all(
                             Theme.of(context).primaryColor),
                       ),
                       onPressed: () => _navegaParaNovaPerguntaScreen(),

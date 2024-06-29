@@ -1,3 +1,5 @@
+import 'package:http/http.dart';
+
 enum TipoDados { logico, textoLivre, numerico, seleccao }
 
 class Pergunta {
@@ -40,14 +42,29 @@ class Pergunta {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['detalheId'] = detalheId;
-    data['pergunta'] = pergunta;
-    data['tipoDados'] = tipoDados;
-    data['obrigatorio'] = obrigatorio;
-    data['min'] = min;
-    data['max'] = max;
+    data['text'] = pergunta;
+    data['type'] = getTipoDados();
+    data['required'] = obrigatorio;
+    data['minValue'] = min;
+    data['maxValue'] = max;
     data['tamanho'] = tamanho;
-    data['valoresPossiveis'] = valoresPossiveis;
-    data['ordem'] = ordem;
+    data['options'] = valoresPossiveis;
+    data['order'] = ordem;
     return data;
+  }
+
+  String getTipoDados() {
+    switch (tipoDados) {
+      case TipoDados.logico:
+        return 'LOGICO';
+      case TipoDados.textoLivre:
+        return 'TEXTO';
+      case TipoDados.numerico:
+        return 'NUMERICO';
+      case TipoDados.seleccao:
+        return 'SELECAO';
+      default:
+        return 'TEXTO';
+    }
   }
 }

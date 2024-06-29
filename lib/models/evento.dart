@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/imagem.dart';
+import 'package:softshares_mobile/utils.dart';
 
 class Evento {
   final int? eventoId;
@@ -126,13 +128,17 @@ class Evento {
 
   // ToJson para envio para a API
   Map<String, dynamic> toJsonCriar() {
-    List<Map<String, dynamic>> listaImagens = [];
-    if (imagens != null) {
-      for (Imagem img in imagens!) {
-        listaImagens.add(img.toJson());
-      }
-      print(jsonEncode(listaImagens));
-    }
+    List<Map<String, dynamic>> listaImagens =
+        toJsonList(imagens, (Imagem img) => img.toJson());
+
+    List<Map<String, dynamic>> listPergInscr = formInsc != null
+        ? toJsonList(formInsc!.perguntas, (pergunta) => pergunta.toJson())
+        : [];
+
+    List<Map<String, dynamic>> listPergQual = formQualidade != null
+        ? toJsonList(formQualidade!.perguntas, (pergunta) => pergunta.toJson())
+        : [];
+
     return {
       "titulo": titulo,
       "poloId": poloId,
@@ -148,9 +154,9 @@ class Evento {
       "dataLimInscricao": dataLimiteInsc.toIso8601String(),
       "utilizadorCriou": utilizadorCriou,
       "cidadeID": cidadeid,
-      "imagens": jsonEncode(listaImagens),
-      'formInsc': formInsc != null ? formInsc!.toJson() : null,
-      'formQualidade': formQualidade != null ? formQualidade!.toJson() : null,
+      "imagens": listaImagens,
+      'formInsc': listPergInscr,
+      'formQualidade': listPergQual,
     };
   }
 

@@ -153,5 +153,8 @@
   "removerFoto": "Remover Foto", 
   "dadosGravados": "Dados guardados com sucesso!", 
   "seleccionar": "Seleccionar", 
-  "seleccionarLocalizacao": "Seleccionar Localização"
+  "seleccionarLocalizacao": "Seleccionar Localização", 
+  "maxForms": "Apenas são permitidos dois formulários", 
+  "preenchaCampos": "Por favor preencha todos os campos", 
+  "savedWithSuccess": "Registo Submetido com sucesso!"
 }
