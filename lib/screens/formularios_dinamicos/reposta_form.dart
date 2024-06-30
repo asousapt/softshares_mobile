@@ -17,11 +17,13 @@ class RespostaFormScreen extends StatefulWidget {
     required this.formularioId,
     this.evento,
     this.tipo,
+    this.numeroConvidados,
   });
 
   final int formularioId;
   final Evento? evento;
   final String? tipo;
+  final int? numeroConvidados;
 
   @override
   State<StatefulWidget> createState() {
@@ -40,7 +42,8 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
   final Map<int, TextEditingController> _controllers = {};
   final Map<int, bool> _booleanValues = {};
   final Map<int, String?> _dropdownValues = {};
-  final _nmrConvidadosController = TextEditingController();
+  final Map<int, List<String>> _multiSelectValues =
+      {}; // New map for multiple choices
 
   // Funcao para buscar o formulario
   Future<void> fetchFormulario() async {
@@ -69,6 +72,9 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
         if (perguntas[i].tipoDados == TipoDados.seleccao) {
           _dropdownValues[i] = null;
         }
+        if (perguntas[i].tipoDados == TipoDados.multiplaEscolha) {
+          _multiSelectValues[i] = [];
+        }
       }
     });
   }
@@ -87,7 +93,7 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
         _controllers[i]!.dispose();
       }
     }
-    _nmrConvidadosController.dispose();
+
     super.dispose();
   }
 
@@ -175,6 +181,30 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
           );
           break;
 
+        case TipoDados.multiplaEscolha:
+          field = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(pergunta.pergunta),
+              ...pergunta.valoresPossiveis.map((valor) {
+                return CheckboxListTile(
+                  title: Text(valor),
+                  value: _multiSelectValues[index]!.contains(valor),
+                  onChanged: (bool? selected) {
+                    setState(() {
+                      if (selected == true) {
+                        _multiSelectValues[index]!.add(valor);
+                      } else {
+                        _multiSelectValues[index]!.remove(valor);
+                      }
+                    });
+                  },
+                );
+              }),
+            ],
+          );
+          break;
+
         default:
           field = Container();
       }
@@ -222,6 +252,14 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
           ));
           break;
 
+        case TipoDados.multiplaEscolha:
+          respostas.add(RespostaDetalhe(
+            perguntaId: pergunta.detalheId,
+            resposta: _multiSelectValues[index]!
+                .join(', '), // Join multiple choices with comma
+          ));
+          break;
+
         default:
       }
     }
@@ -245,8 +283,15 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
             return true;
           }
           break;
+
         case TipoDados.seleccao:
           if (_dropdownValues[index] != null) {
+            return true;
+          }
+          break;
+
+        case TipoDados.multiplaEscolha:
+          if (_multiSelectValues[index]!.isNotEmpty) {
             return true;
           }
           break;
@@ -285,7 +330,8 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('Resposta')),
+        appBar:
+            AppBar(title: Text(AppLocalizations.of(context)!.responderForm)),
         body: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: largura * 0.02, vertical: altura * 0.02),
@@ -312,20 +358,6 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
                               style: const TextStyle(
                                   fontSize: 24, fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(height: altura * 0.02),
-                            widget.evento != null && widget.tipo! == "INSCR"
-                                ? TextFormField(
-                                    controller: _nmrConvidadosController,
-                                    keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
-                                      labelText: AppLocalizations.of(context)!
-                                          .nmrMaxConvidados,
-                                    ),
-                                    validator: (value) {
-                                      return null;
-                                    },
-                                  )
-                                : Container(),
                             SizedBox(height: altura * 0.02),
                             ..._buildPerguntas(context),
                             SizedBox(height: altura * 0.02),
@@ -360,7 +392,6 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
                                   onPressed: () async {
                                     if (_formKey.currentState != null &&
                                         _formKey.currentState!.validate()) {
-                                      print("Formulario validado");
                                       // formulario foi validado
                                       bool sucesso = false;
 
@@ -377,18 +408,23 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
                                         if (widget.tipo == "INSCR") {
                                           sucesso = await eventoRepository
                                               .inscreverEvento(
-                                                  widget.evento!,
-                                                  respostaF,
-                                                  utilizadorId,
-                                                  int.parse(
-                                                      _nmrConvidadosController
-                                                          .text));
+                                            widget.evento!,
+                                            respostaF,
+                                            utilizadorId,
+                                            widget.numeroConvidados ?? 0,
+                                          );
 
                                           setState(() {
                                             isSaving = false;
                                           });
 
                                           if (sucesso) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .incricaoComSucesso),
+                                            ));
                                             Navigator.of(context).pop(true);
                                           } else {
                                             ScaffoldMessenger.of(context)

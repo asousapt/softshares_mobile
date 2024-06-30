@@ -163,6 +163,10 @@ class EventoRepository {
       return false;
     }
 
+    if (evento.dataLimiteInsc.isAtSameMomentAs(hoje)) {
+      return false;
+    }
+
     if (evento.dataLimiteInsc.isAfter(hoje) &&
         !evento.utilizadoresInscritos!.contains(utilizadorId)) {
       return false;

@@ -1,4 +1,4 @@
-enum TipoDados { logico, textoLivre, numerico, seleccao }
+enum TipoDados { logico, textoLivre, numerico, seleccao, multiplaEscolha }
 
 class Pergunta {
   int detalheId;
@@ -61,6 +61,8 @@ class Pergunta {
         return 'NUMERICO';
       case TipoDados.seleccao:
         return 'SELECAO';
+      case TipoDados.multiplaEscolha:
+        return 'ESCOLHA_MULTIPLA';
       default:
         return 'TEXTO';
     }
@@ -76,6 +78,8 @@ class Pergunta {
         return TipoDados.numerico;
       case 'SELECAO':
         return TipoDados.seleccao;
+      case 'ESCOLHA_MULTIPLA':
+        return TipoDados.multiplaEscolha;
       default:
         return TipoDados.textoLivre;
     }

@@ -156,5 +156,8 @@
   "seleccionarLocalizacao": "Seleccionar Localização", 
   "maxForms": "Apenas são permitidos dois formulários", 
   "preenchaCampos": "Por favor preencha todos os campos", 
-  "savedWithSuccess": "Registo Submetido com sucesso!"
+  "savedWithSuccess": "Registo Submetido com sucesso!", 
+  "numeroConvidados": "Número de Convidados", 
+  "responderForm": "Responda ao formulário", 
+  "incricaoComSucesso": "Inscrição no evento bem sucedida"
 }

@@ -155,5 +155,8 @@
   "seleccionarLocalizacao": "Select Location", 
   "maxForms": "Only two forms are allowed", 
   "preenchaCampos": "Please fill in all the fields",
-  "savedWithSuccess": "Data submited with success!"
+  "savedWithSuccess": "Data submited with success!", 
+  "numeroConvidados": "Number of Guests", 
+  "responderForm": "Fill in the form", 
+  "incricaoComSucesso": "Successful event registration"
 }

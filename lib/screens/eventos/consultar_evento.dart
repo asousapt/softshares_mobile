@@ -391,6 +391,20 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                             ),
                                             SizedBox(height: altura * 0.02),
                                             // Botao de inscrever no evento
+                                            EventoRepository().podeInscrever(
+                                                    evento!, utilizadorId)
+                                                ? TextFormField(
+                                                    decoration: InputDecoration(
+                                                      labelText:
+                                                          AppLocalizations.of(
+                                                                  context)!
+                                                              .numeroConvidados,
+                                                    ),
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                  )
+                                                : const SizedBox(),
+                                            SizedBox(height: altura * 0.02),
                                             SizedBox(
                                               height: altura * 0.065,
                                               width: double.infinity,
