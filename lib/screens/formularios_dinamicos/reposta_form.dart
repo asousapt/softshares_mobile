@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/Repositories/formulario_repository.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/pergunta_formulario.dart';
 import 'package:softshares_mobile/models/evento.dart';
@@ -34,59 +35,9 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
 
   // Funcao para buscar o formulario
   Future<void> fetchFormulario() async {
-    // Simulate a network call
-    await Future.delayed(Duration(seconds: 2));
-    Formulario fetchedFormulario = Formulario(
-      formId: 1,
-      titulo: 'Formulário de Teste',
-      tipoFormulario: TipoFormulario.inscr,
-      perguntas: [
-        Pergunta(
-          detalheId: 1,
-          pergunta: 'Qual é o seu nome?',
-          tipoDados: TipoDados.textoLivre,
-          obrigatorio: true,
-          min: 0,
-          max: 0,
-          tamanho: 100,
-          valoresPossiveis: [],
-          ordem: 1,
-        ),
-        Pergunta(
-          detalheId: 2,
-          pergunta: 'Qual é a sua idade?',
-          tipoDados: TipoDados.numerico,
-          obrigatorio: true,
-          min: 1,
-          max: 120,
-          tamanho: 0,
-          valoresPossiveis: [],
-          ordem: 2,
-        ),
-        Pergunta(
-          detalheId: 3,
-          pergunta: 'É vegetariano?',
-          tipoDados: TipoDados.logico,
-          obrigatorio: false,
-          min: 0,
-          max: 0,
-          tamanho: 0,
-          valoresPossiveis: [],
-          ordem: 3,
-        ),
-        Pergunta(
-          detalheId: 4,
-          pergunta: 'Escolha um horário',
-          tipoDados: TipoDados.seleccao,
-          obrigatorio: false,
-          min: 0,
-          max: 0,
-          tamanho: 0,
-          valoresPossiveis: ['Manhã', 'Tarde', 'Noite'],
-          ordem: 4,
-        ),
-      ],
-    );
+    FormularioRepository formularioRepository = FormularioRepository();
+    Formulario fetchedFormulario =
+        await formularioRepository.getFormulariobyId(widget.formularioId);
 
     setState(() {
       formulario = fetchedFormulario;

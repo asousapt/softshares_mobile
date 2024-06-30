@@ -317,7 +317,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
         body: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: largura * 0.02, vertical: altura * 0.02),
-          child: _isLoading
+          child: _isLoading || isSaving
               ? Center(
                   child: CircularProgressIndicator(
                     color: Theme.of(context).canvasColor,
@@ -935,14 +935,6 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                           ),
                         ),
                       ),
-                      if (isSaving)
-                        Container(
-                          color: Colors.white.withOpacity(0.4),
-                          child: Center(
-                            child: CircularProgressIndicator(
-                                color: Theme.of(context).canvasColor),
-                          ),
-                        ),
                     ],
                   ),
                 ),

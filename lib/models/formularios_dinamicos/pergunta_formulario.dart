@@ -1,16 +1,16 @@
-import 'package:http/http.dart';
+import 'dart:convert';
 
 enum TipoDados { logico, textoLivre, numerico, seleccao }
 
 class Pergunta {
-  int detalheId = 0;
+  int detalheId;
   String pergunta;
   TipoDados tipoDados;
-  bool obrigatorio = false;
-  int min = 0;
-  int max = 0;
+  bool obrigatorio;
+  int min;
+  int max;
   int tamanho;
-  List<String> valoresPossiveis = [];
+  List<String> valoresPossiveis;
   int ordem;
 
   Pergunta({
@@ -29,12 +29,12 @@ class Pergunta {
     return Pergunta(
       detalheId: json['detalheId'],
       pergunta: json['pergunta'],
-      tipoDados: json['tipoDados'],
+      tipoDados: getTipoDadosEnum(json['tipoDados']),
       obrigatorio: json['obrigatorio'],
       min: json['min'],
       max: json['max'],
       tamanho: json['tamanho'],
-      valoresPossiveis: json['valoresPossiveis'].cast<String>(),
+      valoresPossiveis: List<String>.from(json['valoresPossiveis']),
       ordem: json['ordem'],
     );
   }
@@ -65,6 +65,21 @@ class Pergunta {
         return 'SELECAO';
       default:
         return 'TEXTO';
+    }
+  }
+
+  static TipoDados getTipoDadosEnum(String tipo) {
+    switch (tipo) {
+      case 'LOGICO':
+        return TipoDados.logico;
+      case 'TEXTO':
+        return TipoDados.textoLivre;
+      case 'NUMERICO':
+        return TipoDados.numerico;
+      case 'SELECAO':
+        return TipoDados.seleccao;
+      default:
+        return TipoDados.textoLivre;
     }
   }
 }

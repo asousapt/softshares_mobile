@@ -32,7 +32,24 @@ class EventoRepository {
     _apiService.setAuthToken("tokenFixo");
     final response =
         await _apiService.postRequest("evento/add/", evento.toJsonCriar());
-    print(response);
+  }
+
+  // pedido do formulario dinamico do evento
+  Future<int> getFormId(Evento evento, String formType) async {
+    _apiService.setAuthToken("tokenFixo");
+    final url = "evento/${evento.eventoId}/form/$formType";
+
+    try {
+      final response = await _apiService.getRequest(url);
+      if (response['data'] != null && response['data'] is int) {
+        return response['data'] as int;
+      } else {
+        throw Exception("Unexpected response format");
+      }
+    } catch (error) {
+      print('Error fetching form ID: $error');
+      return 0;
+    }
   }
 
   // retorna os eventos de um dia especifico (usado no table_calendar)

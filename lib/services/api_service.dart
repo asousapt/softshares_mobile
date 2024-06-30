@@ -47,6 +47,7 @@ class ApiService {
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
+    print('$_baseUrl/$endpoint');
     if (response.statusCode == 200) {
       return jsonDecode(response.body) as Map<String, dynamic>;
     } else {
