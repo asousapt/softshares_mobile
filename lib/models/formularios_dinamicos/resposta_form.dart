@@ -14,6 +14,25 @@ class RespostaDetalhe {
     this.utilizador,
   });
 
+  factory RespostaDetalhe.fromJson(Map<String, dynamic> json) {
+    return RespostaDetalhe(
+      perguntaId: json['perguntaId'],
+      resposta: json['resposta'],
+      pergunta:
+          json['pergunta'] != null ? Pergunta.fromJson(json['pergunta']) : null,
+      utilizador: json['utilizador'] != null
+          ? Utilizador.fromJson(json['utilizador'])
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJsonCriar() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['formulariodetalhesid'] = perguntaId;
+    data['resposta'] = resposta;
+    return data;
+  }
+
   static Future<List<RespostaDetalhe>> getRespostasDetalhe({
     required int utilizadorId,
     required int respostaFormId,

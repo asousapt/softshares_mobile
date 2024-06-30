@@ -1,10 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/evento_repository.dart';
 import 'package:softshares_mobile/Repositories/formulario_repository.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/pergunta_formulario.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/resposta_form.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
 
 class RespostaFormScreen extends StatefulWidget {
@@ -12,10 +16,12 @@ class RespostaFormScreen extends StatefulWidget {
     super.key,
     required this.formularioId,
     this.evento,
+    this.tipo,
   });
 
   final int formularioId;
   final Evento? evento;
+  final String? tipo;
 
   @override
   State<StatefulWidget> createState() {
@@ -27,14 +33,22 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
   Formulario? formulario;
   List<Pergunta> perguntas = [];
   bool _isLoading = true;
+  bool isSaving = false;
+  late int utilizadorId;
 
   final _formKey = GlobalKey<FormState>();
   final Map<int, TextEditingController> _controllers = {};
   final Map<int, bool> _booleanValues = {};
   final Map<int, String?> _dropdownValues = {};
+  final _nmrConvidadosController = TextEditingController();
 
   // Funcao para buscar o formulario
   Future<void> fetchFormulario() async {
+    final prefs = await SharedPreferences.getInstance();
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    utilizadorId = utilizador.utilizadorId;
+
     FormularioRepository formularioRepository = FormularioRepository();
     Formulario fetchedFormulario =
         await formularioRepository.getFormulariobyId(widget.formularioId);
@@ -63,6 +77,18 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
   void initState() {
     super.initState();
     fetchFormulario();
+  }
+
+  @override
+  void dispose() {
+    for (int i = 0; i < perguntas.length; i++) {
+      if (perguntas[i].tipoDados == TipoDados.textoLivre ||
+          perguntas[i].tipoDados == TipoDados.numerico) {
+        _controllers[i]!.dispose();
+      }
+    }
+    _nmrConvidadosController.dispose();
+    super.dispose();
   }
 
   // Faz o build das perguntas do formulário
@@ -263,7 +289,7 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
         body: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: largura * 0.02, vertical: altura * 0.02),
-          child: _isLoading
+          child: _isLoading || isSaving
               ? Container(
                   height: altura * 0.9,
                   color: Theme.of(context).canvasColor,
@@ -286,6 +312,20 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
                               style: const TextStyle(
                                   fontSize: 24, fontWeight: FontWeight.bold),
                             ),
+                            SizedBox(height: altura * 0.02),
+                            widget.evento != null && widget.tipo! == "INSCR"
+                                ? TextFormField(
+                                    controller: _nmrConvidadosController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      labelText: AppLocalizations.of(context)!
+                                          .nmrMaxConvidados,
+                                    ),
+                                    validator: (value) {
+                                      return null;
+                                    },
+                                  )
+                                : Container(),
                             SizedBox(height: altura * 0.02),
                             ..._buildPerguntas(context),
                             SizedBox(height: altura * 0.02),
@@ -317,17 +357,48 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
                                 ),
                                 SizedBox(width: largura * 0.02),
                                 FilledButton(
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
+                                  onPressed: () async {
+                                    if (_formKey.currentState != null &&
+                                        _formKey.currentState!.validate()) {
+                                      print("Formulario validado");
                                       // formulario foi validado
-                                      // TODO: fazer o envio dos dados para a API e sair para outro ecra
+                                      bool sucesso = false;
+
                                       List<RespostaDetalhe> respostaF =
                                           getRespostas();
 
+                                      // No caso de ser um formulario de inscricao de evento
                                       if (widget.evento != null) {
-                                        // Se o evento for fornecido, então estamos a responder a um formulário de evento
-                                        Navigator.pushReplacementNamed(
-                                            context, '/eventos');
+                                        setState(() {
+                                          isSaving = true;
+                                        });
+                                        EventoRepository eventoRepository =
+                                            EventoRepository();
+                                        if (widget.tipo == "INSCR") {
+                                          sucesso = await eventoRepository
+                                              .inscreverEvento(
+                                                  widget.evento!,
+                                                  respostaF,
+                                                  utilizadorId,
+                                                  int.parse(
+                                                      _nmrConvidadosController
+                                                          .text));
+
+                                          setState(() {
+                                            isSaving = false;
+                                          });
+
+                                          if (sucesso) {
+                                            Navigator.of(context).pop(true);
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .ocorreuErro),
+                                            ));
+                                          }
+                                        }
                                       }
                                     }
                                   },

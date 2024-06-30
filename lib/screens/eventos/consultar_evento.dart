@@ -48,7 +48,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
   Future<void> initialize() async {
     await getIdioma();
     evento = widget.evento;
-    print("latitude: ${evento!.latitude}, longitude: ${evento!.longitude}");
+
     isSecondTabEnabled = evento!.utilizadorCriou == utilizadorId;
     setState(() {
       _isLoading = false;
@@ -77,8 +77,8 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
       return SizedBox(
         height: altura * 0.065,
         child: FilledButton(
-          style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.red)),
+          style:
+              ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
           onPressed: () {
             // ToDO: cancelar inscricao
           },
@@ -108,15 +108,47 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
             });
 
             if (formularioId != 0) {
-              Navigator.push(
+              bool inscreveu = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => RespostaFormScreen(
                     formularioId: formularioId,
                     evento: evento,
+                    tipo: "INSCR",
                   ),
                 ),
               );
+
+              if (inscreveu) {
+                setState(() {
+                  evento.numeroInscritos = evento.numeroInscritos + 1;
+                  evento.utilizadoresInscritos!.add(utilizadorId);
+                });
+              }
+            } else {
+              setState(() {
+                isSaving = true;
+              });
+              EventoRepository eventoRepository = EventoRepository();
+              bool sucesso = await eventoRepository.inscreverEvento(
+                  evento, [], utilizadorId, 0);
+              setState(() {
+                isSaving = false;
+              });
+              if (sucesso) {
+                setState(() {
+                  evento.numeroInscritos = evento.numeroInscritos + 1;
+                  evento.utilizadoresInscritos!.add(utilizadorId);
+                });
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.ocorreuErro,
+                    ),
+                  ),
+                );
+              }
             }
           },
           child: Text(AppLocalizations.of(context)!.inscrever),
@@ -126,8 +158,8 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
       return SizedBox(
         height: altura * 0.065,
         child: FilledButton(
-          style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.red)),
+          style:
+              ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
           onPressed: () {
             // TODO: Implementar o cancelamento do evento
           },
@@ -482,7 +514,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                                               style:
                                                                   ButtonStyle(
                                                                 backgroundColor:
-                                                                    MaterialStateProperty
+                                                                    WidgetStateProperty
                                                                         .all(
                                                                   Theme.of(
                                                                           context)

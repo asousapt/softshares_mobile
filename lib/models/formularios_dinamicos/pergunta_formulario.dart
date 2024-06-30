@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 enum TipoDados { logico, textoLivre, numerico, seleccao }
 
 class Pergunta {

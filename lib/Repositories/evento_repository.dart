@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/models/evento.dart';
+import 'package:softshares_mobile/models/formularios_dinamicos/resposta_form.dart';
 import 'package:softshares_mobile/services/api_service.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -32,6 +33,26 @@ class EventoRepository {
     _apiService.setAuthToken("tokenFixo");
     final response =
         await _apiService.postRequest("evento/add/", evento.toJsonCriar());
+  }
+
+  // Pedido de inscricao no evento
+  Future<bool> inscreverEvento(Evento evento, List<RespostaDetalhe> respostas,
+      int utilizadorId, int nmrConvidados) async {
+    List<Map<String, dynamic>> respostasmap;
+    if (respostas.isNotEmpty) {
+      respostasmap = respostas.map((e) => e.toJsonCriar()).toList();
+    } else {
+      respostasmap = [];
+    }
+    _apiService.setAuthToken("tokenFixo");
+    final response = await _apiService.postRequest("evento/inscricao",
+        evento.toJsonInscricao(utilizadorId, nmrConvidados, respostasmap));
+
+    if (response['data'] != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   // pedido do formulario dinamico do evento
@@ -139,10 +160,6 @@ class EventoRepository {
 
     // o evento ja aconteceu
     if (evento.dataLimiteInsc.isBefore(hoje)) {
-      return false;
-    }
-
-    if (evento.dataLimiteInsc.isAtSameMomentAs(hoje)) {
       return false;
     }
 

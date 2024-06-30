@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/imagem.dart';
@@ -13,7 +10,7 @@ class Evento {
   final int subcategoria;
   final String descricao;
   final int numeroMaxPart;
-  final int numeroInscritos;
+  int numeroInscritos;
   final int nmrConvidados;
   final String localizacao;
   final String latitude;
@@ -157,6 +154,16 @@ class Evento {
       "imagens": listaImagens,
       'formInsc': listPergInscr,
       'formQualidade': listPergQual,
+    };
+  }
+
+  Map<String, dynamic> toJsonInscricao(int utilizadorId, int nmrConvidados,
+      List<Map<String, dynamic>> respostas) {
+    return {
+      "idEvento": eventoId,
+      "idUser": utilizadorId,
+      "numConvidados": nmrConvidados,
+      "respostas": respostas,
     };
   }
 
