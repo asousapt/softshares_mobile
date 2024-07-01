@@ -16,6 +16,7 @@ class _MainDrawerState extends State<MainDrawer> {
   Utilizador? utilizador;
   String polo_a_ver = "";
   String iniciais = "";
+  late final prefs;
 
   @override
   void initState() {
@@ -25,7 +26,7 @@ class _MainDrawerState extends State<MainDrawer> {
 
   // carrega o utilizador logado e polo que está seleccionado
   void carregaUtilizador() async {
-    final prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     String? util = prefs.getString('utilizadorObj');
     polo_a_ver = prefs.getString('polo') ?? "";
 
@@ -116,13 +117,16 @@ class _MainDrawerState extends State<MainDrawer> {
               title: Text(AppLocalizations.of(context)!.seleccionarPolo),
             ),
             ListTile(
-              onTap: () {Navigator.pushNamed(context, "/definicoes");},
+              onTap: () {
+                Navigator.pushNamed(context, "/definicoes");
+              },
               contentPadding: const EdgeInsets.only(left: 15, top: 10),
               leading: const Icon(FontAwesomeIcons.gears),
               title: Text(AppLocalizations.of(context)!.definicoes),
             ),
             ListTile(
               onTap: () {
+                prefs.setBool('isChecked', false);
                 Navigator.pushNamed(context, "/login");
               },
               contentPadding: const EdgeInsets.only(left: 15, top: 10),

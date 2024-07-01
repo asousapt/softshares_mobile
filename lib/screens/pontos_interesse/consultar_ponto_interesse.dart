@@ -149,7 +149,7 @@ class _ConsultPontoInteresseScreenState
             bottom: altura * 0.01,
           ),
           height: altura * 0.9,
-          decoration: BoxDecoration(color: Theme.of(context).canvasColor),
+          decoration: BoxDecoration(color: Theme.of(context).canvasColor, borderRadius: BorderRadius.circular(20)),
           child: _isLoading
               ? Center(
                   child: CircularProgressIndicator(
@@ -157,119 +157,109 @@ class _ConsultPontoInteresseScreenState
                   ),
                 )
               : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).canvasColor,
-                          borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).canvasColor,
+                      
+                    ),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: FadeInImage(
+                            fit: BoxFit.fill,
+                            height: altura * 0.2,
+                            width: double.infinity,
+                            placeholder:
+                                const AssetImage("Images/Restaurante.jpg"),
+                            image:
+                                const AssetImage("Images/Restaurante.jpg"),
+                            imageErrorBuilder:
+                                (context, error, stackTrace) {
+                              return const Image(
+                                  image:
+                                      AssetImage("Images/Restaurante.jpg"));
+                            },
+                          ),
                         ),
-                        child: Column(
+                        SizedBox(height: altura * 0.02),
+                        Text(
+                          pontoInteresse!.titulo,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        EstrelasRating(rating: pontoInteresse!.avaliacao!),
+                        SizedBox(height: altura * 0.02),
+                        Row(
                           children: [
-                            Center(
-                              child: FadeInImage(
-                                fit: BoxFit.fill,
-                                height: altura * 0.2,
-                                width: double.infinity,
-                                placeholder:
-                                    const AssetImage("Images/Restaurante.jpg"),
-                                image:
-                                    const AssetImage("Images/Restaurante.jpg"),
-                                imageErrorBuilder:
-                                    (context, error, stackTrace) {
-                                  return const Image(
-                                      image:
-                                          AssetImage("Images/Restaurante.jpg"));
-                                },
-                              ),
+                            const Icon(
+                              FontAwesomeIcons.locationDot,
+                              color: Colors.red,
                             ),
-                            SizedBox(height: altura * 0.02),
-                            Text(
-                              pontoInteresse!.titulo,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Container(
+                              margin: EdgeInsets.only(left: largura * 0.02),
+                              child: Text(pontoInteresse!.localizacao),
                             ),
-                            EstrelasRating(rating: pontoInteresse!.avaliacao!),
-                            SizedBox(height: altura * 0.02),
-                            Row(
-                              children: [
-                                const Icon(
-                                  FontAwesomeIcons.locationDot,
-                                  color: Colors.red,
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(left: largura * 0.02),
-                                  child: Text(pontoInteresse!.localizacao),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: altura * 0.02),
-                            Center(
-                              child: Container(
-                                color: Colors.red,
-                                height: altura * 0.25,
-                                width: largura * 0.85,
-                                child: const Center(
-                                  child: Text("Mapa"),
-                                ),
-                              ),
-                            ),
-                            DividerWithText(
-                                text: AppLocalizations.of(context)!.descricao),
-                            Text(pontoInteresse!.descricao),
-                            DividerWithText(
-                                text: AppLocalizations.of(context)!.avaliar),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextFormField(
-                                    maxLines: null,
-                                    decoration: InputDecoration(
-                                      hintText: AppLocalizations.of(context)!
-                                          .deixaComentario,
-                                      border:
-                                          InputBorder.none, // Remove the border
-                                      contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 10.0), // Add padding
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: RatingPicker(
-                                      initialRating: 1,
-                                      onRatingSelected: atualizarRating),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    enviarAvaliacao();
-                                  },
-                                  child: Text(
-                                      AppLocalizations.of(context)!.avaliar),
-                                ),
-                              ],
-                            ),
-                            const Divider(
-                              color: Color.fromRGBO(29, 90, 161, 1),
-                            ),
-                            Text(AppLocalizations.of(context)!.outrosComentarios),
-                            SizedBox(
-                              height: altura * 0.5,
-                              child: SingleChildScrollView(
-                                child: CommentSection(
-                                  comentarios: comentarios
-                                ),
-                              ),
-                            )
                           ],
                         ),
-                      ),
-                    ],
+                        SizedBox(height: altura * 0.02),
+                        Center(
+                          child: Container(
+                            color: Colors.red,
+                            height: altura * 0.25,
+                            width: largura * 0.85,
+                            child: const Center(
+                              child: Text("Mapa"),
+                            ),
+                          ),
+                        ),
+                        DividerWithText(
+                            text: AppLocalizations.of(context)!.descricao),
+                        Text(pontoInteresse!.descricao),
+                        DividerWithText(
+                            text: AppLocalizations.of(context)!.avaliar),
+                        TextFormField(
+                          maxLines: null,
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!
+                                .deixaComentario,
+                            border:
+                                InputBorder.none, // Remove the border
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 10.0), // Add padding
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: RatingPicker(
+                                  initialRating: 1,
+                                  onRatingSelected: atualizarRating),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                enviarAvaliacao();
+                              },
+                              child: Text(
+                                  AppLocalizations.of(context)!.avaliar),
+                            ),
+                          ],
+                        ),
+                        const Divider(
+                          color: Color.fromRGBO(29, 90, 161, 1),
+                        ),
+                        Text(AppLocalizations.of(context)!.outrosComentarios),
+                        SizedBox(
+                          height: altura * 0.5,
+                          child: SingleChildScrollView(
+                            child: CommentSection(
+                              comentarios: comentarios
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
         ),

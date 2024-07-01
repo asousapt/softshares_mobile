@@ -104,7 +104,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   Future<void> carregarDados() async {
     final prefs = await SharedPreferences.getInstance();
     final int idiomaId = prefs.getInt("idiomaId") ?? 1;
-    user = jsonDecode(prefs.getString('utilizadorObj')!) ;
+    user = Utilizador.fromJson(jsonDecode(prefs.getString('utilizadorObj')!)) ;
     CategoriaRepository categoriaRepository = CategoriaRepository();
     List<Categoria> categoriasL =
         await categoriaRepository.fetchCategoriasDB(idiomaId);
@@ -116,6 +116,18 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       categorias = categoriasL;
       subcategorias = subcategoriasL;
       _isLoading = false;
+      for (int i = 0; i < forms[0]!.perguntas.length; i++) {
+        if (forms[0]!.perguntas[i].tipoDados == TipoDados.textoLivre ||
+            forms[0]!.perguntas[i].tipoDados == TipoDados.numerico) {
+          _controllers[i] = TextEditingController();
+        }
+        if (forms[0]!.perguntas[i].tipoDados == TipoDados.logico) {
+          _booleanValues[i] = false;
+        }
+        if (forms[0]!.perguntas[i].tipoDados == TipoDados.seleccao) {
+          _dropdownValues[i] = null;
+        }
+      }
     });
   }
 
@@ -151,8 +163,8 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
     String mensagem = "${AppLocalizations.of(context)!.titulo} : $titulo \n"
         "${AppLocalizations.of(context)!.localizacao} : $local \n"
         "${AppLocalizations.of(context)!.descricao} : $descricao \n"
-        "${AppLocalizations.of(context)!.categoria} : $cat\n"
-        "${AppLocalizations.of(context)!.subCategoria} : $sub\n";
+        "${AppLocalizations.of(context)!.categoria} : ${categorias.firstWhere((element) => element.categoriaId == int.parse(cat!)).descricao}\n"
+        "${AppLocalizations.of(context)!.subCategoria} : ${subcategorias.firstWhere((element) => element.subcategoriaId == int.parse(sub!)).descricao}\n";
 
     if (forms.isNotEmpty) {
       for (int i = 0; i < forms[0]!.perguntas.length; i++) {
@@ -190,9 +202,9 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       "cidadeid": 299,
       "utilizadorcriou": uti,
       "imagens": [],
-      "formRespostas": getRespostas(),
+      "formRespostas": getRespostas().map((resposta) => resposta.toJson()).toList(),
     };
-
+    print("This is the data: $data");
     return data;
   }
 

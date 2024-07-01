@@ -74,7 +74,7 @@ class _TopicoDetailsScreenState extends State<TopicoDetailsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                topico.utilizadorId.getNomeCompleto(),
+                                topico.getNomeCompleto(),
                                 style: const TextStyle(
                                     fontSize: 14, fontWeight: FontWeight.bold),
                               ),

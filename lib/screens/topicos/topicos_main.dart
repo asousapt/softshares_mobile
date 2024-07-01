@@ -10,6 +10,7 @@ import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/widgets/topico/topico_item.dart';
+import 'package:softshares_mobile/services/api_service.dart';
 
 class TopicosListaScreen extends StatefulWidget {
   const TopicosListaScreen({super.key});
@@ -29,6 +30,7 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
   Color containerColorTopicos = Colors.transparent;
   List<Categoria> categoriasFiltro = [];
   List<Categoria> categorias = [];
+  ApiService api = ApiService();
 
   // Busca as categorias do idioma selecionado
   Future<void> carregaCategorias() async {
@@ -48,89 +50,43 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
   }
 
   Future<List<Topico>> fetchTopicos() async {
-    await Future.delayed(Duration(seconds: 2));
 
     List<Topico> topicos = [];
-    /* Topico(
-        topicoId: 1,
-        categoria: 1,
-        subcategoria: 201,
-        utilizadorId: Utilizador(1, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
-        titulo: 'First Topic',
-        mensagem:
-            'This is the message for the first topic.This is the message for the first topic.This is the message for the first topic.This is the message for the first topic.This is the message for the first topic.This is the message for the first topic.',
-        dataCriacao: DateTime.now().subtract(Duration(days: 5)),
-        idiomaId: 1,
-        imagem: [],
-      ),
-      Topico(
-        topicoId: 2,
-        categoria: 2,
-        subcategoria: 202,
-        utilizadorId: Utilizador(2, 'Jane', 'Smith', 'jane.smith@example.com',
-            'Some info', 2, [1, 2], 2, 2),
-        titulo: 'Second Topic',
-        mensagem: 'This is the message for the second topic.',
-        dataCriacao: DateTime.now().subtract(Duration(days: 3)),
-        idiomaId: 2,
-        imagem: [],
-      ),
-      Topico(
-        topicoId: 3,
-        categoria: 3,
-        subcategoria: 203,
-        utilizadorId: Utilizador(3, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 3, [1, 2], 3, 3),
-        titulo: 'Third Topic',
-        mensagem: 'This is the message for the third topic.',
-        dataCriacao: DateTime.now().subtract(Duration(days: 1)),
-        idiomaId: 1,
-        imagem: [],
-      ),
-      Topico(
-        topicoId: 4,
-        categoria: 3,
-        subcategoria: 203,
-        utilizadorId: Utilizador(3, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 3, [1, 2], 3, 3),
-        titulo: 'Third Topic',
-        mensagem: 'This is the message for the third topic.',
-        dataCriacao: DateTime.now().subtract(Duration(days: 1)),
-        idiomaId: 1,
-        imagem: [],
-      ),
-      Topico(
-        topicoId: 5,
-        categoria: 3,
-        subcategoria: 203,
-        utilizadorId: Utilizador(3, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 3, [1, 2], 3, 3),
-        titulo: 'Third Topic',
-        mensagem: 'This is the message for the third topic.',
-        dataCriacao: DateTime.now().subtract(Duration(days: 1)),
-        idiomaId: 1,
-        imagem: [],
-      ),
-      Topico(
-        topicoId: 6,
-        categoria: 3,
-        subcategoria: 203,
-        utilizadorId: Utilizador(3, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 3, [1, 2], 3, 3),
-        titulo: 'Third Topic',
-        mensagem: 'This is the message for the third topic.',
-        dataCriacao: DateTime.now().subtract(Duration(days: 1)),
-        idiomaId: 1,
-        imagem: [],
-      ),
-    ];*/
+    try {
+      _isLoading = true;
+      final lista = await api.getRequest('thread/');
+      final listaFormatted = lista['data'];
+      if (listaFormatted is! List) {
+        throw Exception("Failed to load data: Expected a list in 'data'");
+      }
+
+      // Parse the JSON data into a list of PontoInteresse objects
+      List<Topico> listaUpdated =
+          listaFormatted.map<Topico>((item) {
+        try {
+          return Topico.fromJson(item);
+        } catch (e) {
+          print("Error parsing item: $item");
+          print("Error details: $e");
+          rethrow;
+        }
+      }).toList();
+      setState(() {
+        listaTopicos = List.from(listaUpdated);
+        listaEvFiltrada = listaTopicos;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching data1: $e");
+      // Handle error appropriately
+    }
     return topicos;
   }
 
   @override
   void initState() {
     super.initState();
+    api.setAuthToken("tokenFixo");
     actualizaDados();
   }
 

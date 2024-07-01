@@ -112,8 +112,6 @@ class _PontosDeInteresseMainScreenState
                 listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
               });
               containerColorPontosDeInteresse = Colors.transparent;
-              print("Mostra lista de pontos de interesse");
-              print(listaPontosDeInteresse);
             }
           });
         },

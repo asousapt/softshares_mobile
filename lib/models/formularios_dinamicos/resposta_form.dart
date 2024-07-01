@@ -14,6 +14,15 @@ class RespostaDetalhe {
     this.utilizador,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'perguntaId': perguntaId,
+      'pergunta': pergunta?.toJson(),
+      'resposta': resposta,
+      'utilizador': utilizador?.toJson(),
+    };
+  }
+
   static Future<List<RespostaDetalhe>> getRespostasDetalhe({
     required int utilizadorId,
     required int respostaFormId,
