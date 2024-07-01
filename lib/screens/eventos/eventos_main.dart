@@ -24,7 +24,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
   String tituloInscritos = "";
   String tituloTotalEventos = "";
   bool _isSearching = false;
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   List<Evento> listaEvFiltrada = [];
   List<Evento> eventosInscrito = [];
   List<Evento> listaEventos = [];
@@ -274,7 +274,11 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
-          Navigator.pushNamed(context, '/criarEvento');
+          Map<String, dynamic> args = {
+            "edicao": false,
+            "eventoId": 0,
+          };
+          Navigator.pushNamed(context, '/criarEvento', arguments: args);
         },
         child: const Icon(
           FontAwesomeIcons.plus,

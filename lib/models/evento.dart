@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:intl/intl.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/imagem.dart';
@@ -30,6 +31,7 @@ class Evento {
   final int? poloId;
   Formulario? formInsc;
   Formulario? formQualidade;
+  List<XFile>? images;
 
   Evento({
     this.eventoId,
@@ -57,6 +59,8 @@ class Evento {
     this.dataAprovacao,
     this.poloId,
     this.formInsc,
+    this.formQualidade,
+    this.images,
   });
 
   // construtor para criar o evento a enviar para a API
@@ -120,6 +124,45 @@ class Evento {
           : [],
       categoria: json['categoriaid'],
       imagem: json['imagens'] != null ? List<String>.from(json['imagens']) : [],
+    );
+  }
+
+  // Factory constructor to create an Evento instance from JSON~
+  factory Evento.fromJsonEditar(Map<String, dynamic> json) {
+    return Evento(
+      eventoId: json['eventoid'],
+      titulo: json['titulo'],
+      descricao: json['descricao'],
+      dataInicio: DateTime.parse(json['datainicio']),
+      dataFim: DateTime.parse(json['datafim']),
+      dataLimiteInsc: DateTime.parse(json['dataliminscricao']),
+      cancelado: json['cancelado'],
+      numeroMaxPart: json['nmrmaxparticipantes'],
+      localizacao: json['localizacao'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      cidadeid: json['cidadeid'],
+      utilizadorCriou: json['utilizadorcriou'],
+      utilizadorAprovou: json['utilizadoraprovou'],
+      aprovado: json['aprovado'],
+      dataAprovacao: json['dataaprovacao'] != null
+          ? DateTime.parse(json['dataaprovacao'])
+          : null,
+      subcategoria: json['subcategoriaid'],
+      poloId: json['poloid'],
+      numeroInscritos: json['numinscritos'],
+      nmrConvidados: json['nmrconvidados'],
+      utilizadoresInscritos: json['participantes'] != null
+          ? List<int>.from(json['participantes'])
+          : [],
+      categoria: json['categoriaid'],
+      images: json['images'] != null ? List<XFile>.from(json['images']) : [],
+      formInsc: json['forminscricao'] != null
+          ? Formulario.fromJson(json['forminscricao'])
+          : null,
+      formQualidade: json['formqualidade'] != null
+          ? Formulario.fromJson(json['formqualidade'])
+          : null,
     );
   }
 

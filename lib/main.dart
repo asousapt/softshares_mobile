@@ -142,7 +142,6 @@ class _MyAppState extends State<MyApp> {
         '/notificacoes': (context) => const NotificationsAlertScreen(),
         '/suporte': (context) => const ContactSupport(),
         '/eventos': (context) => const EventosMainScreen(),
-        '/criarEvento': (context) => const CriarEventoScreen(),
         '/recuperarPass': (context) => EcraRecPass(mudaIdioma: _mudaIdioma),
         '/confirmarID': (context) => EcraConfID(mudaIdioma: _mudaIdioma),
         '/reporPass': (context) => EcraReporPass(mudaIdioma: _mudaIdioma),
@@ -203,6 +202,14 @@ class _MyAppState extends State<MyApp> {
           final arguments = settings.arguments as Utilizador;
           return MaterialPageRoute(
             builder: (context) => ProfileScreen(utilizador: arguments),
+          );
+        } else if (settings.name == "/criarEvento") {
+          final arguments = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) => CriarEventoScreen(
+              edicao: arguments['edicao'] as bool,
+              eventoId: arguments['eventoId'] as int,
+            ),
           );
         }
         return null;

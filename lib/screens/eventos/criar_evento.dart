@@ -24,7 +24,14 @@ import 'package:softshares_mobile/widgets/gerais/dialog.dart';
 import 'package:softshares_mobile/screens/generic/location_picker.dart';
 
 class CriarEventoScreen extends StatefulWidget {
-  const CriarEventoScreen({super.key});
+  const CriarEventoScreen({
+    super.key,
+    required this.edicao,
+    this.eventoId,
+  });
+
+  final bool edicao;
+  final int? eventoId;
 
   @override
   State<CriarEventoScreen> createState() {
@@ -60,6 +67,8 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
   int poloId = 0;
   List<XFile> images = [];
   bool isSaving = false;
+  late bool edicao;
+  late int eventoId;
 
   // Carrega as categorias e subcategorias
   Future<void> carregarCategoriasSubcats() async {
@@ -97,13 +106,56 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     });
   }
 
+  Future<void> carregaDadosEdicao(int eventoId) async {
+    EventoRepository eventoRepository = EventoRepository();
+    try {
+      var evento = await eventoRepository.obtemEvento(eventoId);
+      setState(() {
+        _tituloController.text = evento.titulo;
+        _localizacaoController.text = evento.localizacao;
+        _dateIni.text = evento.dataInicio.toString().substring(0, 10);
+        _timeIni.text = evento.dataInicio.toString().substring(11, 16);
+        _dateFim.text = evento.dataFim.toString().substring(0, 10);
+        _timeFim.text = evento.dataFim.toString().substring(11, 16);
+        _dataLimiteInscricao.text =
+            evento.dataLimiteInsc.toString().substring(0, 10);
+        _categoriaId = evento.categoria.toString();
+        _subCategoriaId = evento.subcategoria.toString();
+        _nmrMaxParticipantes.text = evento.numeroMaxPart.toString();
+        nmrMaxParticipantes = evento.numeroMaxPart;
+        permiteConvidados = evento.nmrConvidados != 0;
+        nmrConvidados = evento.nmrConvidados;
+        descricao = evento.descricao;
+        forms = [];
+        if (evento.formInsc != null) {
+          forms.add(evento.formInsc!);
+        }
+        if (evento.formQualidade != null) {
+          forms.add(evento.formQualidade!);
+        }
+      });
+    } catch (e) {
+      print("Erro ao carregar dados do evento: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.ocorreuErro),
+        ),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    edicao = widget.edicao;
+    eventoId = widget.eventoId ?? 0;
     carregarCategoriasSubcats().then((value) {
       setState(() {
         _categoriaId = categorias![0].categoriaId.toString();
         _subCategoriaId = subcategorias![0].subcategoriaId.toString();
+        if (edicao) {
+          carregaDadosEdicao(eventoId);
+        }
       });
     });
     _nmrMaxParticipantes.text = "0";
