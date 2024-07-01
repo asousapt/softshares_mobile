@@ -181,6 +181,8 @@ class _LocationPickerState extends State<LocationPicker> {
                               SizedBox(width: largura * 0.02),
                               FilledButton(
                                 onPressed: () {
+                                  print(
+                                      "latitude: ${value!.latitude} longitude: ${value!.longitude}");
                                   Navigator.pop(context, value);
                                 },
                                 child: Text(

@@ -1,14 +1,14 @@
-enum TipoDados { logico, textoLivre, numerico, seleccao }
+enum TipoDados { logico, textoLivre, numerico, seleccao, multiplaEscolha }
 
 class Pergunta {
-  int detalheId = 0;
+  int detalheId;
   String pergunta;
   TipoDados tipoDados;
-  bool obrigatorio = false;
-  int min = 0;
-  int max = 0;
+  bool obrigatorio;
+  int min;
+  int max;
   int tamanho;
-  List<String> valoresPossiveis = [];
+  List<String> valoresPossiveis;
   int ordem;
 
   Pergunta({
@@ -27,12 +27,12 @@ class Pergunta {
     return Pergunta(
       detalheId: json['detalheId'],
       pergunta: json['pergunta'],
-      tipoDados: json['tipoDados'],
+      tipoDados: getTipoDadosEnum(json['tipoDados']),
       obrigatorio: json['obrigatorio'],
       min: json['min'],
       max: json['max'],
       tamanho: json['tamanho'],
-      valoresPossiveis: json['valoresPossiveis'].cast<String>(),
+      valoresPossiveis: List<String>.from(json['valoresPossiveis']),
       ordem: json['ordem'],
     );
   }
@@ -40,14 +40,48 @@ class Pergunta {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['detalheId'] = detalheId;
-    data['pergunta'] = pergunta;
-    data['tipoDados'] = tipoDados;
-    data['obrigatorio'] = obrigatorio;
-    data['min'] = min;
-    data['max'] = max;
+    data['text'] = pergunta;
+    data['type'] = getTipoDados();
+    data['required'] = obrigatorio;
+    data['minValue'] = min;
+    data['maxValue'] = max;
     data['tamanho'] = tamanho;
-    data['valoresPossiveis'] = valoresPossiveis;
-    data['ordem'] = ordem;
+    data['options'] = valoresPossiveis;
+    data['order'] = ordem;
     return data;
+  }
+
+  String getTipoDados() {
+    switch (tipoDados) {
+      case TipoDados.logico:
+        return 'LOGICO';
+      case TipoDados.textoLivre:
+        return 'TEXTO';
+      case TipoDados.numerico:
+        return 'NUMERICO';
+      case TipoDados.seleccao:
+        return 'SELECAO';
+      case TipoDados.multiplaEscolha:
+        return 'ESCOLHA_MULTIPLA';
+      default:
+        return 'TEXTO';
+    }
+  }
+
+  static TipoDados getTipoDadosEnum(String tipo) {
+    switch (tipo) {
+      case 'LOGICO':
+        return TipoDados.logico;
+      case 'TEXTO':
+        return TipoDados.textoLivre;
+      case 'NUMERICO':
+        return TipoDados.numerico;
+      case 'SELECAO':
+        return TipoDados.seleccao;
+      case 'ESCOLHA_MULTIPLA':
+        return TipoDados.multiplaEscolha;
+      default:
+        return TipoDados.textoLivre;
+    }
   }
 }

@@ -1,8 +1,8 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 import 'package:intl/intl.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/imagem.dart';
+import 'package:softshares_mobile/utils.dart';
 
 class Evento {
   final int? eventoId;
@@ -11,7 +11,7 @@ class Evento {
   final int subcategoria;
   final String descricao;
   final int numeroMaxPart;
-  final int numeroInscritos;
+  int numeroInscritos;
   final int nmrConvidados;
   final String localizacao;
   final String latitude;
@@ -22,7 +22,7 @@ class Evento {
   final List<String>? imagem;
   final int utilizadorCriou;
   final int cidadeid;
-  final bool cancelado;
+  final bool? cancelado;
   final List<int>? utilizadoresInscritos;
   List<Imagem>? imagens;
   final int? utilizadorAprovou;
@@ -31,6 +31,7 @@ class Evento {
   final int? poloId;
   Formulario? formInsc;
   Formulario? formQualidade;
+  List<XFile>? images;
 
   Evento({
     this.eventoId,
@@ -58,6 +59,8 @@ class Evento {
     this.dataAprovacao,
     this.poloId,
     this.formInsc,
+    this.formQualidade,
+    this.images,
   });
 
   // construtor para criar o evento a enviar para a API
@@ -78,8 +81,8 @@ class Evento {
     this.imagem,
     required this.utilizadorCriou,
     required this.cidadeid,
-    required this.cancelado,
-    required this.utilizadoresInscritos,
+    this.cancelado,
+    this.utilizadoresInscritos,
     this.numeroInscritos = 0,
     this.imagens,
     this.utilizadorAprovou,
@@ -124,29 +127,86 @@ class Evento {
     );
   }
 
+  // Factory constructor to create an Evento instance from JSON~
+  factory Evento.fromJsonEditar(Map<String, dynamic> json) {
+    return Evento(
+      eventoId: json['eventoid'],
+      titulo: json['titulo'],
+      descricao: json['descricao'],
+      dataInicio: DateTime.parse(json['datainicio']),
+      dataFim: DateTime.parse(json['datafim']),
+      dataLimiteInsc: DateTime.parse(json['dataliminscricao']),
+      cancelado: json['cancelado'],
+      numeroMaxPart: json['nmrmaxparticipantes'],
+      localizacao: json['localizacao'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      cidadeid: json['cidadeid'],
+      utilizadorCriou: json['utilizadorcriou'],
+      utilizadorAprovou: json['utilizadoraprovou'],
+      aprovado: json['aprovado'],
+      dataAprovacao: json['dataaprovacao'] != null
+          ? DateTime.parse(json['dataaprovacao'])
+          : null,
+      subcategoria: json['subcategoriaid'],
+      poloId: json['poloid'],
+      numeroInscritos: json['numinscritos'],
+      nmrConvidados: json['nmrconvidados'],
+      utilizadoresInscritos: json['participantes'] != null
+          ? List<int>.from(json['participantes'])
+          : [],
+      categoria: json['categoriaid'],
+      images: json['images'] != null ? List<XFile>.from(json['images']) : [],
+      formInsc: json['forminscricao'] != null
+          ? Formulario.fromJson(json['forminscricao'])
+          : null,
+      formQualidade: json['formqualidade'] != null
+          ? Formulario.fromJson(json['formqualidade'])
+          : null,
+    );
+  }
+
   // ToJson para envio para a API
   Map<String, dynamic> toJsonCriar() {
+    List<Map<String, dynamic>> listaImagens =
+        toJsonList(imagens, (Imagem img) => img.toJson());
+
+    List<Map<String, dynamic>> listPergInscr = formInsc != null
+        ? toJsonList(formInsc!.perguntas, (pergunta) => pergunta.toJson())
+        : [];
+
+    List<Map<String, dynamic>> listPergQual = formQualidade != null
+        ? toJsonList(formQualidade!.perguntas, (pergunta) => pergunta.toJson())
+        : [];
+
     return {
       "titulo": titulo,
-      "categoria": categoria,
-      "subcategoria": subcategoria,
+      "poloId": poloId,
+      "subcategoriaId": subcategoria,
       "descricao": descricao,
-      "numeroMaxPart": numeroMaxPart,
+      "nmrMaxParticipantes": numeroMaxPart,
       "nmrConvidados": nmrConvidados,
       "localizacao": localizacao,
       "latitude": latitude,
       "longitude": longitude,
       "dataInicio": dataInicio.toIso8601String(),
       "dataFim": dataFim.toIso8601String(),
-      "dataLimiteInsc": dataLimiteInsc.toIso8601String(),
+      "dataLimInscricao": dataLimiteInsc.toIso8601String(),
       "utilizadorCriou": utilizadorCriou,
-      "cidadeid": cidadeid,
-      "cancelado": cancelado,
-      "imagens": imagens != null
-          ? jsonEncode(imagens!.map((e) => e.toJson()).toList())
-          : null,
-      'formInsc': formInsc != null ? formInsc!.toJson() : null,
-      'formQualidade': formQualidade != null ? formQualidade!.toJson() : null,
+      "cidadeID": cidadeid,
+      "imagens": listaImagens,
+      'formInsc': listPergInscr,
+      'formQualidade': listPergQual,
+    };
+  }
+
+  Map<String, dynamic> toJsonInscricao(int utilizadorId, int nmrConvidados,
+      List<Map<String, dynamic>> respostas) {
+    return {
+      "idEvento": eventoId,
+      "idUser": utilizadorId,
+      "numConvidados": nmrConvidados,
+      "respostas": respostas,
     };
   }
 

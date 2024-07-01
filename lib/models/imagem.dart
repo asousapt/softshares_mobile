@@ -1,5 +1,3 @@
-import 'package:path/path.dart';
-
 class Imagem {
   String nome;
   String base64;

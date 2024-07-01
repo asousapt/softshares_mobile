@@ -500,7 +500,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
               color: Theme.of(context).canvasColor,
               child: Row(
                 children: <Widget>[
-                  FotoPicker(onImagesPicked: _onImagesPicked),
+                  //FotoPicker(onImagesPicked: _onImagesPicked),
                   SizedBox(width: largura * 0.02),
                   Expanded(
                     child: TextField(

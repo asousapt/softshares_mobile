@@ -47,6 +47,7 @@ class ApiService {
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
+    print('$_baseUrl/$endpoint');
     if (response.statusCode == 200) {
       return jsonDecode(response.body) as Map<String, dynamic>;
     } else {
@@ -75,7 +76,7 @@ class ApiService {
     if (_authToken == null) {
       throw Exception('Auth token is not set. Please authenticate first.');
     }
-
+    print('$_baseUrl/$endpoint');
     final response = await http.post(
       Uri.parse('$_baseUrl/$endpoint'),
       headers: <String, String>{

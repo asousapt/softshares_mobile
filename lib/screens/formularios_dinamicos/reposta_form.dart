@@ -1,9 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/evento_repository.dart';
+import 'package:softshares_mobile/Repositories/formulario_repository.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/pergunta_formulario.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/resposta_form.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
 
 class RespostaFormScreen extends StatefulWidget {
@@ -11,10 +16,14 @@ class RespostaFormScreen extends StatefulWidget {
     super.key,
     required this.formularioId,
     this.evento,
+    this.tipo,
+    this.numeroConvidados,
   });
 
   final int formularioId;
   final Evento? evento;
+  final String? tipo;
+  final int? numeroConvidados;
 
   @override
   State<StatefulWidget> createState() {
@@ -26,67 +35,26 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
   Formulario? formulario;
   List<Pergunta> perguntas = [];
   bool _isLoading = true;
+  bool isSaving = false;
+  late int utilizadorId;
 
   final _formKey = GlobalKey<FormState>();
   final Map<int, TextEditingController> _controllers = {};
   final Map<int, bool> _booleanValues = {};
   final Map<int, String?> _dropdownValues = {};
+  final Map<int, List<String>> _multiSelectValues =
+      {}; // New map for multiple choices
 
   // Funcao para buscar o formulario
   Future<void> fetchFormulario() async {
-    // Simulate a network call
-    await Future.delayed(Duration(seconds: 2));
-    Formulario fetchedFormulario = Formulario(
-      formId: 1,
-      titulo: 'Formulário de Teste',
-      tipoFormulario: TipoFormulario.inscr,
-      perguntas: [
-        Pergunta(
-          detalheId: 1,
-          pergunta: 'Qual é o seu nome?',
-          tipoDados: TipoDados.textoLivre,
-          obrigatorio: true,
-          min: 0,
-          max: 0,
-          tamanho: 100,
-          valoresPossiveis: [],
-          ordem: 1,
-        ),
-        Pergunta(
-          detalheId: 2,
-          pergunta: 'Qual é a sua idade?',
-          tipoDados: TipoDados.numerico,
-          obrigatorio: true,
-          min: 1,
-          max: 120,
-          tamanho: 0,
-          valoresPossiveis: [],
-          ordem: 2,
-        ),
-        Pergunta(
-          detalheId: 3,
-          pergunta: 'É vegetariano?',
-          tipoDados: TipoDados.logico,
-          obrigatorio: false,
-          min: 0,
-          max: 0,
-          tamanho: 0,
-          valoresPossiveis: [],
-          ordem: 3,
-        ),
-        Pergunta(
-          detalheId: 4,
-          pergunta: 'Escolha um horário',
-          tipoDados: TipoDados.seleccao,
-          obrigatorio: false,
-          min: 0,
-          max: 0,
-          tamanho: 0,
-          valoresPossiveis: ['Manhã', 'Tarde', 'Noite'],
-          ordem: 4,
-        ),
-      ],
-    );
+    final prefs = await SharedPreferences.getInstance();
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    utilizadorId = utilizador.utilizadorId;
+
+    FormularioRepository formularioRepository = FormularioRepository();
+    Formulario fetchedFormulario =
+        await formularioRepository.getFormulariobyId(widget.formularioId);
 
     setState(() {
       formulario = fetchedFormulario;
@@ -104,6 +72,9 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
         if (perguntas[i].tipoDados == TipoDados.seleccao) {
           _dropdownValues[i] = null;
         }
+        if (perguntas[i].tipoDados == TipoDados.multiplaEscolha) {
+          _multiSelectValues[i] = [];
+        }
       }
     });
   }
@@ -112,6 +83,18 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
   void initState() {
     super.initState();
     fetchFormulario();
+  }
+
+  @override
+  void dispose() {
+    for (int i = 0; i < perguntas.length; i++) {
+      if (perguntas[i].tipoDados == TipoDados.textoLivre ||
+          perguntas[i].tipoDados == TipoDados.numerico) {
+        _controllers[i]!.dispose();
+      }
+    }
+
+    super.dispose();
   }
 
   // Faz o build das perguntas do formulário
@@ -198,6 +181,30 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
           );
           break;
 
+        case TipoDados.multiplaEscolha:
+          field = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(pergunta.pergunta),
+              ...pergunta.valoresPossiveis.map((valor) {
+                return CheckboxListTile(
+                  title: Text(valor),
+                  value: _multiSelectValues[index]!.contains(valor),
+                  onChanged: (bool? selected) {
+                    setState(() {
+                      if (selected == true) {
+                        _multiSelectValues[index]!.add(valor);
+                      } else {
+                        _multiSelectValues[index]!.remove(valor);
+                      }
+                    });
+                  },
+                );
+              }),
+            ],
+          );
+          break;
+
         default:
           field = Container();
       }
@@ -245,6 +252,14 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
           ));
           break;
 
+        case TipoDados.multiplaEscolha:
+          respostas.add(RespostaDetalhe(
+            perguntaId: pergunta.detalheId,
+            resposta: _multiSelectValues[index]!
+                .join(', '), // Join multiple choices with comma
+          ));
+          break;
+
         default:
       }
     }
@@ -268,8 +283,15 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
             return true;
           }
           break;
+
         case TipoDados.seleccao:
           if (_dropdownValues[index] != null) {
+            return true;
+          }
+          break;
+
+        case TipoDados.multiplaEscolha:
+          if (_multiSelectValues[index]!.isNotEmpty) {
             return true;
           }
           break;
@@ -308,11 +330,12 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('Resposta')),
+        appBar:
+            AppBar(title: Text(AppLocalizations.of(context)!.responderForm)),
         body: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: largura * 0.02, vertical: altura * 0.02),
-          child: _isLoading
+          child: _isLoading || isSaving
               ? Container(
                   height: altura * 0.9,
                   color: Theme.of(context).canvasColor,
@@ -366,17 +389,52 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
                                 ),
                                 SizedBox(width: largura * 0.02),
                                 FilledButton(
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
+                                  onPressed: () async {
+                                    if (_formKey.currentState != null &&
+                                        _formKey.currentState!.validate()) {
                                       // formulario foi validado
-                                      // TODO: fazer o envio dos dados para a API e sair para outro ecra
+                                      bool sucesso = false;
+
                                       List<RespostaDetalhe> respostaF =
                                           getRespostas();
 
+                                      // No caso de ser um formulario de inscricao de evento
                                       if (widget.evento != null) {
-                                        // Se o evento for fornecido, então estamos a responder a um formulário de evento
-                                        Navigator.pushReplacementNamed(
-                                            context, '/eventos');
+                                        setState(() {
+                                          isSaving = true;
+                                        });
+                                        EventoRepository eventoRepository =
+                                            EventoRepository();
+                                        if (widget.tipo == "INSCR") {
+                                          sucesso = await eventoRepository
+                                              .inscreverEvento(
+                                            widget.evento!,
+                                            respostaF,
+                                            utilizadorId,
+                                            widget.numeroConvidados ?? 0,
+                                          );
+
+                                          setState(() {
+                                            isSaving = false;
+                                          });
+
+                                          if (sucesso) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .incricaoComSucesso),
+                                            ));
+                                            Navigator.of(context).pop(true);
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .ocorreuErro),
+                                            ));
+                                          }
+                                        }
                                       }
                                     }
                                   },

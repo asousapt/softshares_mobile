@@ -152,5 +152,11 @@
   "removerFoto": "Quitar imagen", 
   "dadosGravados": "¡Datos guardados con éxito!", 
   "seleccionar": "Seleccionar", 
-  "seleccionarLocalizacao": "Seleccione el lugar"
+  "seleccionarLocalizacao": "Seleccione el lugar", 
+  "maxForms": "Sólo se admiten dos formas", 
+  "preenchaCampos": "Rellene todos los campos", 
+  "savedWithSuccess": "¡Datos enviados con éxito!", 
+  "numeroConvidados": "Número de invitados", 
+  "responderForm": "Rellene el formulario", 
+  "incricaoComSucesso": "Inscripción satisfactoria"
 }

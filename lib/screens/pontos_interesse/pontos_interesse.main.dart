@@ -6,7 +6,6 @@ import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'package:softshares_mobile/widgets/pontos__de_interesse/pontos_de_interesse_card.dart';
-import 'package:softshares_mobile/widgets/pontos__de_interesse/estrelas.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

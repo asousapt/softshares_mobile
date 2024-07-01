@@ -78,6 +78,10 @@ class DatabaseService {
     type $textType,
     enabled $boolType
   )''');
+    await db.execute('''CREATE TABLE cidade (
+      cidadeid $idType,
+      nome $textType
+    )''');
 
     print('Tables created');
   }
@@ -133,6 +137,11 @@ class DatabaseService {
     type $textType,
     enabled $boolType
   )''');
+      await db.execute('''CREATE TABLE IF NOT EXISTS cidade (
+      cidadeid $idType,
+      nome $textType
+    )''');
+      print('Table cidade created in upgrade');
     }
   }
 

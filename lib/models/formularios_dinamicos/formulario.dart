@@ -30,11 +30,10 @@ class Formulario {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  // prepara o Json para o envio do form
+  Map<String, dynamic> toJsonEnvio() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['formId'] = formId;
-    data['titulo'] = titulo;
-    data['tipoFormulario'] = tipoFormulario;
+    data['descForm'] = titulo;
     data['perguntas'] = perguntas.map((v) => v.toJson()).toList();
     return data;
   }

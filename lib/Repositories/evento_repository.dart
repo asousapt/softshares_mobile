@@ -1,6 +1,9 @@
 import 'dart:collection';
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/models/evento.dart';
+import 'package:softshares_mobile/models/formularios_dinamicos/resposta_form.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/services/api_service.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -12,18 +15,78 @@ class EventoRepository {
     _apiService.setAuthToken("tokenFixo");
     final prefs = await SharedPreferences.getInstance();
     final poloId = prefs.getInt("poloId").toString();
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    int utilizadorId = utilizador.utilizadorId;
     final DateTime now = DateTime.now();
     final DateTime firstDay = DateTime(now.year, now.month, now.day - 90);
     final DateTime lastDay = DateTime(now.year, now.month, now.day + 90);
 
-    final response = await _apiService.getRequest(
-        "evento/$poloId/data/range/${firstDay.toIso8601String()}/${lastDay.toIso8601String()}");
+    final url =
+        "evento/$poloId/data/range/${firstDay.toIso8601String()}/${lastDay.toIso8601String()}/utilizador/${utilizadorId.toString()}";
+    final response = await _apiService.getRequest(url);
+
     final eventosformattr = response['data'] as List;
 
     if (eventosformattr.isEmpty) {
       return [];
     } else {
       return eventosformattr.map((e) => Evento.fromJson(e)).toList();
+    }
+  }
+
+  // BUsca o evento peloID para edicao
+  Future<Evento> obtemEvento(int eventoId) async {
+    _apiService.setAuthToken("tokenFixo");
+    final response =
+        await _apiService.getRequest("evento/$eventoId/formulario");
+    final eventoformattr = response['data'];
+
+    return Evento.fromJsonEditar(eventoformattr);
+  }
+
+  // Pedido de insercao de um novo evento
+  Future<void> criarEvento(Evento evento) async {
+    _apiService.setAuthToken("tokenFixo");
+    final response =
+        await _apiService.postRequest("evento/add/", evento.toJsonCriar());
+  }
+
+  // Pedido de inscricao no evento
+  Future<bool> inscreverEvento(Evento evento, List<RespostaDetalhe> respostas,
+      int utilizadorId, int nmrConvidados) async {
+    List<Map<String, dynamic>> respostasmap;
+    if (respostas.isNotEmpty) {
+      respostasmap = respostas.map((e) => e.toJsonCriar()).toList();
+    } else {
+      respostasmap = [];
+    }
+    _apiService.setAuthToken("tokenFixo");
+    final response = await _apiService.postRequest("evento/inscricao",
+        evento.toJsonInscricao(utilizadorId, nmrConvidados, respostasmap));
+
+    if (response['data'] != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // pedido do formulario dinamico do evento
+  Future<int> getFormId(Evento evento, String formType) async {
+    _apiService.setAuthToken("tokenFixo");
+    final url = "evento/${evento.eventoId}/form/$formType";
+
+    try {
+      final response = await _apiService.getRequest(url);
+      if (response['data'] != null && response['data'] is int) {
+        return response['data'] as int;
+      } else {
+        throw Exception("Unexpected response format");
+      }
+    } catch (error) {
+      print('Error fetching form ID: $error');
+      return 0;
     }
   }
 
