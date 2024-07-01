@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/topico.dart';
@@ -8,10 +10,12 @@ class TopicoCardItem extends StatelessWidget {
     super.key,
     required this.topico,
     required this.categorias,
+    required this.idioma,
   });
 
   final Topico topico;
   final List<Categoria> categorias;
+  final String idioma;
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +48,26 @@ class TopicoCardItem extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 25,
-                  backgroundImage: NetworkImage(
-                    'https://picsum.photos/250?image=9',
-                  ),
+                  backgroundImage: (topico.utilizadorCriou.fotoUrl!.isEmpty)
+                      ? null
+                      : topico.utilizadorCriou.fotoUrl!.startsWith('http') ||
+                              topico.utilizadorCriou.fotoUrl!
+                                  .startsWith('https')
+                          ? NetworkImage(topico.utilizadorCriou.fotoUrl!)
+                          : FileImage(File(topico.utilizadorCriou.fotoUrl!))
+                              as ImageProvider<Object>?,
+                  backgroundColor: topico.utilizadorCriou.fotoUrl!.isEmpty
+                      ? Colors.blue
+                      : null,
+                  child: topico.utilizadorCriou.fotoUrl!.isEmpty
+                      ? Text(
+                          topico.utilizadorCriou.getIniciais(),
+                          style: const TextStyle(
+                            fontSize: 40,
+                            color: Colors.white,
+                          ),
+                        )
+                      : null,
                 ),
                 SizedBox(width: largura * 0.02),
                 Column(
@@ -54,12 +75,12 @@ class TopicoCardItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      topico.getNomeCompleto(),
+                      topico.utilizadorCriou.getNomeCompleto(),
                       style: const TextStyle(
                           fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      dataFormatada('pt', topico.dataCriacao!),
+                      dataFormatada(idioma, topico.dataCriacao!),
                       style: const TextStyle(
                         fontSize: 12,
                       ),

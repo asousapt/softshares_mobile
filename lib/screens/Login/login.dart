@@ -46,6 +46,7 @@ class _EcraLoginState extends State<EcraLogin> {
   //Basededados bd = Basededados();
   bool passwordVisible = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late String idioma = 'pt';
 
   _checkIfisLoggedInFacebook() async {
     final accessToken = await FacebookAuth.instance.accessToken;
@@ -106,6 +107,14 @@ class _EcraLoginState extends State<EcraLogin> {
   void inicializar() async {
     final prefs = await SharedPreferences.getInstance();
     bool? exists = false;
+    String? idiomaProv = prefs.getString('idioma');
+    if (idiomaProv != null) {
+      setState(() {
+        idioma = idiomaProv;
+      });
+    } else {
+      prefs.setString('idioma', 'pt');
+    }
     exists = prefs.getBool('isChecked');
     if (exists != null) {
       setState(() {
@@ -441,8 +450,13 @@ class _EcraLoginState extends State<EcraLogin> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         GestureDetector(
-                                          onTap: () {
+                                          onTap: () async {
                                             widget.mudaIdioma('pt');
+                                            final prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            await prefs.setString(
+                                                'idioma', 'pt');
                                           },
                                           child: CircleAvatar(
                                             radius: 32,
@@ -464,8 +478,13 @@ class _EcraLoginState extends State<EcraLogin> {
                                           ),
                                         ),
                                         GestureDetector(
-                                          onTap: () {
+                                          onTap: () async {
                                             widget.mudaIdioma('es');
+                                            final prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            await prefs.setString(
+                                                'idioma', 'es');
                                           },
                                           child: CircleAvatar(
                                             radius: 32,
@@ -487,8 +506,13 @@ class _EcraLoginState extends State<EcraLogin> {
                                           ),
                                         ),
                                         GestureDetector(
-                                          onTap: () {
+                                          onTap: () async {
                                             widget.mudaIdioma('en');
+                                            final prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            await prefs.setString(
+                                                'idioma', 'en');
                                           },
                                           child: CircleAvatar(
                                             radius: 32,

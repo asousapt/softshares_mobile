@@ -159,5 +159,6 @@
   "savedWithSuccess": "Registo Submetido com sucesso!", 
   "numeroConvidados": "Número de Convidados", 
   "responderForm": "Responda ao formulário", 
-  "incricaoComSucesso": "Inscrição no evento bem sucedida"
+  "incricaoComSucesso": "Inscrição no evento bem sucedida", 
+  "detalhesTopico": "Detalhes do Tópico"
 }

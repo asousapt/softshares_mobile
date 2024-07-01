@@ -101,7 +101,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   Future<void> carregarDados() async {
     final prefs = await SharedPreferences.getInstance();
     idiomaId = prefs.getInt("idiomaId") ?? 1;
-    user = Utilizador.fromJson(jsonDecode(prefs.getString('utilizadorObj')!)) ;
+    user = Utilizador.fromJson(jsonDecode(prefs.getString('utilizadorObj')!));
     CategoriaRepository categoriaRepository = CategoriaRepository();
     List<Categoria> categoriasL =
         await categoriaRepository.fetchCategoriasDB(idiomaId);
@@ -199,7 +199,8 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       "cidadeid": 299,
       "utilizadorcriou": uti,
       "imagens": [],
-      "formRespostas": getRespostas().map((resposta) => resposta.toJson()).toList(),
+      "formRespostas":
+          [] //getRespostas().map((resposta) => resposta.toJson()).toList(),
     };
     print("This is the data: $data");
     return data;

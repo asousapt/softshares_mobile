@@ -158,5 +158,6 @@
   "savedWithSuccess": "Data submited with success!", 
   "numeroConvidados": "Number of Guests", 
   "responderForm": "Fill in the form", 
-  "incricaoComSucesso": "Successful event registration"
+  "incricaoComSucesso": "Successful event registration", 
+  "detalhesTopico": "Thread Details"
 }

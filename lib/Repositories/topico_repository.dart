@@ -8,12 +8,11 @@ class TopicoRepository {
     _apiService.setAuthToken("tokenFixo");
 
     try {
-      final response = await _apiService.getRequest("thread");
+      final response = await _apiService.getRequest("thread/mobile");
 
       if (response != null && response['data'] != null) {
-        List<dynamic> topicosData = response['data'] as List;
-        List<Topico> topicos = topicosData.map((e) => Topico.fromJson(e)).toList();
-        return topicos;
+        final topicosData = response['data'] as List;
+        return topicosData.map((e) => Topico.fromJson(e)).toList();
       } else {
         throw Exception('Falha ao carregar tópicos');
       }
