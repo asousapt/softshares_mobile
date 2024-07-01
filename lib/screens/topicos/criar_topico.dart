@@ -1,13 +1,19 @@
+import 'dart:convert';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
 import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
+import 'package:softshares_mobile/Repositories/topico_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
+import 'package:softshares_mobile/models/imagem.dart';
 import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/models/topico.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/utils.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
+import 'package:softshares_mobile/widgets/gerais/foto_picker.dart';
 
 class CriarTopicoScreen extends StatefulWidget {
   const CriarTopicoScreen({super.key});
@@ -27,7 +33,9 @@ class CriarTopicoScreenState extends State<CriarTopicoScreen> {
   bool _isLoading = true;
   List<Categoria> categorias = [];
   List<Subcategoria> subcategorias = [];
+  List<XFile> images = [];
 
+  // carrega categorias e subcategorias da base de dados local
   Future<void> carregarCategoriasSubcats() async {
     final prefs = await SharedPreferences.getInstance();
     final int idiomaId = prefs.getInt("idiomaId") ?? 1;
@@ -60,6 +68,12 @@ class CriarTopicoScreenState extends State<CriarTopicoScreen> {
     _tituloController.dispose();
     _mensagemController.dispose();
     super.dispose();
+  }
+
+  void _updateImages(List<XFile> newImages) {
+    setState(() {
+      images = newImages;
+    });
   }
 
   @override
@@ -119,143 +133,174 @@ class CriarTopicoScreenState extends State<CriarTopicoScreen> {
                             vertical: altura * 0.02),
                         child: Form(
                           key: _formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              TextFormField(
-                                maxLength: 140,
-                                controller: _tituloController,
-                                decoration: InputDecoration(
-                                  label: Text(
-                                      AppLocalizations.of(context)!.titulo),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                FotoPicker(
+                                  pickedImages: images,
+                                  onImagesPicked: _updateImages,
                                 ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "${AppLocalizations.of(context)!.porfavorInsiraO} ${AppLocalizations.of(context)!.titulo}";
-                                  }
-                                  return null;
-                                },
-                              ),
-                              SizedBox(height: altura * 0.02),
-                              DropdownButtonFormField(
-                                padding:
-                                    const EdgeInsets.only(left: 10, right: 10),
-                                hint: Text(
-                                    AppLocalizations.of(context)!.categoria),
-                                isExpanded: true,
-                                value: _categoriaId.toString(),
-                                items: getListaCatDropdown(categorias),
-                                onChanged: (value) {
-                                  setState(
-                                    () {
-                                      _categoriaId = value;
-                                      _subCategoriaId = subcategorias
-                                          .where((e) =>
-                                              e.categoriaId == int.parse(value))
-                                          .first
-                                          .subcategoriaId
-                                          .toString();
-                                    },
-                                  );
-                                },
-                              ),
-                              SizedBox(height: altura * 0.02),
-                              DropdownButton(
-                                padding:
-                                    const EdgeInsets.only(left: 10, right: 10),
-                                borderRadius: BorderRadius.circular(20),
-                                hint: Text(
-                                    AppLocalizations.of(context)!.subCategoria),
-                                isExpanded: true,
-                                value: _subCategoriaId.toString(),
-                                items: getListaSubCatDropdown(
-                                    subcategorias, int.parse(_categoriaId!)),
-                                onChanged: (value) {
-                                  setState(
-                                    () {
-                                      _subCategoriaId = value;
-                                    },
-                                  );
-                                },
-                              ),
-                              SizedBox(height: altura * 0.02),
-                              TextFormField(
-                                maxLines: 10,
-                                controller: _mensagemController,
-                                decoration: InputDecoration(
-                                  label: Text(
-                                      AppLocalizations.of(context)!.mensagem),
+                                TextFormField(
+                                  maxLength: 140,
+                                  controller: _tituloController,
+                                  decoration: InputDecoration(
+                                    label: Text(
+                                        AppLocalizations.of(context)!.titulo),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "${AppLocalizations.of(context)!.porfavorInsiraO} ${AppLocalizations.of(context)!.titulo}";
+                                    }
+                                    return null;
+                                  },
                                 ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "${AppLocalizations.of(context)!.porfavorInsiraA} ${AppLocalizations.of(context)!.mensagem}";
-                                  }
-                                  return null;
-                                },
-                              ),
-                              SizedBox(height: altura * 0.12),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      if (_tituloController.text.isNotEmpty ||
-                                          _mensagemController.text.isNotEmpty) {
-                                        Future<bool> confirma = confirmExit(
-                                          context,
-                                          AppLocalizations.of(context)!
-                                              .sairSemGuardar,
-                                          AppLocalizations.of(context)!
-                                              .dadosSeraoPerdidos,
-                                        );
-                                        confirma.then((value) {
-                                          if (value) {
-                                            Navigator.of(context).pop();
-                                          }
-                                        });
-                                      } else {
-                                        Navigator.of(context).pop();
-                                      }
-                                    },
-                                    child: Text(
-                                        AppLocalizations.of(context)!.cancelar),
+                                SizedBox(height: altura * 0.02),
+                                DropdownButtonFormField(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  hint: Text(
+                                      AppLocalizations.of(context)!.categoria),
+                                  isExpanded: true,
+                                  value: _categoriaId.toString(),
+                                  items: getListaCatDropdown(categorias),
+                                  onChanged: (value) {
+                                    setState(
+                                      () {
+                                        _categoriaId = value;
+                                        _subCategoriaId = subcategorias
+                                            .where((e) =>
+                                                e.categoriaId ==
+                                                int.parse(value))
+                                            .first
+                                            .subcategoriaId
+                                            .toString();
+                                      },
+                                    );
+                                  },
+                                ),
+                                SizedBox(height: altura * 0.02),
+                                DropdownButton(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  borderRadius: BorderRadius.circular(20),
+                                  hint: Text(AppLocalizations.of(context)!
+                                      .subCategoria),
+                                  isExpanded: true,
+                                  value: _subCategoriaId.toString(),
+                                  items: getListaSubCatDropdown(
+                                      subcategorias, int.parse(_categoriaId!)),
+                                  onChanged: (value) {
+                                    setState(
+                                      () {
+                                        _subCategoriaId = value;
+                                      },
+                                    );
+                                  },
+                                ),
+                                SizedBox(height: altura * 0.02),
+                                TextFormField(
+                                  maxLines: 10,
+                                  controller: _mensagemController,
+                                  decoration: InputDecoration(
+                                    label: Text(
+                                        AppLocalizations.of(context)!.mensagem),
                                   ),
-                                  SizedBox(width: largura * 0.02),
-                                  FilledButton(
-                                    onPressed: () {
-                                      // TODO: Implementar a lógica de guardar o tópico
-                                      // Substituir o codigo do idioma,utilizador e anexos
-                                      /*Topico topico = Topico(
-                                        idiomaId: 1,
-                                        imagem: [],
-                                        titulo: _tituloController.text,
-                                        mensagem: _mensagemController.text,
-                                        categoria: int.parse(_categoriaId!),
-                                        subcategoria:
-                                            int.parse(_subCategoriaId!),
-                                        utilizadorId: Utilizador(
-                                            3,
-                                            'Alice',
-                                            'Johnson',
-                                            'alice.johnson@example.com',
-                                            'Some info',
-                                            3,
-                                            [1, 2],
-                                            3,
-                                            3),
-                                      ); */
-                                      /* if (_formKey.currentState!.validate()) {
-                                  Navigator.of(context)
-                                      .pushReplacementNamed('/forum');
-                                } */
-                                    },
-                                    child: Text(
-                                        AppLocalizations.of(context)!.guardar),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "${AppLocalizations.of(context)!.porfavorInsiraA} ${AppLocalizations.of(context)!.mensagem}";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                SizedBox(height: altura * 0.02),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        if (_tituloController.text.isNotEmpty ||
+                                            _mensagemController
+                                                .text.isNotEmpty) {
+                                          Future<bool> confirma = confirmExit(
+                                            context,
+                                            AppLocalizations.of(context)!
+                                                .sairSemGuardar,
+                                            AppLocalizations.of(context)!
+                                                .dadosSeraoPerdidos,
+                                          );
+                                          confirma.then((value) {
+                                            if (value) {
+                                              Navigator.of(context).pop();
+                                            }
+                                          });
+                                        } else {
+                                          Navigator.of(context).pop();
+                                        }
+                                      },
+                                      child: Text(AppLocalizations.of(context)!
+                                          .cancelar),
+                                    ),
+                                    SizedBox(width: largura * 0.02),
+                                    FilledButton(
+                                      onPressed: () async {
+                                        if (_formKey.currentState!.validate() &&
+                                            images.isNotEmpty) {
+                                          setState(() {
+                                            _isLoading = true;
+                                          });
+                                          //carrega idiomaId
+                                          final prefs = await SharedPreferences
+                                              .getInstance();
+                                          final int idiomaId =
+                                              prefs.getInt("idiomaId") ?? 1;
+                                          // Convert as imagens para o tipo Imagem
+                                          List<Imagem> imagens = [];
+                                          imagens =
+                                              await convertListXfiletoImagem(
+                                                  images);
+                                          String util = prefs
+                                                  .getString('utilizadorObj') ??
+                                              '';
+                                          Utilizador utilizadortmp =
+                                              Utilizador.fromJson(
+                                                  jsonDecode(util));
+                                          Topico topicoCriar = Topico(
+                                            subcategoria:
+                                                int.parse(_subCategoriaId!),
+                                            titulo: _tituloController.text,
+                                            mensagem: _mensagemController.text,
+                                            idiomaId: idiomaId,
+                                            imagens: imagens,
+                                            utilizadorId:
+                                                utilizadortmp.utilizadorId,
+                                          );
+                                          TopicoRepository topicoRepository =
+                                              TopicoRepository();
+                                          await topicoRepository
+                                              .criarTopico(topicoCriar);
+                                          setState(() {
+                                            _isLoading = false;
+                                          });
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .dadosGravados),
+                                            ),
+                                          );
+                                          Navigator.of(context).pop();
+                                        }
+                                      },
+                                      child: Text(AppLocalizations.of(context)!
+                                          .guardar),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

@@ -48,20 +48,20 @@ class TopicoCardItem extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 25,
-                  backgroundImage: (topico.utilizadorCriou.fotoUrl!.isEmpty)
+                  backgroundImage: (topico.utilizadorCriou!.fotoUrl!.isEmpty)
                       ? null
-                      : topico.utilizadorCriou.fotoUrl!.startsWith('http') ||
-                              topico.utilizadorCriou.fotoUrl!
+                      : topico.utilizadorCriou!.fotoUrl!.startsWith('http') ||
+                              topico.utilizadorCriou!.fotoUrl!
                                   .startsWith('https')
-                          ? NetworkImage(topico.utilizadorCriou.fotoUrl!)
-                          : FileImage(File(topico.utilizadorCriou.fotoUrl!))
+                          ? NetworkImage(topico.utilizadorCriou!.fotoUrl!)
+                          : FileImage(File(topico.utilizadorCriou!.fotoUrl!))
                               as ImageProvider<Object>?,
-                  backgroundColor: topico.utilizadorCriou.fotoUrl!.isEmpty
+                  backgroundColor: topico.utilizadorCriou!.fotoUrl!.isEmpty
                       ? Colors.blue
                       : null,
-                  child: topico.utilizadorCriou.fotoUrl!.isEmpty
+                  child: topico.utilizadorCriou!.fotoUrl!.isEmpty
                       ? Text(
-                          topico.utilizadorCriou.getIniciais(),
+                          topico.utilizadorCriou!.getIniciais(),
                           style: const TextStyle(
                             fontSize: 40,
                             color: Colors.white,
@@ -75,7 +75,7 @@ class TopicoCardItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      topico.utilizadorCriou.getNomeCompleto(),
+                      topico.utilizadorCriou!.getNomeCompleto(),
                       style: const TextStyle(
                           fontSize: 14, fontWeight: FontWeight.bold),
                     ),

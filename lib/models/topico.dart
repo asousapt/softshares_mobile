@@ -1,28 +1,38 @@
+import 'package:camera/camera.dart';
+import 'package:softshares_mobile/models/imagem.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/utils.dart';
 
 class Topico {
   final int? topicoId;
-  final int categoria;
+  final int? categoria;
   final int subcategoria;
-  final Utilizador utilizadorCriou;
+  final Utilizador? utilizadorCriou;
+  final int? utilizadorId;
   final String titulo;
   final String mensagem;
   final DateTime? dataCriacao;
   final int idiomaId;
   final List<String>? imagem;
+  List<XFile>? images;
+  List<Imagem>? imagens;
 
   Topico({
     this.topicoId,
-    required this.categoria,
+    this.categoria,
     required this.subcategoria,
-    required this.utilizadorCriou,
+    this.utilizadorCriou,
     required this.titulo,
     required this.mensagem,
     this.dataCriacao,
     required this.idiomaId,
-    required this.imagem,
+    this.imagem,
+    this.utilizadorId,
+    this.images,
+    this.imagens,
   });
 
+  // retorna um objeto Topico a partir de um json
   factory Topico.fromJson(Map<String, dynamic> json) {
     return Topico(
       topicoId: json['topicoId'],
@@ -39,5 +49,19 @@ class Topico {
           ? List<String>.from(json['imagens'].map((item) => item.toString()))
           : [],
     );
+  }
+
+  Map<String, dynamic> toJsonCriar() {
+    List<Map<String, dynamic>> listaImagens =
+        toJsonList(imagens, (Imagem img) => img.toJson());
+
+    return {
+      "subcategoriaid": subcategoria,
+      "titulo": titulo,
+      "mensagem": mensagem,
+      "imagens": listaImagens,
+      "utilizadorid": utilizadorId ?? 0,
+      "idiomaid": idiomaId
+    };
   }
 }

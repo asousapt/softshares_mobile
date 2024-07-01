@@ -5,9 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/topico.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/screens/mensagensGrupos/info_utilizador.dart';
 import 'package:softshares_mobile/time_utils.dart';
 import 'package:softshares_mobile/widgets/comentarios_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/widgets/gerais/galeria_widget.dart';
 
 class TopicoDetailsScreen extends StatefulWidget {
   const TopicoDetailsScreen({
@@ -88,33 +90,50 @@ class _TopicoDetailsScreenState extends State<TopicoDetailsScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // User Info
+                            // informacao do utilizador
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                CircleAvatar(
-                                  radius: 25,
-                                  backgroundImage: _getUserImage(topico),
-                                  backgroundColor:
-                                      topico.utilizadorCriou.fotoUrl!.isEmpty
-                                          ? Colors.blue
-                                          : null,
-                                  child: topico.utilizadorCriou.fotoUrl!.isEmpty
-                                      ? Text(
-                                          topico.utilizadorCriou.getIniciais(),
-                                          style: const TextStyle(
-                                            fontSize: 40,
-                                            color: Colors.white,
-                                          ),
-                                        )
-                                      : null,
+                                InkWell(
+                                  child: CircleAvatar(
+                                    radius: 25,
+                                    backgroundImage: _getUserImage(topico),
+                                    backgroundColor:
+                                        topico.utilizadorCriou!.fotoUrl!.isEmpty
+                                            ? Colors.blue
+                                            : null,
+                                    child:
+                                        topico.utilizadorCriou!.fotoUrl!.isEmpty
+                                            ? Text(
+                                                topico.utilizadorCriou!
+                                                    .getIniciais(),
+                                                style: const TextStyle(
+                                                  fontSize: 40,
+                                                  color: Colors.white,
+                                                ),
+                                              )
+                                            : null,
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return UtilizadorInfoScreen(
+                                            utilizadorId: user.utilizadorId,
+                                            mostraGaleria: false,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
                                 ),
                                 SizedBox(width: largura * 0.02),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      topico.utilizadorCriou.getNomeCompleto(),
+                                      topico.utilizadorCriou!.getNomeCompleto(),
                                       style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold),
@@ -139,6 +158,10 @@ class _TopicoDetailsScreenState extends State<TopicoDetailsScreen> {
                               topico.titulo,
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
+                            ),
+                            SizedBox(height: altura * 0.02),
+                            GaleriaWidget(
+                              urls: topico.imagem != null ? topico.imagem! : [],
                             ),
                             SizedBox(height: altura * 0.02),
                             // Topic Message
@@ -185,14 +208,14 @@ class _TopicoDetailsScreenState extends State<TopicoDetailsScreen> {
   }
 
   ImageProvider<Object>? _getUserImage(Topico topico) {
-    if (topico.utilizadorCriou.fotoUrl!.isEmpty) {
+    if (topico.utilizadorCriou!.fotoUrl!.isEmpty) {
       return null;
     }
-    if (topico.utilizadorCriou.fotoUrl!.startsWith('http') ||
-        topico.utilizadorCriou.fotoUrl!.startsWith('https')) {
-      return NetworkImage(topico.utilizadorCriou.fotoUrl!);
+    if (topico.utilizadorCriou!.fotoUrl!.startsWith('http') ||
+        topico.utilizadorCriou!.fotoUrl!.startsWith('https')) {
+      return NetworkImage(topico.utilizadorCriou!.fotoUrl!);
     }
-    return FileImage(File(topico.utilizadorCriou.fotoUrl!));
+    return FileImage(File(topico.utilizadorCriou!.fotoUrl!));
   }
 
   Widget _buildResponseSection(

@@ -21,4 +21,10 @@ class TopicoRepository {
       throw Exception('Erro ao buscar tópicos');
     }
   }
+
+  Future<void> criarTopico(Topico topico) async {
+    _apiService.setAuthToken("tokenFixo");
+    final response =
+        await _apiService.postRequest("thread/add/", topico.toJsonCriar());
+  }
 }

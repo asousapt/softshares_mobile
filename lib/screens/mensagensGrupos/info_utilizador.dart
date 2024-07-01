@@ -7,9 +7,11 @@ class UtilizadorInfoScreen extends StatefulWidget {
   const UtilizadorInfoScreen({
     super.key,
     required this.utilizadorId,
+    required this.mostraGaleria,
   });
 
   final int utilizadorId;
+  final bool mostraGaleria;
 
   @override
   State<UtilizadorInfoScreen> createState() {
@@ -20,6 +22,7 @@ class UtilizadorInfoScreen extends StatefulWidget {
 class _UtilizadorInfoScreenState extends State<UtilizadorInfoScreen> {
   Utilizador? utilizador;
   bool _isLoading = true;
+  late bool mostraGaleria;
 
   @override
   void initState() {
@@ -28,6 +31,9 @@ class _UtilizadorInfoScreenState extends State<UtilizadorInfoScreen> {
   }
 
   Future<void> actualizaDados() async {
+    setState(() {
+      mostraGaleria = widget.mostraGaleria;
+    });
     try {
       Utilizador fetchUtil = await fetchUtilizadorById(widget.utilizadorId);
       setState(() {
@@ -154,81 +160,95 @@ class _UtilizadorInfoScreenState extends State<UtilizadorInfoScreen> {
                                             ),
                                           ),
                                           // Tab de galeria
-                                          FutureBuilder<List<String>>(
-                                            future: fetchGalleryImages(),
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.waiting) {
-                                                return Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                  ),
-                                                );
-                                              } else if (snapshot.hasError) {
-                                                return Center(
-                                                  child: Text(
-                                                    AppLocalizations.of(
-                                                            context)!
-                                                        .ocorreuErro,
-                                                  ),
-                                                );
-                                              } else if (!snapshot.hasData ||
-                                                  snapshot.data!.isEmpty) {
-                                                return Center(
-                                                  child: Text(
-                                                    AppLocalizations.of(
-                                                            context)!
-                                                        .galeriaVazia,
-                                                  ),
-                                                );
-                                              } else {
-                                                List<String> imageUrls =
-                                                    snapshot.data!;
-                                                return GridView.builder(
-                                                  gridDelegate:
-                                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 3,
-                                                    crossAxisSpacing: 4.0,
-                                                    mainAxisSpacing: 4.0,
-                                                  ),
-                                                  itemCount: imageUrls.length,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    return InkWell(
-                                                      onTap: () => {
-                                                        Navigator.of(context)
-                                                            .push(
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                PhotoGalleryScreen(
-                                                              imageUrls:
-                                                                  imageUrls,
-                                                              initialIndex:
-                                                                  index,
-                                                            ),
-                                                          ),
+                                          mostraGaleria
+                                              ? FutureBuilder<List<String>>(
+                                                  future: fetchGalleryImages(),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState
+                                                            .waiting) {
+                                                      return Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .primaryColor,
                                                         ),
-                                                      },
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          image:
-                                                              DecorationImage(
-                                                            image: NetworkImage(
-                                                              imageUrls[index],
-                                                            ),
-                                                            fit: BoxFit.cover,
-                                                          ),
+                                                      );
+                                                    } else if (snapshot
+                                                        .hasError) {
+                                                      return Center(
+                                                        child: Text(
+                                                          AppLocalizations.of(
+                                                                  context)!
+                                                              .ocorreuErro,
                                                         ),
-                                                      ),
-                                                    );
+                                                      );
+                                                    } else if (!snapshot
+                                                            .hasData ||
+                                                        snapshot
+                                                            .data!.isEmpty) {
+                                                      return Center(
+                                                        child: Text(
+                                                          AppLocalizations.of(
+                                                                  context)!
+                                                              .galeriaVazia,
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      List<String> imageUrls =
+                                                          snapshot.data!;
+                                                      return GridView.builder(
+                                                        gridDelegate:
+                                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                                          crossAxisCount: 3,
+                                                          crossAxisSpacing: 4.0,
+                                                          mainAxisSpacing: 4.0,
+                                                        ),
+                                                        itemCount:
+                                                            imageUrls.length,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          return InkWell(
+                                                            onTap: () => {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .push(
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          PhotoGalleryScreen(
+                                                                    imageUrls:
+                                                                        imageUrls,
+                                                                    initialIndex:
+                                                                        index,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            },
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                image:
+                                                                    DecorationImage(
+                                                                  image:
+                                                                      NetworkImage(
+                                                                    imageUrls[
+                                                                        index],
+                                                                  ),
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    }
                                                   },
-                                                );
-                                              }
-                                            },
-                                          ),
+                                                )
+                                              : Container()
                                         ],
                                       ),
                                     ),
