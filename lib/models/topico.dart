@@ -1,45 +1,52 @@
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/services/api_service.dart';
 
 class Topico {
-  final int topicoId;
-  final int categoria;
-  final int subcategoria;
-  final Utilizador utilizadorId;
-  final String titulo;
-  final String mensagem;
-  final DateTime dataCriacao;
-  final int idiomaId;
-  final List<String> imagem;
+  ApiService api = ApiService();
+  int? topicoId;
+  int subcategoria;
+  int utilizadorId;
+  String utilizadorPnome;
+  String utilizadorUnome;
+  String titulo;
+  String mensagem;
+  DateTime? dataCriacao;
+  int idiomaId;
+  List<String> imagem;
+  int? poloId;
+  int? categoria;
 
   Topico({
-    required this.topicoId,
-    required this.categoria,
+    this.topicoId,
     required this.subcategoria,
     required this.utilizadorId,
+    required this.utilizadorPnome,
+    required this.utilizadorUnome,
     required this.titulo,
     required this.mensagem,
     required this.dataCriacao,
     required this.idiomaId,
     required this.imagem,
+    this.categoria,
   });
 
   factory Topico.fromJson(Map<String, dynamic> json) {
-    print('Topico parsed: $json');
-    try {
-      return Topico(
-        topicoId: json['topicoId'],
-        categoria: json['categoria'],
-        subcategoria: json['subcategoria'],
-        utilizadorId: Utilizador.fromJson(json['utilizadorId']),
-        titulo: json['titulo'],
-        mensagem: json['mensagem'],
-        dataCriacao: DateTime.parse(json['dataCriacao']),
-        idiomaId: json['idiomaId'],
-        imagem: List<String>.from(json['imagem']),
-      );
-    } catch (e) {
-      print('Erro ao converter JSON para Topico: $e');
-      throw Exception('Erro ao converter JSON para Topico');
-    }
+    return Topico(
+      topicoId: json['threadid'] ?? 0,
+      subcategoria: json['subcategoriaid'] ?? 0,
+      categoria: json['categoriaid'] ?? 0,
+      utilizadorId: json['utilizadorid'] ?? 0,
+      utilizadorPnome: json['pnome'] ?? '',
+      utilizadorUnome: json['unome'] ?? '',
+      titulo: json['titulo'] ?? '',
+      mensagem: json['mensagem'] ?? '',
+      dataCriacao: json['datacriacao'] != null ? DateTime.parse(json['datacriacao']) : DateTime(1970, 1, 1),
+      idiomaId: json['idiomaid'] ?? 0,
+      imagem: List<String>.from(json['imagens'] ?? []),
+    );
+  }
+
+  String getNomeCompleto() {
+    return "$utilizadorPnome $utilizadorUnome";
   }
 }

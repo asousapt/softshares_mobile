@@ -103,13 +103,28 @@ class _EcraLoginState extends State<EcraLogin> {
     return emailRegex.hasMatch(email);
   }
 
+  void inicializar() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool? exists = false;
+    exists = prefs.getBool('isChecked');
+    if (exists != null) {
+      setState(() {
+        isChecked = exists!;
+      });
+    }
+    if (isChecked) {
+      Navigator.pushNamed(context, "/home");
+    }
+    ;
+  }
+
   @override
   void initState() {
     super.initState();
+    inicializar();
     controlEmail = TextEditingController();
     controlPass = TextEditingController();
     getVersion();
-    isChecked = false;
     passwordVisible = true;
   }
 
@@ -350,7 +365,7 @@ class _EcraLoginState extends State<EcraLogin> {
 
                                         Utilizador util =
                                             await utilizadorRepository
-                                                .getUtilizador("37");
+                                                .getUtilizador("21");
 
                                         Map<String, dynamic> utilJson =
                                             util.toJson();

@@ -14,4 +14,16 @@ class Commentario {
     required this.data,
     this.subcomentarios = const [],
   });
+
+  factory Commentario.fromJson(Map<String, dynamic> json) {
+    return Commentario(
+      comentarioid: json['comentarioid'],
+      comentario: json['comentario'],
+      autor: Utilizador.fromJson(json['autor']),
+      data: DateTime.parse(json['data']),
+      subcomentarios: (json['subcomentarios'] as List<dynamic>?)
+          ?.map((subjson) => Commentario.fromJson(subjson))
+          .toList() ?? [],
+    );
+  }
 }

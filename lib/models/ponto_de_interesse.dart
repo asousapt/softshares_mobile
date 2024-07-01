@@ -7,7 +7,6 @@ class PontoInteresse {
   final String descricao;
   final bool? aprovado;
   final DateTime? dataAprovacao;
-  final int? utilizadorAprova;
   final String localizacao;
   final String? latitude;
   final String? longitude;
@@ -15,7 +14,7 @@ class PontoInteresse {
   final int cidadeId;
   final DateTime dataCriacao;
   final DateTime? dataAlteracao;
-  final Utilizador? criador;
+  final int? criador;
   final double? avaliacao;
 
   PontoInteresse({
@@ -25,7 +24,6 @@ class PontoInteresse {
     required this.descricao,
     this.aprovado,
     this.dataAprovacao,
-    this.utilizadorAprova,
     required this.localizacao,
     this.latitude,
     this.longitude,
@@ -58,9 +56,7 @@ class PontoInteresse {
     final dataAlteracao = json['dataalteracao'] != null
         ? DateTime.parse(json['dataalteracao'])
         : null;
-    final criador = json['utilizadorcriou_utilizador'] != null
-        ? Utilizador.fromJson(json['utilizadorcriou_utilizador'])
-        : null;
+    final criador = json['utilizadoraprova'] as int?;
     final avaliacao = json['avgavaliacao'] != null 
       ? double.tryParse(json['avgavaliacao']) 
       : null;
@@ -83,7 +79,6 @@ class PontoInteresse {
       descricao: descricao,
       aprovado: aprovado,
       dataAprovacao: dataAprovacao,
-      utilizadorAprova: utilizadorAprova,
       localizacao: localizacao,
       latitude: latitude,
       longitude: longitude,
@@ -104,7 +99,6 @@ class PontoInteresse {
       'descricao': descricao,
       'aprovado': aprovado,
       'dataaprovacao': dataAprovacao?.toIso8601String(),
-      'utilizadoraprova': utilizadorAprova,
       'localizacao': localizacao,
       'latitude': latitude,
       'longitude': longitude,
@@ -112,7 +106,7 @@ class PontoInteresse {
       'cidadeid': cidadeId,
       'datacriacao': dataCriacao.toIso8601String(),
       'dataalteracao': dataAlteracao?.toIso8601String(),
-      'utilizadorcriou_utilizador': criador?.toJson(),
+      'utilizadorcriou_utilizador': criador,
       'avgavaliacao': avaliacao,
     };
   }
@@ -127,14 +121,13 @@ final List<PontoInteresse> pontosDeInteresseTeste = [
         'Um lindo parque no centro da cidade com áreas verdes e playgrounds.',
     aprovado: true,
     dataAprovacao: DateTime(2023, 4, 12),
-    utilizadorAprova: 2,
     localizacao: 'Centro da Cidade',
     latitude: '40.785091',
     longitude: '-73.968285',
     idiomaId: 1,
     cidadeId: 101,
     dataCriacao: DateTime(2023, 1, 10),
-    criador: utilizadores[0],
+    criador: utilizadores[0].utilizadorId,
     avaliacao: 4.5,
   ),
   PontoInteresse(
@@ -145,14 +138,13 @@ final List<PontoInteresse> pontosDeInteresseTeste = [
         'Um museu com uma coleção incrível de arte moderna e contemporânea.',
     aprovado: true,
     dataAprovacao: DateTime(2023, 5, 20),
-    utilizadorAprova: 3,
     localizacao: 'Rua das Artes, 45',
     latitude: '40.761436',
     longitude: '-73.977621',
     idiomaId: 1,
     cidadeId: 101,
     dataCriacao: DateTime(2023, 2, 15),
-    criador: utilizadores[1],
+    criador: utilizadores[1].utilizadorId,
     avaliacao: 4.7,
   ),
   PontoInteresse(
@@ -162,14 +154,13 @@ final List<PontoInteresse> pontosDeInteresseTeste = [
     descricao: 'Uma bela praia com areia dourada e águas cristalinas.',
     aprovado: true,
     dataAprovacao: DateTime(2023, 6, 5),
-    utilizadorAprova: 1,
     localizacao: 'Avenida Beira Mar',
     latitude: '40.595928',
     longitude: '-73.961452',
     idiomaId: 1,
     cidadeId: 102,
     dataCriacao: DateTime(2023, 3, 25),
-    criador: utilizadores[2],
+    criador: utilizadores[2].utilizadorId,
     avaliacao: 4.8,
   ),
   PontoInteresse(
@@ -179,14 +170,13 @@ final List<PontoInteresse> pontosDeInteresseTeste = [
     descricao: 'Uma catedral histórica com arquitetura gótica impressionante.',
     aprovado: true,
     dataAprovacao: DateTime(2023, 7, 15),
-    utilizadorAprova: 4,
     localizacao: 'Praça da Sé, 10',
     latitude: '40.712776',
     longitude: '-74.005974',
     idiomaId: 1,
     cidadeId: 103,
     dataCriacao: DateTime(2023, 4, 30),
-    criador: utilizadores[3],
+    criador: utilizadores[3].utilizadorId,
     avaliacao: 4.9,
   ),
 ];

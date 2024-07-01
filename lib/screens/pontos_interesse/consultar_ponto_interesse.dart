@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
+import 'package:softshares_mobile/models/comentario.dart';
 import 'package:softshares_mobile/models/ponto_de_interesse.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/widgets/pontos__de_interesse/escolherRating.dart';
@@ -15,6 +16,7 @@ import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'dart:convert';
+import 'package:softshares_mobile/services/api_service.dart';
 
 class ConsultPontoInteresseScreen extends StatefulWidget {
   const ConsultPontoInteresseScreen({
@@ -39,12 +41,15 @@ class _ConsultPontoInteresseScreenState
   int rating = 0;
   bool invalidRating = false;
   Utilizador? user;
-  List<Commentario> comentariosTeste = [];
+  ApiService api = ApiService();
+  List<Commentario> comentarios = [];
 
   Future<void> carregaDados() async {
     final prefs = await SharedPreferences.getInstance();
+    api.setAuthToken("tokenFixo");
     final idiomaId = prefs.getInt("idiomaId") ?? 1;
-    user = jsonDecode(prefs.getString('utilizadorObj')!);
+    await fetchComentarios();
+    user = Utilizador.fromJson(jsonDecode(prefs.getString('utilizadorObj')!));
 
     CategoriaRepository categoriaRepository = CategoriaRepository();
     List<Categoria> categoriasdb =
@@ -71,6 +76,37 @@ class _ConsultPontoInteresseScreenState
       invalidRating == true;
     } else {
       //Código para enviar rating
+    }
+  }
+
+  Future<void> fetchComentarios() async {
+    try {
+      _isLoading = true;
+      final lista = await api.getRequest('comentario/');
+      final listaFormatted = lista['data'];
+      if (listaFormatted is! List) {
+        throw Exception("Failed to load data: Expected a list in 'data'");
+      }
+
+      // Parse the JSON data into a list of PontoInteresse objects
+      List<Commentario> listaUpdated =
+          listaFormatted.map<Commentario>((item) {
+        try {
+          return Commentario.fromJson(item);
+        } catch (e) {
+          print("Error parsing item2: $item");
+          print("Error details: $e");
+          rethrow;
+        }
+      }).toList();
+      setState(() {
+        comentarios = List.from(listaUpdated);
+        _isLoading = false;
+      });
+      print(comentarios);
+    } catch (e) {
+      print("Error fetching data1: $e");
+      // Handle error appropriately
     }
   }
 
@@ -105,7 +141,7 @@ class _ConsultPontoInteresseScreenState
             bottom: altura * 0.01,
           ),
           height: altura * 0.9,
-          decoration: BoxDecoration(color: Theme.of(context).canvasColor),
+          decoration: BoxDecoration(color: Theme.of(context).canvasColor, borderRadius: BorderRadius.circular(20)),
           child: _isLoading
               ? Center(
                   child: CircularProgressIndicator(
@@ -113,119 +149,109 @@ class _ConsultPontoInteresseScreenState
                   ),
                 )
               : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).canvasColor,
-                          borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).canvasColor,
+                      
+                    ),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: FadeInImage(
+                            fit: BoxFit.fill,
+                            height: altura * 0.2,
+                            width: double.infinity,
+                            placeholder:
+                                const AssetImage("Images/Restaurante.jpg"),
+                            image:
+                                const AssetImage("Images/Restaurante.jpg"),
+                            imageErrorBuilder:
+                                (context, error, stackTrace) {
+                              return const Image(
+                                  image:
+                                      AssetImage("Images/Restaurante.jpg"));
+                            },
+                          ),
                         ),
-                        child: Column(
+                        SizedBox(height: altura * 0.02),
+                        Text(
+                          pontoInteresse!.titulo,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        EstrelasRating(rating: pontoInteresse!.avaliacao!),
+                        SizedBox(height: altura * 0.02),
+                        Row(
                           children: [
-                            Center(
-                              child: FadeInImage(
-                                fit: BoxFit.fill,
-                                height: altura * 0.2,
-                                width: double.infinity,
-                                placeholder:
-                                    const AssetImage("Images/Restaurante.jpg"),
-                                image:
-                                    const AssetImage("Images/Restaurante.jpg"),
-                                imageErrorBuilder:
-                                    (context, error, stackTrace) {
-                                  return const Image(
-                                      image:
-                                          AssetImage("Images/Restaurante.jpg"));
-                                },
-                              ),
+                            const Icon(
+                              FontAwesomeIcons.locationDot,
+                              color: Colors.red,
                             ),
-                            SizedBox(height: altura * 0.02),
-                            Text(
-                              pontoInteresse!.titulo,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Container(
+                              margin: EdgeInsets.only(left: largura * 0.02),
+                              child: Text(pontoInteresse!.localizacao),
                             ),
-                            EstrelasRating(rating: pontoInteresse!.avaliacao!),
-                            SizedBox(height: altura * 0.02),
-                            Row(
-                              children: [
-                                const Icon(
-                                  FontAwesomeIcons.locationDot,
-                                  color: Colors.red,
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(left: largura * 0.02),
-                                  child: Text(pontoInteresse!.localizacao),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: altura * 0.02),
-                            Center(
-                              child: Container(
-                                color: Colors.red,
-                                height: altura * 0.25,
-                                width: largura * 0.85,
-                                child: const Center(
-                                  child: Text("Mapa"),
-                                ),
-                              ),
-                            ),
-                            DividerWithText(
-                                text: AppLocalizations.of(context)!.descricao),
-                            Text(pontoInteresse!.descricao),
-                            DividerWithText(
-                                text: AppLocalizations.of(context)!.avaliar),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextFormField(
-                                    maxLines: null,
-                                    decoration: InputDecoration(
-                                      hintText: AppLocalizations.of(context)!
-                                          .deixaComentario,
-                                      border:
-                                          InputBorder.none, // Remove the border
-                                      contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 10.0), // Add padding
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: RatingPicker(
-                                      initialRating: 1,
-                                      onRatingSelected: atualizarRating),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    enviarAvaliacao();
-                                  },
-                                  child: Text(
-                                      AppLocalizations.of(context)!.avaliar),
-                                ),
-                              ],
-                            ),
-                            const Divider(
-                              color: Color.fromRGBO(29, 90, 161, 1),
-                            ),
-                            Text(AppLocalizations.of(context)!
-                                .outrosComentarios),
-                            SizedBox(
-                              height: altura * 0.5,
-                              child: SingleChildScrollView(
-                                child: CommentSection(
-                                    comentarios: comentariosTeste),
-                              ),
-                            )
                           ],
                         ),
-                      ),
-                    ],
+                        SizedBox(height: altura * 0.02),
+                        Center(
+                          child: Container(
+                            color: Colors.red,
+                            height: altura * 0.25,
+                            width: largura * 0.85,
+                            child: const Center(
+                              child: Text("Mapa"),
+                            ),
+                          ),
+                        ),
+                        DividerWithText(
+                            text: AppLocalizations.of(context)!.descricao),
+                        Text(pontoInteresse!.descricao),
+                        DividerWithText(
+                            text: AppLocalizations.of(context)!.avaliar),
+                        TextFormField(
+                          maxLines: null,
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!
+                                .deixaComentario,
+                            border:
+                                InputBorder.none, // Remove the border
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 10.0), // Add padding
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: RatingPicker(
+                                  initialRating: 1,
+                                  onRatingSelected: atualizarRating),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                enviarAvaliacao();
+                              },
+                              child: Text(
+                                  AppLocalizations.of(context)!.avaliar),
+                            ),
+                          ],
+                        ),
+                        const Divider(
+                          color: Color.fromRGBO(29, 90, 161, 1),
+                        ),
+                        Text(AppLocalizations.of(context)!.outrosComentarios),
+                        SizedBox(
+                          height: altura * 0.5,
+                          child: SingleChildScrollView(
+                            child: CommentSection(
+                              comentarios: comentarios
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
         ),

@@ -11,6 +11,7 @@ import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/widgets/topico/topico_item.dart';
+import 'package:softshares_mobile/services/api_service.dart';
 
 class TopicosListaScreen extends StatefulWidget {
   const TopicosListaScreen({super.key});
@@ -30,6 +31,7 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
   Color containerColorTopicos = Colors.transparent;
   List<Categoria> categoriasFiltro = [];
   List<Categoria> categorias = [];
+  ApiService api = ApiService();
 
   // Busca as categorias do idioma selecionado
   Future<void> carregaCategorias() async {
@@ -49,39 +51,43 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
   }
 
   Future<List<Topico>> fetchTopicos() async {
-    await Future.delayed(Duration(seconds: 2));
 
     List<Topico> topicos = [];
-
     try {
-      TopicoRepository topicoRepository = TopicoRepository();
-      topicos = await topicoRepository.getTopicos();
+      _isLoading = true;
+      final lista = await api.getRequest('thread/');
+      final listaFormatted = lista['data'];
+      if (listaFormatted is! List) {
+        throw Exception("Failed to load data: Expected a list in 'data'");
+      }
 
-      setState(() {
-        listaTopicos = topicos;
-        listaEvFiltrada = topicos;
-
-        if (topicos.isEmpty) {
-          containerColorTopicos = Theme.of(context).canvasColor;
-        } else {
-          containerColorTopicos = Colors.transparent;
+      // Parse the JSON data into a list of PontoInteresse objects
+      List<Topico> listaUpdated =
+          listaFormatted.map<Topico>((item) {
+        try {
+          return Topico.fromJson(item);
+        } catch (e) {
+          print("Error parsing item: $item");
+          print("Error details: $e");
+          rethrow;
         }
-
+      }).toList();
+      setState(() {
+        listaTopicos = List.from(listaUpdated);
+        listaEvFiltrada = listaTopicos;
         _isLoading = false;
       });
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      print('Erro ao buscar tópicos: $e');
+      print("Error fetching data1: $e");
+      // Handle error appropriately
     }
-
     return topicos;
   }
 
   @override
   void initState() {
     super.initState();
+    api.setAuthToken("tokenFixo");
     actualizaDados();
   }
 

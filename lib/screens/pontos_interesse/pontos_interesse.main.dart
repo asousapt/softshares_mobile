@@ -9,7 +9,7 @@ import 'package:softshares_mobile/widgets/pontos__de_interesse/pontos_de_interes
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../services/api_service.dart';
+import 'package:softshares_mobile/services/api_service.dart';
 
 class PontosDeInteresseMainScreen extends StatefulWidget {
   const PontosDeInteresseMainScreen({Key? key}) : super(key: key);
@@ -111,8 +111,6 @@ class _PontosDeInteresseMainScreenState
                 listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
               });
               containerColorPontosDeInteresse = Colors.transparent;
-              print("Mostra lista de pontos de interesse");
-              print(listaPontosDeInteresse);
             }
           });
         },

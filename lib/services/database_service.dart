@@ -30,6 +30,7 @@ class DatabaseService {
   Future<void> _createDB(Database db, int version) async {
     const idType = 'INTEGER NOT NULL';
     const textType = 'TEXT NOT NULL';
+    const boolType = 'INTEGER NOT NULL';
 
     await db.execute('''CREATE TABLE idioma (
       idiomaid $idType,
@@ -72,6 +73,11 @@ class DatabaseService {
       idiomaId $idType
     )''');
 
+    await db.execute('''CREATE TABLE notification_preferences (
+    id $idType PRIMARY KEY,
+    type $textType,
+    enabled $boolType
+  )''');
     await db.execute('''CREATE TABLE cidade (
       cidadeid $idType,
       nome $textType
@@ -83,6 +89,7 @@ class DatabaseService {
   Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
     const idType = 'INTEGER NOT NULL';
     const textType = 'TEXT NOT NULL';
+    const boolType = 'INTEGER NOT NULL';
 
     if (oldVersion < 2) {
       await db.execute('''CREATE TABLE IF NOT EXISTS polo (
@@ -125,6 +132,11 @@ class DatabaseService {
     )''');
       print('Table funcao created in upgrade');
 
+      await db.execute('''CREATE TABLE IF NOT EXISTS notification_preferences (
+    id $idType PRIMARY KEY,
+    type $textType,
+    enabled $boolType
+  )''');
       await db.execute('''CREATE TABLE IF NOT EXISTS cidade (
       cidadeid $idType,
       nome $textType
