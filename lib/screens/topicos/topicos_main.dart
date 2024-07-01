@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
+import 'package:softshares_mobile/Repositories/topico_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/topico.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
@@ -51,80 +52,30 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
     await Future.delayed(Duration(seconds: 2));
 
     List<Topico> topicos = [];
-    /* Topico(
-        topicoId: 1,
-        categoria: 1,
-        subcategoria: 201,
-        utilizadorId: Utilizador(1, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
-        titulo: 'First Topic',
-        mensagem:
-            'This is the message for the first topic.This is the message for the first topic.This is the message for the first topic.This is the message for the first topic.This is the message for the first topic.This is the message for the first topic.',
-        dataCriacao: DateTime.now().subtract(Duration(days: 5)),
-        idiomaId: 1,
-        imagem: [],
-      ),
-      Topico(
-        topicoId: 2,
-        categoria: 2,
-        subcategoria: 202,
-        utilizadorId: Utilizador(2, 'Jane', 'Smith', 'jane.smith@example.com',
-            'Some info', 2, [1, 2], 2, 2),
-        titulo: 'Second Topic',
-        mensagem: 'This is the message for the second topic.',
-        dataCriacao: DateTime.now().subtract(Duration(days: 3)),
-        idiomaId: 2,
-        imagem: [],
-      ),
-      Topico(
-        topicoId: 3,
-        categoria: 3,
-        subcategoria: 203,
-        utilizadorId: Utilizador(3, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 3, [1, 2], 3, 3),
-        titulo: 'Third Topic',
-        mensagem: 'This is the message for the third topic.',
-        dataCriacao: DateTime.now().subtract(Duration(days: 1)),
-        idiomaId: 1,
-        imagem: [],
-      ),
-      Topico(
-        topicoId: 4,
-        categoria: 3,
-        subcategoria: 203,
-        utilizadorId: Utilizador(3, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 3, [1, 2], 3, 3),
-        titulo: 'Third Topic',
-        mensagem: 'This is the message for the third topic.',
-        dataCriacao: DateTime.now().subtract(Duration(days: 1)),
-        idiomaId: 1,
-        imagem: [],
-      ),
-      Topico(
-        topicoId: 5,
-        categoria: 3,
-        subcategoria: 203,
-        utilizadorId: Utilizador(3, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 3, [1, 2], 3, 3),
-        titulo: 'Third Topic',
-        mensagem: 'This is the message for the third topic.',
-        dataCriacao: DateTime.now().subtract(Duration(days: 1)),
-        idiomaId: 1,
-        imagem: [],
-      ),
-      Topico(
-        topicoId: 6,
-        categoria: 3,
-        subcategoria: 203,
-        utilizadorId: Utilizador(3, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 3, [1, 2], 3, 3),
-        titulo: 'Third Topic',
-        mensagem: 'This is the message for the third topic.',
-        dataCriacao: DateTime.now().subtract(Duration(days: 1)),
-        idiomaId: 1,
-        imagem: [],
-      ),
-    ];*/
+
+    try {
+      TopicoRepository topicoRepository = TopicoRepository();
+      topicos = await topicoRepository.getTopicos();
+
+      setState(() {
+        listaTopicos = topicos;
+        listaEvFiltrada = topicos;
+
+        if (topicos.isEmpty) {
+          containerColorTopicos = Theme.of(context).canvasColor;
+        } else {
+          containerColorTopicos = Colors.transparent;
+        }
+
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      print('Erro ao buscar tópicos: $e');
+    }
+
     return topicos;
   }
 
