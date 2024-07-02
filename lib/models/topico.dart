@@ -1,52 +1,67 @@
+import 'package:camera/camera.dart';
+import 'package:softshares_mobile/models/imagem.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
-import 'package:softshares_mobile/services/api_service.dart';
+import 'package:softshares_mobile/utils.dart';
 
 class Topico {
-  ApiService api = ApiService();
-  int? topicoId;
-  int subcategoria;
-  int utilizadorId;
-  String utilizadorPnome;
-  String utilizadorUnome;
-  String titulo;
-  String mensagem;
-  DateTime? dataCriacao;
-  int idiomaId;
-  List<String> imagem;
-  int? poloId;
-  int? categoria;
+  final int? topicoId;
+  final int? categoria;
+  final int subcategoria;
+  final Utilizador? utilizadorCriou;
+  final int? utilizadorId;
+  final String titulo;
+  final String mensagem;
+  final DateTime? dataCriacao;
+  final int idiomaId;
+  final List<String>? imagem;
+  List<XFile>? images;
+  List<Imagem>? imagens;
 
   Topico({
     this.topicoId,
+    this.categoria,
     required this.subcategoria,
-    required this.utilizadorId,
-    required this.utilizadorPnome,
-    required this.utilizadorUnome,
+    this.utilizadorCriou,
     required this.titulo,
     required this.mensagem,
     this.dataCriacao,
     required this.idiomaId,
-    required this.imagem,
-    this.categoria,
+    this.imagem,
+    this.utilizadorId,
+    this.images,
+    this.imagens,
   });
 
+  // retorna um objeto Topico a partir de um json
   factory Topico.fromJson(Map<String, dynamic> json) {
     return Topico(
-      topicoId: json['threadid'] ?? 0,
-      subcategoria: json['subcategoriaid'] ?? 0,
-      categoria: json['categoriaid'] ?? 0,
-      utilizadorId: json['utilizadorid'] ?? 0,
-      utilizadorPnome: json['pnome'] ?? '',
-      utilizadorUnome: json['unome'] ?? '',
-      titulo: json['titulo'] ?? '',
-      mensagem: json['mensagem'] ?? '',
-      dataCriacao: json['datacriacao'] != null ? DateTime.parse(json['datacriacao']) : DateTime(1970, 1, 1),
-      idiomaId: json['idiomaid'] ?? 0,
-      imagem: List<String>.from(json['imagens'] ?? []),
+      topicoId: json['topicoId'],
+      categoria: json['categoria'],
+      subcategoria: json['subcategoria'],
+      utilizadorCriou: Utilizador.fromJsonSimplificado(json['utilizador']),
+      titulo: json['titulo'],
+      mensagem: json['mensagem'],
+      dataCriacao: json['dataCriacao'] != null
+          ? DateTime.parse(json['dataCriacao'])
+          : null,
+      idiomaId: json['idiomaId'],
+      imagem: json['imagens'] != null
+          ? List<String>.from(json['imagens'].map((item) => item.toString()))
+          : [],
     );
   }
 
-  String getNomeCompleto() {
-    return "$utilizadorPnome $utilizadorUnome";
+  Map<String, dynamic> toJsonCriar() {
+    List<Map<String, dynamic>> listaImagens =
+        toJsonList(imagens, (Imagem img) => img.toJson());
+
+    return {
+      "subcategoriaid": subcategoria,
+      "titulo": titulo,
+      "mensagem": mensagem,
+      "imagens": listaImagens,
+      "utilizadorid": utilizadorId ?? 0,
+      "idiomaid": idiomaId
+    };
   }
 }

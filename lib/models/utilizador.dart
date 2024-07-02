@@ -106,6 +106,17 @@ class Utilizador {
     );
   }
 
+  factory Utilizador.fromJsonSimplificado(Map<String, dynamic> json) {
+    return Utilizador(
+      utilizadorId: json['utilizadorid'] ?? 0,
+      pNome: json['pnome'] ?? '',
+      uNome: json['unome'] ?? '',
+      email: json['email'] ?? '',
+      poloId: json['poloid'] ?? 0,
+      fotoUrl: json['fotoUrl'] ?? '',
+    );
+  }
+
   // Simplified constructor for the list example
   Utilizador.simplificado(
     this.utilizadorId,

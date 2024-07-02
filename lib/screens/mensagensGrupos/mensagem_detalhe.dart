@@ -307,6 +307,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                             builder: (context) {
                               return UtilizadorInfoScreen(
                                 utilizadorId: widget.utilizadorId!,
+                                mostraGaleria: true,
                               );
                             },
                           ),

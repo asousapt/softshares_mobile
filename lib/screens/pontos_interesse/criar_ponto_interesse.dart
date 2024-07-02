@@ -101,7 +101,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   Future<void> carregarDados() async {
     final prefs = await SharedPreferences.getInstance();
     idiomaId = prefs.getInt("idiomaId") ?? 1;
-    user = Utilizador.fromJson(jsonDecode(prefs.getString('utilizadorObj')!)) ;
+    user = Utilizador.fromJson(jsonDecode(prefs.getString('utilizadorObj')!));
     CategoriaRepository categoriaRepository = CategoriaRepository();
     List<Categoria> categoriasL =
         await categoriaRepository.fetchCategoriasDB(idiomaId);

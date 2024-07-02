@@ -158,5 +158,6 @@
   "savedWithSuccess": "¡Datos enviados con éxito!", 
   "numeroConvidados": "Número de invitados", 
   "responderForm": "Rellene el formulario", 
-  "incricaoComSucesso": "Inscripción satisfactoria"
+  "incricaoComSucesso": "Inscripción satisfactoria", 
+  "detalhesTopico": "Detalhes da linha"
 }

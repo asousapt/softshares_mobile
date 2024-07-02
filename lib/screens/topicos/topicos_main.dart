@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
+import 'package:softshares_mobile/Repositories/topico_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/topico.dart';
-import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/topicos/topico_details.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
@@ -31,11 +31,14 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
   List<Categoria> categoriasFiltro = [];
   List<Categoria> categorias = [];
   ApiService api = ApiService();
+  late String idioma;
 
   // Busca as categorias do idioma selecionado
   Future<void> carregaCategorias() async {
     final prefs = await SharedPreferences.getInstance();
     final idiomaId = prefs.getInt("idiomaId") ?? 1;
+    idioma = prefs.getString("idioma") ?? "pt";
+    print("Idioma: $idioma");
     CategoriaRepository categoriaRepository = CategoriaRepository();
     categorias = await categoriaRepository.fetchCategoriasDB(idiomaId);
     categoriasFiltro = List.from(categorias);
@@ -49,44 +52,10 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
     categoriasFiltro.add(todos);
   }
 
-  Future<List<Topico>> fetchTopicos() async {
-
-    List<Topico> topicos = [];
-    try {
-      _isLoading = true;
-      final lista = await api.getRequest('thread/');
-      final listaFormatted = lista['data'];
-      if (listaFormatted is! List) {
-        throw Exception("Failed to load data: Expected a list in 'data'");
-      }
-
-      // Parse the JSON data into a list of PontoInteresse objects
-      List<Topico> listaUpdated =
-          listaFormatted.map<Topico>((item) {
-        try {
-          return Topico.fromJson(item);
-        } catch (e) {
-          print("Error parsing item: $item");
-          print("Error details: $e");
-          rethrow;
-        }
-      }).toList();
-      setState(() {
-        listaTopicos = List.from(listaUpdated);
-        listaEvFiltrada = listaTopicos;
-        _isLoading = false;
-      });
-    } catch (e) {
-      print("Error fetching data1: $e");
-      // Handle error appropriately
-    }
-    return topicos;
-  }
-
   @override
   void initState() {
     super.initState();
-    api.setAuthToken("tokenFixo");
+
     actualizaDados();
   }
 
@@ -95,11 +64,12 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
     setState(() {
       _isLoading = true;
     });
+    TopicoRepository topicoRepository = TopicoRepository();
+    listaTopicos = await topicoRepository.getTopicos();
 
-    listaTopicos = await fetchTopicos();
     setState(() {
       listaEvFiltrada = listaTopicos;
-
+      _isLoading = false;
       if (listaTopicos.isEmpty) {
         containerColorTopicos = Theme.of(context).canvasColor;
       } else {
@@ -262,6 +232,7 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
                                     child: TopicoCardItem(
                                       topico: e,
                                       categorias: categorias,
+                                      idioma: idioma,
                                     ),
                                     onTap: () {
                                       Navigator.push(
