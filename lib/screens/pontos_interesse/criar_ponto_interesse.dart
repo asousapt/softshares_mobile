@@ -199,7 +199,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       "cidadeid": 299,
       "utilizadorcriou": uti,
       "imagens": [],
-      "formRespostas": getRespostas().map((resposta) => resposta.toJson()).toList(),
+      "formRespostas": getRespostas().map((resposta) => resposta.toJsonCriar()).toList(),
     };
     print("This is the data: $data");
     return data;

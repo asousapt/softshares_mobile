@@ -45,6 +45,7 @@ class _ConsultPontoInteresseScreenState
   List<Commentario> comentarios = [];
 
   Future<void> carregaDados() async {
+    pontoInteresse = widget.pontoInteresse;
     final prefs = await SharedPreferences.getInstance();
     api.setAuthToken("tokenFixo");
     final idiomaId = prefs.getInt("idiomaId") ?? 1;
@@ -59,8 +60,6 @@ class _ConsultPontoInteresseScreenState
       _isLoading = false;
     });
   }
-
-  int utilizadorId = 1;
 
   atualizarRating(int aval) {
     setState(() {
@@ -82,8 +81,8 @@ class _ConsultPontoInteresseScreenState
   Future<void> fetchComentarios() async {
     try {
       _isLoading = true;
-      final lista = await api.getRequest('comentario/');
-      final listaFormatted = lista['data'];
+      final lista = await api.getRequest('comentario/tabela/POI/registo/${pontoInteresse!.pontoInteresseId}');
+      final listaFormatted = lista['data'][0]['comentarios'];
       if (listaFormatted is! List) {
         throw Exception("Failed to load data: Expected a list in 'data'");
       }

@@ -65,7 +65,7 @@ class _PontosDeInteresseMainScreenState
   Future<void> fetchPontosDeInteresse() async {
     try {
       _isLoading = true;
-      final lista = await api.getRequest('pontoInteresse/');
+      final lista = await api.getRequest('pontoInteresse/aprovados');
       final listaFormatted = lista['data'];
       if (listaFormatted is! List) {
         throw Exception("Failed to load data: Expected a list in 'data'");

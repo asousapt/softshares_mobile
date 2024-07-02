@@ -5,6 +5,7 @@ import 'package:transparent_image/transparent_image.dart';
 import '../../models/utilizador.dart';
 import '../../models/ponto_de_interesse.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/widgets/pontos__de_interesse/estrelas.dart';
 
 class PontoInteresseCard extends StatelessWidget {
   final PontoInteresse pontoInteresse;
@@ -63,6 +64,7 @@ class PontoInteresseCard extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(pontoInteresse.descricao),
+            EstrelasRating(rating: pontoInteresse!.avaliacao!),
           ],
         ),
       ),

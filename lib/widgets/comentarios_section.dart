@@ -51,7 +51,7 @@ class _CommentSectionState extends State<CommentSection> {
                 SizedBox(width: 8.0),
                 Column(
                   children: [
-                    Text(comment.autor.getNomeCompleto()),
+                    Text(comment.autor),
                     Text(
                       dataFormatada('pt', comment.data),
                     ),

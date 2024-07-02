@@ -3,7 +3,7 @@ import 'package:softshares_mobile/models/utilizador.dart';
 class Commentario {
   final int comentarioid;
   final String comentario;
-  final Utilizador autor;
+  final String autor;
   final DateTime data;
   final List<Commentario> subcomentarios;
 
@@ -17,13 +17,17 @@ class Commentario {
 
   factory Commentario.fromJson(Map<String, dynamic> json) {
     return Commentario(
-      comentarioid: json['comentarioid'],
-      comentario: json['comentario'],
-      autor: Utilizador.fromJson(json['autor']),
-      data: DateTime.parse(json['data']),
-      subcomentarios: (json['subcomentarios'] as List<dynamic>?)
-          ?.map((subjson) => Commentario.fromJson(subjson))
-          .toList() ?? [],
+      comentarioid: json['comentarioid'] ?? 0,
+      comentario: json['comentario'] ?? '',
+      autor: json['utilizador_nome'] ?? '',
+      data: json.containsKey('data') && json['data'] != null
+          ? DateTime.parse(json['data'])
+          : DateTime.now(),
+      subcomentarios: json['respostas'] != null
+          ? (json['respostas'] as List<dynamic>)
+              .map((subjson) => Commentario.fromJson(subjson))
+              .toList()
+          : [],
     );
   }
 }
