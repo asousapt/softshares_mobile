@@ -25,7 +25,9 @@ class Formulario {
     return Formulario(
       formId: json['formId'],
       titulo: json['titulo'],
-      tipoFormulario: json['tipoFormulario'],
+      tipoFormulario: json['tipoFormulario'] == "INSCR"
+          ? TipoFormulario.inscr
+          : TipoFormulario.qualidade,
       perguntas: perguntas,
     );
   }
@@ -34,6 +36,7 @@ class Formulario {
   Map<String, dynamic> toJsonEnvio() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['descForm'] = titulo;
+    data["formularioid"] = formId != 0 ? formId : 0;
     data['perguntas'] = perguntas.map((v) => v.toJson()).toList();
     return data;
   }

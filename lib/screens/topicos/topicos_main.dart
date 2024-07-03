@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,7 +25,7 @@ class TopicosListaScreen extends StatefulWidget {
 class _TopicosListaScreenState extends State<TopicosListaScreen> {
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
-  bool _isLoading = false;
+  bool _isLoading = true;
   List<Topico> listaEvFiltrada = [];
   List<Topico> listaTopicos = [];
   Color containerColorTopicos = Colors.transparent;
@@ -32,6 +33,7 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
   List<Categoria> categorias = [];
   ApiService api = ApiService();
   late String idioma;
+  bool _showError = false;
 
   // Busca as categorias do idioma selecionado
   Future<void> carregaCategorias() async {
@@ -55,28 +57,46 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
   @override
   void initState() {
     super.initState();
-
     actualizaDados();
   }
 
   Future<void> actualizaDados() async {
-    carregaCategorias();
-    setState(() {
-      _isLoading = true;
-    });
+    try {
+      await Future.wait([
+        carregaCategorias(),
+        _fetchTopicosWithTimeout(),
+      ]);
+      setState(() {
+        _isLoading = false;
+        _showError = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _showError = true;
+      });
+    }
+  }
+
+  Future<void> _fetchTopicosWithTimeout() async {
     TopicoRepository topicoRepository = TopicoRepository();
-    listaTopicos = await topicoRepository.getTopicos();
+    listaTopicos = await topicoRepository.getTopicos().timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        throw TimeoutException(
+          AppLocalizations.of(context)!.ocorreuErro,
+          const Duration(seconds: 5),
+        );
+      },
+    );
 
     setState(() {
       listaEvFiltrada = listaTopicos;
-      _isLoading = false;
       if (listaTopicos.isEmpty) {
         containerColorTopicos = Theme.of(context).canvasColor;
       } else {
         containerColorTopicos = Colors.transparent;
       }
-
-      _isLoading = false;
     });
   }
 
@@ -196,65 +216,53 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
         child: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: largura * 0.02, vertical: altura * 0.02),
-          child: SingleChildScrollView(
-            child: Container(
-              decoration: BoxDecoration(
-                //  color: Theme.of(context).canvasColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              height: altura * 0.9,
-              child: Container(
-                margin: EdgeInsets.symmetric(
-                    horizontal: largura * 0.01, vertical: altura * 0.02),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      color: containerColorTopicos,
-                      height: altura * 0.8,
-                      child: listaEvFiltrada.isEmpty
-                          ? _isLoading
-                              ? Center(
-                                  child: CircularProgressIndicator(
-                                      backgroundColor:
-                                          Theme.of(context).canvasColor),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Container(
+                  color: containerColorTopicos,
+                  child: _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                              backgroundColor: Theme.of(context).canvasColor))
+                      : _showError
+                          ? Center(
+                              child: Text(
+                                  AppLocalizations.of(context)!.ocorreuErro))
+                          : listaEvFiltrada.isNotEmpty
+                              ? ListView(
+                                  children: listaEvFiltrada.map((e) {
+                                    return InkWell(
+                                      enableFeedback: true,
+                                      child: TopicoCardItem(
+                                        topico: e,
+                                        categorias: categorias,
+                                        idioma: idioma,
+                                      ),
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                TopicoDetailsScreen(
+                                              topico: e,
+                                              categorias: categorias,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  }).toList(),
                                 )
                               : Center(
                                   child: Text(
                                       AppLocalizations.of(context)!.naoHaDados),
-                                )
-                          : Expanded(
-                              child: ListView(
-                                children: listaEvFiltrada.map((e) {
-                                  return InkWell(
-                                    enableFeedback: true,
-                                    child: TopicoCardItem(
-                                      topico: e,
-                                      categorias: categorias,
-                                      idioma: idioma,
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              TopicoDetailsScreen(
-                                            topico: e,
-                                            categorias: categorias,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                    ),
-                  ],
+                                ),
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),

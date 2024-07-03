@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:softshares_mobile/models/imagem.dart';
 
 // Função que converte uma imagem de um URL para base64
@@ -46,6 +48,36 @@ Future<List<Imagem>> convertListXfiletoImagem(List<XFile> xFiles) async {
   }
 
   return imagens;
+}
+
+Future<Imagem?> downloadImage(String imageUrl) async {
+  try {
+    final response = await http.get(Uri.parse(imageUrl));
+    if (response.statusCode == 200) {
+      final bytes = response.bodyBytes;
+      final tempDir = await getTemporaryDirectory();
+
+      // Clean up the URL to get a proper file name without query parameters
+      final uri = Uri.parse(imageUrl);
+      final fileName = path.basename(uri.path);
+
+      final file = File('${tempDir.path}/$fileName');
+
+      await file.writeAsBytes(bytes);
+
+      return Imagem(
+        nome: fileName,
+        url: file.path,
+        tamanho: bytes.length,
+        base64: base64Encode(bytes),
+      );
+    } else {
+      throw Exception('Erro ao carregar imagem');
+    }
+  } catch (e) {
+    print('Erro ao converter para base64: $e');
+    return null;
+  }
 }
 
 // Função que converte uma lista de objetos para JSON

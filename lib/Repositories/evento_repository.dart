@@ -35,11 +35,25 @@ class EventoRepository {
     }
   }
 
+  // Busca os eventos em que o utilizador esta inscrito
+  Future<List<Evento>> getEventosInscritos(int utilizadorId) async {
+    _apiService.setAuthToken("tokenFixo");
+    final response =
+        await _apiService.getRequest("evento/incricto/$utilizadorId");
+
+    final eventosformattr = response['data'] as List;
+
+    if (eventosformattr.isEmpty) {
+      return [];
+    } else {
+      return eventosformattr.map((e) => Evento.fromJson(e)).toList();
+    }
+  }
+
   // BUsca o evento peloID para edicao
   Future<Evento> obtemEvento(int eventoId) async {
     _apiService.setAuthToken("tokenFixo");
-    final response =
-        await _apiService.getRequest("evento/$eventoId/formulario");
+    final response = await _apiService.getRequest("evento/mobile/$eventoId");
     final eventoformattr = response['data'];
 
     return Evento.fromJsonEditar(eventoformattr);
@@ -50,6 +64,12 @@ class EventoRepository {
     _apiService.setAuthToken("tokenFixo");
     final response =
         await _apiService.postRequest("evento/add/", evento.toJsonCriar());
+  }
+
+  Future<void> editarEvento(Evento evento) async {
+    _apiService.setAuthToken("tokenFixo");
+    final String url = "evento/update/mobile/${evento.eventoId}";
+    final response = await _apiService.putRequest(url, evento.toJsonEditar());
   }
 
   // Pedido de inscricao no evento
