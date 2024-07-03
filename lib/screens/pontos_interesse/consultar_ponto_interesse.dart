@@ -43,6 +43,8 @@ class _ConsultPontoInteresseScreenState
   Utilizador? user;
   ApiService api = ApiService();
   List<Commentario> comentarios = [];
+  final TextEditingController comentarioController = TextEditingController();
+  bool tinhaAvaliado = false;
 
   Future<void> carregaDados() async {
     pontoInteresse = widget.pontoInteresse;
@@ -51,6 +53,8 @@ class _ConsultPontoInteresseScreenState
     final idiomaId = prefs.getInt("idiomaId") ?? 1;
     await fetchComentarios();
     user = Utilizador.fromJson(jsonDecode(prefs.getString('utilizadorObj')!));
+    final ratingAntigo = await api.getRequest('avaliacao/poi/${pontoInteresse!.pontoInteresseId}/utilizador/${user!.utilizadorId}');
+    if (ratingAntigo['data'] != 0) tinhaAvaliado =true;
 
     CategoriaRepository categoriaRepository = CategoriaRepository();
     List<Categoria> categoriasdb =
@@ -58,6 +62,7 @@ class _ConsultPontoInteresseScreenState
     setState(() {
       categorias = categoriasdb;
       _isLoading = false;
+      rating = ratingAntigo['data'] as int;
     });
   }
 
@@ -67,14 +72,30 @@ class _ConsultPontoInteresseScreenState
     });
   }
 
-  void enviarAvaliacao() {
-    if (comentarioAtual == null) {
-      //API para enviar comentário atual
+  void enviarAvaliacao() async{
+    setState(() {
+      comentarioAtual = comentarioController.text;
+    });
+    if (comentarioAtual != "") {
+      final Map<String,dynamic> commentJson = {
+        "tipo": "POI",
+        "idRegisto":pontoInteresse!.pontoInteresseId,
+        "utilizadorid": user!.utilizadorId,
+        "comentario":comentarioAtual,
+        "comentarioPai ": null,
+      };
+      await api.postRequest("comentario/add", commentJson);
     }
     if (rating == 0) {
       invalidRating == true;
     } else {
-      //Código para enviar rating
+      final Map<String,dynamic> avaliacaoJson = {
+        "tipo": "POI",
+        "idRegisto":pontoInteresse!.pontoInteresseId,
+        "utilizadorid": user!.utilizadorId,
+        "avaliacao": rating,
+      };
+      await api.postRequest("avaliacao/add", avaliacaoJson);
     }
   }
 
@@ -211,6 +232,7 @@ class _ConsultPontoInteresseScreenState
                         DividerWithText(
                             text: AppLocalizations.of(context)!.avaliar),
                         TextFormField(
+                          controller: comentarioController,
                           maxLines: null,
                           decoration: InputDecoration(
                             hintText: AppLocalizations.of(context)!

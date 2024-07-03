@@ -14,6 +14,13 @@ import 'package:softshares_mobile/widgets/gerais/dialog.dart';
 import 'package:softshares_mobile/services/api_service.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/pergunta_formulario.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/resposta_form.dart';
+import 'package:softshares_mobile/Repositories/cidade_repository.dart';
+import 'package:softshares_mobile/screens/generic/location_picker.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:camera/camera.dart';
+import 'package:softshares_mobile/widgets/gerais/foto_picker.dart';
+import 'package:softshares_mobile/utils.dart';
+import 'package:softshares_mobile/models/imagem.dart';
 
 class CriarPontoInteresseScreen extends StatefulWidget {
   const CriarPontoInteresseScreen({super.key});
@@ -31,8 +38,9 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   String? _categoriaId;
   String? _subCategoriaId;
   String? descricao;
-  late int idiomaId;
-  Map<int, Formulario> forms = {};
+  int idiomaId = 0, cidadeId = 0;
+  double latitude = 0.0, longitude = 0.0;
+  Formulario? form = null;
   bool defaultValues = false;
   List<Categoria> categorias = [];
   List<Subcategoria> subcategorias = [];
@@ -43,8 +51,16 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   final Map<int, bool> _booleanValues = {};
   final Map<int, String?> _dropdownValues = {};
   Utilizador? user;
+  List<XFile> images = [];
+  List<Imagem> imagens = [];
 
-  Formulario fetchedFormulario = Formulario(
+  void _updateImages(List<XFile> newImages) {
+    setState(() {
+      images = newImages;
+    });
+  }
+
+  /*Formulario fetchedFormulario = Formulario(
     formId: 1,
     titulo: 'Formulário de Teste',
     tipoFormulario: TipoFormulario.inscr,
@@ -94,7 +110,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
         ordem: 4,
       ),
     ],
-  );
+  );*/
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -108,24 +124,42 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
     SubcategoriaRepository subcategoriaRepository = SubcategoriaRepository();
     List<Subcategoria> subcategoriasL =
         await subcategoriaRepository.fetchSubcategoriasDB(idiomaId);
+    CidadeRepository cidadeRepository = CidadeRepository();
+    int cidadeId = await cidadeRepository.obtemCidadeId(latitude, longitude);
 
     setState(() {
       categorias = categoriasL;
       subcategorias = subcategoriasL;
       _isLoading = false;
-      for (int i = 0; i < forms[0]!.perguntas.length; i++) {
-        if (forms[0]!.perguntas[i].tipoDados == TipoDados.textoLivre ||
-            forms[0]!.perguntas[i].tipoDados == TipoDados.numerico) {
+      for (int i = 0; i < form!.perguntas.length; i++) {
+        if (form!.perguntas[i].tipoDados == TipoDados.textoLivre ||
+            form!.perguntas[i].tipoDados == TipoDados.numerico) {
           _controllers[i] = TextEditingController();
         }
-        if (forms[0]!.perguntas[i].tipoDados == TipoDados.logico) {
+        if (form!.perguntas[i].tipoDados == TipoDados.logico) {
           _booleanValues[i] = false;
         }
-        if (forms[0]!.perguntas[i].tipoDados == TipoDados.seleccao) {
+        if (form!.perguntas[i].tipoDados == TipoDados.seleccao) {
           _dropdownValues[i] = null;
         }
       }
     });
+  }
+
+  void setForm() async {
+    print("A subcategoria escolhida foi: ${_subCategoriaId}");
+    final json1 = await api.getRequest("formulario/subcatm/${_subCategoriaId}");
+    if (json1['data'] != 0) {
+      int idform = json1['data'];
+      final json2 = await api.getRequest("formulario//idformm/${idform}");
+      setState(() {
+        form = Formulario.fromJson(json2['data']);
+      });
+    } else {
+      setState(() {
+        form = null;
+      });
+    }
   }
 
   @override
@@ -139,7 +173,6 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       });
     });
     descricao = "";
-    forms[0] = fetchedFormulario;
   }
 
   @override
@@ -163,22 +196,26 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
         "${AppLocalizations.of(context)!.categoria} : ${categorias.firstWhere((element) => element.categoriaId == int.parse(cat!)).descricao}\n"
         "${AppLocalizations.of(context)!.subCategoria} : ${subcategorias.firstWhere((element) => element.subcategoriaId == int.parse(sub!)).descricao}\n";
 
-    if (forms.isNotEmpty) {
-      for (int i = 0; i < forms[0]!.perguntas.length; i++) {
-        mensagem += forms[0]!.perguntas[i].pergunta;
-        if (forms[0]!.perguntas[i].tipoDados == TipoDados.textoLivre ||
-            forms[0]!.perguntas[i].tipoDados == TipoDados.numerico) {
+    if (form != null) {
+      for (int i = 0; i < form!.perguntas.length; i++) {
+        mensagem += form!.perguntas[i].pergunta;
+        if (form!.perguntas[i].tipoDados == TipoDados.textoLivre ||
+            form!.perguntas[i].tipoDados == TipoDados.numerico) {
           mensagem += ": ${_controllers[i]!.text}\n";
         }
-        if (forms[0]!.perguntas[i].tipoDados == TipoDados.logico) {
+        if (form!.perguntas[i].tipoDados == TipoDados.logico) {
           mensagem += ": ${_booleanValues[i]}\n";
         }
-        if (forms[0]!.perguntas[i].tipoDados == TipoDados.seleccao) {
+        if (form!.perguntas[i].tipoDados == TipoDados.seleccao) {
           mensagem += ": ${_dropdownValues[i]}\n";
         }
       }
     }
     return mensagem;
+  }
+
+  void converterImagens() async{
+    imagens = await convertListXfiletoImagem(images);
   }
 
   Map<String, dynamic> createJson() {
@@ -188,18 +225,22 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
     final int cat = int.parse(_categoriaId!);
     final int sub = int.parse(_subCategoriaId!);
     final uti = user!.utilizadorId;
+    
+    converterImagens();
+
     final Map<String, dynamic> data = {
       "subcategoriaid": sub,
       "titulo": titulo,
       "descricao": descricao,
       "localizacao": local,
-      "latitude": "0",
-      "longitude": "0",
+      "latitude": latitude,
+      "longitude": longitude,
       "idiomaid": idiomaId,
-      "cidadeid": 299,
+      "cidadeid": cidadeId,
       "utilizadorcriou": uti,
       "imagens": [],
-      "formRespostas": getRespostas().map((resposta) => resposta.toJsonCriar()).toList(),
+      "formRespostas":
+          getRespostas().map((resposta) => resposta.toJsonCriar()).toList(),
     };
     print("This is the data: $data");
     return data;
@@ -226,9 +267,10 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   List<Widget> _buildPerguntas(BuildContext context) {
     double altura = MediaQuery.of(context).size.height;
     List<Widget> widgets = [];
+    print("gonna build questions");
 
-    for (int index = 0; index < forms[0]!.perguntas.length; index++) {
-      Pergunta pergunta = forms[0]!.perguntas[index];
+    for (int index = 0; index < form!.perguntas.length; index++) {
+      Pergunta pergunta = form!.perguntas[index];
       print("O index é: $index");
       Widget field;
 
@@ -313,7 +355,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       widgets.add(field);
 
       // Aiciona um espaço a seguir a cada campo, exceto o último
-      if (index < forms[0]!.perguntas.length - 1) {
+      if (index < form!.perguntas.length - 1) {
         widgets.add(SizedBox(height: altura * 0.02));
       }
     }
@@ -325,8 +367,8 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   List<RespostaDetalhe> getRespostas() {
     List<RespostaDetalhe> respostas = [];
 
-    for (int index = 0; index < forms[0]!.perguntas.length; index++) {
-      Pergunta pergunta = forms[0]!.perguntas[index];
+    for (int index = 0; index < form!.perguntas.length; index++) {
+      Pergunta pergunta = form!.perguntas[index];
 
       switch (pergunta.tipoDados) {
         case TipoDados.logico:
@@ -360,8 +402,8 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   }
 
   bool validaFormsTemDados() {
-    for (int index = 0; index < forms[0]!.perguntas.length; index++) {
-      Pergunta pergunta = forms[0]!.perguntas[index];
+    for (int index = 0; index < form!.perguntas.length; index++) {
+      Pergunta pergunta = form!.perguntas[index];
 
       switch (pergunta.tipoDados) {
         case TipoDados.logico:
@@ -492,8 +534,18 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
                                         controller: _localizacaoController,
                                         decoration: InputDecoration(
                                           suffixIcon: IconButton(
-                                            onPressed: () {
-                                              //TODO: Implementar a selecção de localização do mapa
+                                            onPressed: () async {
+                                              LatLng? localizacao =
+                                                  await Navigator.of(context)
+                                                      .push(MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const LocationPicker(),
+                                              ));
+                                              if (localizacao != null) {
+                                                latitude = localizacao.latitude;
+                                                longitude =
+                                                    localizacao.longitude;
+                                              }
                                             },
                                             icon: const Icon(
                                                 FontAwesomeIcons.locationDot),
@@ -551,6 +603,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
                                           setState(
                                             () {
                                               _subCategoriaId = value;
+                                              setForm();
                                             },
                                           );
                                         },
@@ -573,14 +626,19 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
                                             : null,
                                       ),
                                       SizedBox(height: altura * 0.02),
+                                      FotoPicker(
+                                        pickedImages: images,
+                                        onImagesPicked: _updateImages,
+                                      ),
                                       // LISTA DE FORMULARIOS
-                                      forms.isNotEmpty
+                                      form != null
                                           ? Column(
                                               children:
                                                   _buildPerguntas(context),
                                             )
                                           : const SizedBox(height: 0),
                                       SizedBox(height: altura * 0.02),
+
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
@@ -597,7 +655,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
                                                           .isNotEmpty ||
                                                       _descricao
                                                           .text.isNotEmpty) &&
-                                                  (forms.isEmpty ||
+                                                  (form == null ||
                                                       validaFormsTemDados())) {
                                                 Future<bool> confirma =
                                                     confirmExit(

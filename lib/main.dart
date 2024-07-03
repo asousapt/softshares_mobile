@@ -43,6 +43,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final dbService = DatabaseService.instance;
+
+  //dbService.deleteDB();
   // Ensure the database is initialized before use
   await dbService.database;
   await dotenv.load(fileName: ".env");
