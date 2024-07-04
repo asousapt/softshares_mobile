@@ -8,11 +8,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class RespostaIndividualScreen extends StatefulWidget {
   const RespostaIndividualScreen({
     super.key,
-    required this.formularioId,
+    required this.eventoid,
     required this.utilizador,
   });
 
-  final int formularioId;
+  final int eventoid;
   final int utilizador;
 
   @override
@@ -107,7 +107,7 @@ class _RespostaIndividualScreenState extends State<RespostaIndividualScreen> {
       List<RespostaDetalhe> fetchedRespostas =
           await RespostaDetalhe.getRespostasDetalhe(
         utilizadorId: widget.utilizador,
-        respostaFormId: widget.formularioId,
+        respostaFormId: widget.eventoid,
       );
       setState(() {
         respostas = fetchedRespostas;

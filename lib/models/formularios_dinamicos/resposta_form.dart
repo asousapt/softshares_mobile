@@ -2,13 +2,13 @@ import 'package:softshares_mobile/models/formularios_dinamicos/pergunta_formular
 import 'package:softshares_mobile/models/utilizador.dart';
 
 class RespostaDetalhe {
-  final int perguntaId;
+  final int repostaId;
   final Pergunta? pergunta;
   final String resposta;
   final Utilizador? utilizador;
 
   RespostaDetalhe({
-    required this.perguntaId,
+    required this.repostaId,
     required this.resposta,
     this.pergunta,
     this.utilizador,
@@ -16,7 +16,7 @@ class RespostaDetalhe {
 
   factory RespostaDetalhe.fromJson(Map<String, dynamic> json) {
     return RespostaDetalhe(
-      perguntaId: json['perguntaId'],
+      repostaId: json['perguntaId'],
       resposta: json['resposta'],
       pergunta:
           json['pergunta'] != null ? Pergunta.fromJson(json['pergunta']) : null,
@@ -28,7 +28,7 @@ class RespostaDetalhe {
 
   Map<String, dynamic> toJsonCriar() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['formulariodetalhesid'] = perguntaId;
+    data['formulariodetalhesid'] = repostaId;
     data['resposta'] = resposta;
     return data;
   }
@@ -41,7 +41,7 @@ class RespostaDetalhe {
 
     List<RespostaDetalhe> dummyRespostas = [
       RespostaDetalhe(
-        perguntaId: 1,
+        repostaId: 1,
         resposta: 'John Doe',
         pergunta: Pergunta(
           detalheId: 1,
@@ -56,7 +56,7 @@ class RespostaDetalhe {
         ),
       ),
       RespostaDetalhe(
-        perguntaId: 2,
+        repostaId: 2,
         resposta: '25',
         pergunta: Pergunta(
           detalheId: 2,
@@ -71,7 +71,7 @@ class RespostaDetalhe {
         ),
       ),
       RespostaDetalhe(
-        perguntaId: 3,
+        repostaId: 3,
         resposta: 'true',
         pergunta: Pergunta(
           detalheId: 3,
@@ -86,7 +86,7 @@ class RespostaDetalhe {
         ),
       ),
       RespostaDetalhe(
-        perguntaId: 4,
+        repostaId: 4,
         resposta: 'Manhã',
         pergunta: Pergunta(
           detalheId: 4,

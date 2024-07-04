@@ -37,6 +37,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
   bool _isLoading = true;
   late int utilizadorId;
   bool isSaving = false;
+  bool temFormularios = false;
 
   @override
   void initState() {
@@ -48,7 +49,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
   Future<void> initialize() async {
     await getIdioma();
     evento = widget.evento;
-
+    temFormularios = await temFormularios1();
     isSecondTabEnabled = evento!.utilizadorCriou == utilizadorId;
     setState(() {
       _isLoading = false;
@@ -197,6 +198,14 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
   Future<List<Utilizador>> getUtilizadoresInscritos(int eventoId) async {
     EventoRepository eventoRepository = EventoRepository();
     return eventoRepository.getUtilizadoresInscritos(eventoId);
+  }
+
+  // verifica se tem formularios de inscricao e qualidade
+  Future<bool> temFormularios1() async {
+    EventoRepository eventoRepository = EventoRepository();
+    int inscricao = await eventoRepository.getFormId(evento!, "INSCR");
+    int qualidade = await eventoRepository.getFormId(evento!, "QUALIDADE");
+    return inscricao != 0 || qualidade != 0;
   }
 
   @override
@@ -541,43 +550,44 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                                                       ),
                                                                     ),
                                                                   ),
-                                                            trailing:
-                                                                IconButton(
-                                                              onPressed: () {
-                                                                // TODO: Fazer navagacao paraa pagina da resposta deste utilizador
+                                                            trailing: temFormularios
+                                                                ? IconButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      // TODO: Fazer navagacao paraa pagina da resposta deste utilizador
 
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            RespostaIndividualScreen(
-                                                                      formularioId:
-                                                                          1,
-                                                                      utilizador:
-                                                                          index,
+                                                                      Navigator
+                                                                          .push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              RespostaIndividualScreen(
+                                                                            eventoid:
+                                                                                1,
+                                                                            utilizador:
+                                                                                index,
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                    icon: Icon(
+                                                                      color: Theme.of(
+                                                                              context)
+                                                                          .canvasColor,
+                                                                      FontAwesomeIcons
+                                                                          .clipboard,
                                                                     ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                              icon: Icon(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .canvasColor,
-                                                                FontAwesomeIcons
-                                                                    .clipboard,
-                                                              ),
-                                                              style:
-                                                                  ButtonStyle(
-                                                                backgroundColor:
-                                                                    WidgetStateProperty
-                                                                        .all(
-                                                                  Theme.of(
-                                                                          context)
-                                                                      .primaryColor,
-                                                                ),
-                                                              ),
-                                                            ),
+                                                                    style:
+                                                                        ButtonStyle(
+                                                                      backgroundColor:
+                                                                          WidgetStateProperty
+                                                                              .all(
+                                                                        Theme.of(context)
+                                                                            .primaryColor,
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                : const SizedBox(),
                                                           );
                                                         },
                                                       );
