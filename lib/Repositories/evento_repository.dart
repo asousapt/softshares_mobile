@@ -117,6 +117,7 @@ class EventoRepository {
     }
   }
 
+  // Busca os utilizadores inscritos no evento
   Future<List<Utilizador>> getUtilizadoresInscritos(int eventoId) async {
     _apiService.setAuthToken("tokenFixo");
     final url = "evento/participantes/$eventoId";
@@ -131,6 +132,13 @@ class EventoRepository {
           .map((e) => Utilizador.fromJsonSimplificado(e))
           .toList();
     }
+  }
+
+  // Faz o cancelamento do evento
+  Future<void> cancelarEvento(int eventoId) async {
+    _apiService.setAuthToken("tokenFixo");
+    final url = "evento/cancelar/$eventoId";
+    final response = await _apiService.putRequest(url, {});
   }
 
   // retorna os eventos de um dia especifico (usado no table_calendar)

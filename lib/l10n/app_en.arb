@@ -159,5 +159,6 @@
   "numeroConvidados": "Number of Guests", 
   "responderForm": "Fill in the form", 
   "incricaoComSucesso": "Successful event registration", 
-  "detalhesTopico": "Thread Details"
+  "detalhesTopico": "Thread Details", 
+  "eventoCancelado": "The event was cancelled"
 }

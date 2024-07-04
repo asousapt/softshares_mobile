@@ -160,14 +160,30 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
           child: Text(AppLocalizations.of(context)!.inscrever),
         ),
       );
-    } else if (podeCancelarEventof) {
+    } else if (podeCancelarEventof && evento.cancelado == false) {
       return SizedBox(
         height: altura * 0.065,
         child: FilledButton(
           style:
               ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
-          onPressed: () {
-            // TODO: Implementar o cancelamento do evento
+          onPressed: () async {
+            // Cancelamento do evento pelo owner
+            setState(() {
+              isSaving = true;
+            });
+            EventoRepository eventoRepository = EventoRepository();
+            eventoRepository.cancelarEvento(evento.eventoId!);
+            setState(() {
+              isSaving = false;
+              evento.cancelado = true;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context)!.eventoCancelado,
+                ),
+              ),
+            );
           },
           child: Text(
               "${AppLocalizations.of(context)!.cancelar} ${AppLocalizations.of(context)!.evento}"),

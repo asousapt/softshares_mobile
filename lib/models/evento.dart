@@ -22,7 +22,7 @@ class Evento {
   final List<String>? imagem;
   final int utilizadorCriou;
   final int cidadeid;
-  final bool? cancelado;
+  bool? cancelado;
   final List<int>? utilizadoresInscritos;
   List<Imagem>? imagens;
   final int? utilizadorAprovou;

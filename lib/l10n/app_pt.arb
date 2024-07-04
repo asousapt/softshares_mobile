@@ -160,5 +160,6 @@
   "numeroConvidados": "Número de Convidados", 
   "responderForm": "Responda ao formulário", 
   "incricaoComSucesso": "Inscrição no evento bem sucedida", 
-  "detalhesTopico": "Detalhes do Tópico"
+  "detalhesTopico": "Detalhes do Tópico",
+    "eventoCancelado": "Evento cancelado"
 }
