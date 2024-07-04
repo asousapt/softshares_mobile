@@ -79,8 +79,14 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
         child: FilledButton(
           style:
               ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
-          onPressed: () {
-            // ToDO: cancelar inscricao
+          onPressed: () async {
+            // cancelar inscricao
+            EventoRepository eventoRepository = EventoRepository();
+            eventoRepository.cancelarInscricao(evento.eventoId!, utilizadorId);
+            setState(() {
+              evento.numeroInscritos = evento.numeroInscritos - 1;
+              evento.utilizadoresInscritos!.remove(utilizadorId);
+            });
           },
           child: Text(
             AppLocalizations.of(context)!.cancelarInscriao,
@@ -172,8 +178,9 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
     }
   }
 
-  Future<List<int>> getUtilizadoresInscritos() async {
-    return evento!.utilizadoresInscritos!;
+  Future<List<Utilizador>> getUtilizadoresInscritos(int eventoId) async {
+    EventoRepository eventoRepository = EventoRepository();
+    return eventoRepository.getUtilizadoresInscritos(eventoId);
   }
 
   @override
@@ -444,7 +451,8 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                               Expanded(
                                                 child: FutureBuilder(
                                                   future:
-                                                      getUtilizadoresInscritos(),
+                                                      getUtilizadoresInscritos(
+                                                          evento!.eventoId!),
                                                   builder: (context, snapshot) {
                                                     if (snapshot
                                                             .connectionState ==
@@ -481,24 +489,42 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                                             (context, index) {
                                                           return ListTile(
                                                             title: Text(
-                                                              "Utilizador ${evento!.utilizadoresInscritos![index]}",
+                                                              snapshot
+                                                                  .data![index]
+                                                                  .getNomeCompleto(),
                                                             ),
-                                                            // TODO: Alterar a imagem do utilizador
-                                                            leading:
-                                                                CircleAvatar(
-                                                              child: Container(
-                                                                decoration:
-                                                                    const BoxDecoration(
-                                                                  shape: BoxShape
-                                                                      .circle,
-                                                                  image:
-                                                                      DecorationImage(
-                                                                    image: NetworkImage(
-                                                                        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"),
+                                                            leading: snapshot
+                                                                        .data![
+                                                                            index]
+                                                                        .fotoUrl ==
+                                                                    null
+                                                                ? CircleAvatar(
+                                                                    backgroundColor:
+                                                                        Theme.of(context)
+                                                                            .secondaryHeaderColor,
+                                                                    child:
+                                                                        Center(
+                                                                      child: Text(snapshot
+                                                                          .data![
+                                                                              index]
+                                                                          .getIniciais()),
+                                                                    ),
+                                                                  )
+                                                                : CircleAvatar(
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        shape: BoxShape
+                                                                            .circle,
+                                                                        image:
+                                                                            DecorationImage(
+                                                                          image:
+                                                                              NetworkImage(snapshot.data![index].fotoUrl ?? ""),
+                                                                        ),
+                                                                      ),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ),
-                                                            ),
                                                             trailing:
                                                                 IconButton(
                                                               onPressed: () {

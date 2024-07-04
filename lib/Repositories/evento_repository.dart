@@ -50,6 +50,13 @@ class EventoRepository {
     }
   }
 
+  // cancelar inscricao do evento
+  Future<void> cancelarInscricao(int eventoId, int utilizadorId) async {
+    _apiService.setAuthToken("tokenFixo");
+    final url = "evento/utilizador/delete/$eventoId/$utilizadorId";
+    final response = await _apiService.deleteRequest(url);
+  }
+
   // BUsca o evento peloID para edicao
   Future<Evento> obtemEvento(int eventoId) async {
     _apiService.setAuthToken("tokenFixo");
@@ -107,6 +114,22 @@ class EventoRepository {
     } catch (error) {
       print('Error fetching form ID: $error');
       return 0;
+    }
+  }
+
+  Future<List<Utilizador>> getUtilizadoresInscritos(int eventoId) async {
+    _apiService.setAuthToken("tokenFixo");
+    final url = "evento/participantes/$eventoId";
+    final response = await _apiService.getRequest(url);
+
+    final utilizadoresformattr = response['data'] as List;
+
+    if (utilizadoresformattr.isEmpty) {
+      return [];
+    } else {
+      return utilizadoresformattr
+          .map((e) => Utilizador.fromJsonSimplificado(e))
+          .toList();
     }
   }
 
