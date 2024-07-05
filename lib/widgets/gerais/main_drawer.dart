@@ -4,7 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
-
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:softshares_mobile/services/google_signin_api.dart';
 class MainDrawer extends StatefulWidget {
   const MainDrawer({super.key});
 
@@ -23,6 +24,13 @@ class _MainDrawerState extends State<MainDrawer> {
     carregaUtilizador();
     super.initState();
   }
+
+  /*_logoutFacebook() async {
+    await FacebookAuth.instance.logOut();
+    _accessToken = null;
+    _facebookData = null;
+    setState(() {});
+  }*/
 
   // carrega o utilizador logado e polo que está seleccionado
   void carregaUtilizador() async {
@@ -125,8 +133,10 @@ class _MainDrawerState extends State<MainDrawer> {
               title: Text(AppLocalizations.of(context)!.definicoes),
             ),
             ListTile(
-              onTap: () {
+              onTap: () async {
                 prefs.setBool('isChecked', false);
+                await FacebookAuth.instance.logOut();
+                await GoogleSignInApi.logout();
                 Navigator.pushNamed(context, "/login");
               },
               contentPadding: const EdgeInsets.only(left: 15, top: 10),

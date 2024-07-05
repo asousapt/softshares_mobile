@@ -159,5 +159,7 @@
   "numeroConvidados": "Number of Guests", 
   "responderForm": "Fill in the form", 
   "incricaoComSucesso": "Successful event registration", 
-  "detalhesTopico": "Thread Details"
+  "detalhesTopico": "Thread Details",
+  "inserirDadosConta" : "Enter Account Data",
+  "googleFailed" : "Google entry failed"
 }

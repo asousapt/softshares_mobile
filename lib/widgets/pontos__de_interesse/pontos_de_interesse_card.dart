@@ -6,6 +6,7 @@ import '../../models/utilizador.dart';
 import '../../models/ponto_de_interesse.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/widgets/pontos__de_interesse/estrelas.dart';
+import 'package:softshares_mobile/widgets/gerais/imageWidget.dart';
 
 class PontoInteresseCard extends StatelessWidget {
   final PontoInteresse pontoInteresse;
@@ -46,9 +47,21 @@ class PontoInteresseCard extends StatelessWidget {
               height: altura * 0.2,
               width: double.infinity,
               placeholder: const AssetImage("Images/Restaurante.jpg"),
-              image: const AssetImage("Images/Restaurante.jpg"),
+              image: pontoInteresse.imagens != null &&
+                      pontoInteresse.imagens!.isNotEmpty
+                  ? NetworkImage(pontoInteresse.imagens![0])
+                  : const AssetImage("Images/Restaurante.jpg") as ImageProvider,
               imageErrorBuilder: (context, error, stackTrace) {
-                return const Image(image: AssetImage("Images/Restaurante.jpg"));
+                return Container(
+                  height: altura * 0.2,
+                  width: double.infinity,
+                  color: Colors.grey[200],
+                  child: const Icon(
+                    Icons.broken_image,
+                    color: Colors.grey,
+                    size: 50,
+                  ),
+                );
               },
             ),
             Divider(),
@@ -59,7 +72,8 @@ class PontoInteresseCard extends StatelessWidget {
                   FontAwesomeIcons.locationDot,
                   color: Colors.red,
                 ),
-                Text("${AppLocalizations.of(context)!.localizacao}: ${pontoInteresse.localizacao}"),
+                Text(
+                    "${AppLocalizations.of(context)!.localizacao}: ${pontoInteresse.localizacao}"),
               ],
             ),
             SizedBox(height: 10),

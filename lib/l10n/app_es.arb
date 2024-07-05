@@ -159,5 +159,7 @@
   "numeroConvidados": "Número de invitados", 
   "responderForm": "Rellene el formulario", 
   "incricaoComSucesso": "Inscripción satisfactoria", 
-  "detalhesTopico": "Detalhes da linha"
+  "detalhesTopico": "Detalhes da linha",
+  "inserirDadosConta" : "Ingrese los datos de la cuenta",
+  "googleFailed" : "La entrada de Google falló"
 }

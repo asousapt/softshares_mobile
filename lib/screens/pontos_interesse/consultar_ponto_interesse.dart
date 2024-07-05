@@ -62,7 +62,7 @@ class _ConsultPontoInteresseScreenState
     setState(() {
       categorias = categoriasdb;
       _isLoading = false;
-      rating = ratingAntigo['data'] as int;
+      rating = ratingAntigo['data']['avaliacao'] as int;
     });
   }
 
@@ -85,6 +85,7 @@ class _ConsultPontoInteresseScreenState
         "comentarioPai ": null,
       };
       await api.postRequest("comentario/add", commentJson);
+      await fetchComentarios();
     }
     if (rating == 0) {
       invalidRating == true;
@@ -95,6 +96,7 @@ class _ConsultPontoInteresseScreenState
         "utilizadorid": user!.utilizadorId,
         "avaliacao": rating,
       };
+      print(avaliacaoJson);
       await api.postRequest("avaliacao/add", avaliacaoJson);
     }
   }
@@ -121,7 +123,6 @@ class _ConsultPontoInteresseScreenState
       }).toList();
       setState(() {
         comentarios = List.from(listaUpdated);
-        _isLoading = false;
       });
       print(comentarios);
     } catch (e) {
@@ -132,9 +133,9 @@ class _ConsultPontoInteresseScreenState
 
   @override
   void initState() {
+    super.initState();
     carregaDados();
     pontoInteresse = widget.pontoInteresse;
-    super.initState();
   }
 
   @override
@@ -183,14 +184,22 @@ class _ConsultPontoInteresseScreenState
                             width: double.infinity,
                             placeholder:
                                 const AssetImage("Images/Restaurante.jpg"),
-                            image:
-                                const AssetImage("Images/Restaurante.jpg"),
-                            imageErrorBuilder:
-                                (context, error, stackTrace) {
-                              return const Image(
-                                  image:
-                                      AssetImage("Images/Restaurante.jpg"));
-                            },
+                            image: pontoInteresse!.imagens != null &&
+                      pontoInteresse!.imagens!.isNotEmpty
+                  ? NetworkImage(pontoInteresse!.imagens![0])
+                  : const AssetImage("Images/Restaurante.jpg") as ImageProvider,
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Container(
+                  height: altura * 0.2,
+                  width: double.infinity,
+                  color: Colors.grey[200],
+                  child: const Icon(
+                    Icons.broken_image,
+                    color: Colors.grey,
+                    size: 50,
+                  ),
+                );
+              },
                           ),
                         ),
                         SizedBox(height: altura * 0.02),
@@ -243,11 +252,16 @@ class _ConsultPontoInteresseScreenState
                                 horizontal: 10.0), // Add padding
                           ),
                         ),
+                        if (_isLoading)
+                        Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      else
                         Row(
                           children: [
                             Expanded(
                               child: RatingPicker(
-                                  initialRating: 1,
+                                  initialRating: rating,
                                   onRatingSelected: atualizarRating),
                             ),
                             ElevatedButton(

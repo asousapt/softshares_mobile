@@ -2,6 +2,7 @@ import 'dart:convert';
 import "package:flutter/material.dart";
 import 'package:country_flags/country_flags.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -18,6 +19,7 @@ import 'package:softshares_mobile/models/departamento.dart';
 import 'package:softshares_mobile/models/polo.dart';
 import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/services/google_signin_api.dart';
 
 class EcraLogin extends StatefulWidget {
   const EcraLogin({
@@ -85,6 +87,17 @@ class _EcraLoginState extends State<EcraLogin> {
     _facebookData!.forEach((key, value) {
       print('$key: $value');
     });
+  }
+
+  Future signInGoogle() async{
+    print("Executes this");
+    final user = await GoogleSignInApi.login();
+    if(user == null){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.googleFailed)));
+    }else{
+      print("Nome do user: ${user.displayName}, Email: ${user.email}");
+      Navigator.pushNamed(context, '/escolherPolo');
+    }
   }
 
   _logoutFacebook() async {
@@ -382,6 +395,9 @@ class _EcraLoginState extends State<EcraLogin> {
                                         await prefs.setString("utilizadorObj",
                                             jsonEncode(utilJson));
 
+                                        await prefs.setBool('isChecked',
+                                            isChecked);    
+
                                         await carregaPolos();
                                         await carregaCategorias();
                                         SubcategoriaRepository
@@ -560,7 +576,7 @@ class _EcraLoginState extends State<EcraLogin> {
                                   ),
                                   SizedBox(height: altura * 0.01),
                                   ElevatedButton(
-                                    onPressed: sub,
+                                    onPressed: signInGoogle,
                                     style: ElevatedButton.styleFrom(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: largura * 0.1,

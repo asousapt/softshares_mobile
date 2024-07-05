@@ -4,6 +4,7 @@ class PontoInteresse {
   final int pontoInteresseId;
   final int subCategoriaId;
   final String titulo;
+  final List<String>? imagens;
   final String descricao;
   final bool? aprovado;
   final DateTime? dataAprovacao;
@@ -33,6 +34,7 @@ class PontoInteresse {
     this.dataAlteracao,
     this.criador,
     this.avaliacao,
+    this.imagens,
   });
 
   factory PontoInteresse.fromJson(Map<String, dynamic> json) {
@@ -44,7 +46,6 @@ class PontoInteresse {
     final dataAprovacao = json['dataaprovacao'] != null
         ? DateTime.parse(json['dataaprovacao'])
         : null;
-    final utilizadorAprova = json['utilizadoraprova'] as int?;
     final localizacao = json['localizacao'] as String?;
     final latitude = json['latitude'] as String?;
     final longitude = json['longitude'] as String?;
@@ -60,6 +61,9 @@ class PontoInteresse {
     final avaliacao = json['avgavaliacao'] != null 
       ? double.tryParse(json['avgavaliacao']) 
       : null;
+    final imagens = (json['imagens'] as List<dynamic>?)
+        ?.map((item) => item as String)
+        .toList();
 
     if (pontoInteresseId == null ||
         subCategoriaId == null ||
@@ -88,6 +92,7 @@ class PontoInteresse {
       dataAlteracao: dataAlteracao,
       criador: criador,
       avaliacao: avaliacao,
+      imagens: imagens,
     );
   }
 
@@ -108,6 +113,7 @@ class PontoInteresse {
       'dataalteracao': dataAlteracao?.toIso8601String(),
       'utilizadorcriou_utilizador': criador,
       'avgavaliacao': avaliacao,
+      'imagens': imagens,
     };
   }
 }
