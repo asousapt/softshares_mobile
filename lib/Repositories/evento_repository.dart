@@ -35,11 +35,32 @@ class EventoRepository {
     }
   }
 
+  // Busca os eventos em que o utilizador esta inscrito
+  Future<List<Evento>> getEventosInscritos(int utilizadorId) async {
+    _apiService.setAuthToken("tokenFixo");
+    final response =
+        await _apiService.getRequest("evento/incricto/$utilizadorId");
+
+    final eventosformattr = response['data'] as List;
+
+    if (eventosformattr.isEmpty) {
+      return [];
+    } else {
+      return eventosformattr.map((e) => Evento.fromJson(e)).toList();
+    }
+  }
+
+  // cancelar inscricao do evento
+  Future<void> cancelarInscricao(int eventoId, int utilizadorId) async {
+    _apiService.setAuthToken("tokenFixo");
+    final url = "evento/utilizador/delete/$eventoId/$utilizadorId";
+    final response = await _apiService.deleteRequest(url);
+  }
+
   // BUsca o evento peloID para edicao
   Future<Evento> obtemEvento(int eventoId) async {
     _apiService.setAuthToken("tokenFixo");
-    final response =
-        await _apiService.getRequest("evento/$eventoId/formulario");
+    final response = await _apiService.getRequest("evento/mobile/$eventoId");
     final eventoformattr = response['data'];
 
     return Evento.fromJsonEditar(eventoformattr);
@@ -50,6 +71,12 @@ class EventoRepository {
     _apiService.setAuthToken("tokenFixo");
     final response =
         await _apiService.postRequest("evento/add/", evento.toJsonCriar());
+  }
+
+  Future<void> editarEvento(Evento evento) async {
+    _apiService.setAuthToken("tokenFixo");
+    final String url = "evento/update/mobile/${evento.eventoId}";
+    final response = await _apiService.putRequest(url, evento.toJsonEditar());
   }
 
   // Pedido de inscricao no evento
@@ -88,6 +115,30 @@ class EventoRepository {
       print('Error fetching form ID: $error');
       return 0;
     }
+  }
+
+  // Busca os utilizadores inscritos no evento
+  Future<List<Utilizador>> getUtilizadoresInscritos(int eventoId) async {
+    _apiService.setAuthToken("tokenFixo");
+    final url = "evento/participantes/$eventoId";
+    final response = await _apiService.getRequest(url);
+
+    final utilizadoresformattr = response['data'] as List;
+
+    if (utilizadoresformattr.isEmpty) {
+      return [];
+    } else {
+      return utilizadoresformattr
+          .map((e) => Utilizador.fromJsonSimplificado(e))
+          .toList();
+    }
+  }
+
+  // Faz o cancelamento do evento
+  Future<void> cancelarEvento(int eventoId) async {
+    _apiService.setAuthToken("tokenFixo");
+    final url = "evento/cancelar/$eventoId";
+    final response = await _apiService.putRequest(url, {});
   }
 
   // retorna os eventos de um dia especifico (usado no table_calendar)

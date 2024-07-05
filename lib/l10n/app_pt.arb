@@ -163,4 +163,5 @@
   "detalhesTopico": "Detalhes do Tópico",
   "inserirDadosConta" : "Inserir Dados da Conta",
   "googleFailed" : "Entrada Google falhou"
+    "eventoCancelado": "Evento cancelado"
 }

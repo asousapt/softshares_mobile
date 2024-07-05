@@ -44,7 +44,7 @@ class EventCardItem extends StatelessWidget {
                 width: double.infinity,
                 placeholder: MemoryImage(kTransparentImage),
                 image: NetworkImage(
-                    "https://pplware.sapo.pt/wp-content/uploads/2022/02/s_22_plus_1.jpg "),
+                    evento.imagem != null ? evento.imagem![0] : ""),
               ),
               const SizedBox(height: 10),
               Row(

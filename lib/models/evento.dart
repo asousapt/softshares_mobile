@@ -5,7 +5,7 @@ import 'package:softshares_mobile/models/imagem.dart';
 import 'package:softshares_mobile/utils.dart';
 
 class Evento {
-  final int? eventoId;
+  int? eventoId;
   final String titulo;
   final int? categoria;
   final int subcategoria;
@@ -22,7 +22,7 @@ class Evento {
   final List<String>? imagem;
   final int utilizadorCriou;
   final int cidadeid;
-  final bool? cancelado;
+  bool? cancelado;
   final List<int>? utilizadoresInscritos;
   List<Imagem>? imagens;
   final int? utilizadorAprovou;
@@ -130,39 +130,33 @@ class Evento {
   // Factory constructor to create an Evento instance from JSON~
   factory Evento.fromJsonEditar(Map<String, dynamic> json) {
     return Evento(
-      eventoId: json['eventoid'],
-      titulo: json['titulo'],
-      descricao: json['descricao'],
-      dataInicio: DateTime.parse(json['datainicio']),
-      dataFim: DateTime.parse(json['datafim']),
-      dataLimiteInsc: DateTime.parse(json['dataliminscricao']),
-      cancelado: json['cancelado'],
-      numeroMaxPart: json['nmrmaxparticipantes'],
-      localizacao: json['localizacao'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-      cidadeid: json['cidadeid'],
-      utilizadorCriou: json['utilizadorcriou'],
-      utilizadorAprovou: json['utilizadoraprovou'],
-      aprovado: json['aprovado'],
-      dataAprovacao: json['dataaprovacao'] != null
-          ? DateTime.parse(json['dataaprovacao'])
-          : null,
-      subcategoria: json['subcategoriaid'],
-      poloId: json['poloid'],
-      numeroInscritos: json['numinscritos'],
-      nmrConvidados: json['nmrconvidados'],
-      utilizadoresInscritos: json['participantes'] != null
-          ? List<int>.from(json['participantes'])
+      eventoId: json['evento']['eventoid'] ?? 0,
+      titulo: json['evento']['titulo'] ?? "",
+      descricao: json['evento']['descricao'] ?? "",
+      dataInicio: DateTime.parse(json['evento']['datainicio']),
+      dataFim: DateTime.parse(json['evento']['datafim']),
+      dataLimiteInsc: DateTime.parse(json['evento']['dataliminscricao']),
+      cancelado: json['evento']['cancelado'] ?? false,
+      numeroMaxPart: json['evento']['nmrmaxparticipantes'] ?? 0,
+      localizacao: json['evento']['localizacao'] ?? "",
+      latitude: json['evento']['latitude'] ?? "",
+      longitude: json['evento']['longitude'] ?? "",
+      cidadeid: json['evento']['cidadeid'] ?? 0,
+      utilizadorCriou: json['evento']['utilizadorcriou'] ?? 0,
+      aprovado: json['evento']['aprovado'] ?? false,
+      subcategoria: json['evento']['subcategoriaid'] ?? 0,
+      poloId: json['evento']['poloid'] ?? 0,
+      numeroInscritos: json['evento']['numinscritos'] ?? 0,
+      nmrConvidados: json['evento']['nmrconvidados'] ?? 0,
+      categoria: json['evento']['subcategoria']['categoriaid'] ?? 0,
+      imagens: json['evento']['images'] != null
+          ? List<Imagem>.from(json['evento']['images']
+              .map((img) => Imagem.fromJson(img))
+              .toList())
           : [],
-      categoria: json['categoriaid'],
-      images: json['images'] != null ? List<XFile>.from(json['images']) : [],
-      formInsc: json['forminscricao'] != null
-          ? Formulario.fromJson(json['forminscricao'])
-          : null,
-      formQualidade: json['formqualidade'] != null
-          ? Formulario.fromJson(json['formqualidade'])
-          : null,
+      utilizadoresInscritos: json['evento']['participantes'] != null
+          ? List<int>.from(json['evento']['participantes'])
+          : [],
     );
   }
 
@@ -197,6 +191,40 @@ class Evento {
       "imagens": listaImagens,
       'formInsc': listPergInscr,
       'formQualidade': listPergQual,
+    };
+  }
+
+  Map<String, dynamic> toJsonEditar() {
+    List<Map<String, dynamic>> listaImagens =
+        toJsonList(imagens, (Imagem img) => img.toJson());
+
+    List<Map<String, dynamic>> listPergInscr = formInsc != null
+        ? toJsonList(formInsc!.perguntas, (pergunta) => pergunta.toJson())
+        : [];
+
+    List<Map<String, dynamic>> listPergQual = formQualidade != null
+        ? toJsonList(formQualidade!.perguntas, (pergunta) => pergunta.toJson())
+        : [];
+
+    return {
+      "titulo": titulo,
+      "poloId": poloId,
+      "subcategoriaId": subcategoria,
+      "descricao": descricao,
+      "nmrMaxParticipantes": numeroMaxPart,
+      "nmrConvidados": nmrConvidados,
+      "localizacao": localizacao,
+      "latitude": latitude,
+      "longitude": longitude,
+      "dataInicio": dataInicio.toIso8601String(),
+      "dataFim": dataFim.toIso8601String(),
+      "dataLimInscricao": dataLimiteInsc.toIso8601String(),
+      "utilizadorCriou": utilizadorCriou,
+      "cidadeID": cidadeid,
+      "imagens": listaImagens,
+      'formInsc': formInsc != null ? formInsc!.toJsonEnvio() : {},
+      'formQualidade':
+          formQualidade != null ? formQualidade!.toJsonEnvio() : {},
     };
   }
 

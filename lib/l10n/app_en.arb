@@ -162,4 +162,6 @@
   "detalhesTopico": "Thread Details",
   "inserirDadosConta" : "Enter Account Data",
   "googleFailed" : "Google entry failed"
+  "detalhesTopico": "Thread Details", 
+  "eventoCancelado": "The event was cancelled"
 }

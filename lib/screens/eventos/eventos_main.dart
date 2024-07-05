@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
 import 'package:softshares_mobile/Repositories/evento_repository.dart';
 import 'package:softshares_mobile/models/evento.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/widgets/eventos/event_card_item.dart';
 import 'package:softshares_mobile/widgets/eventos/evento_card_eventos.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
@@ -34,12 +35,16 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
   List<Categoria> categorias = [];
   List<Categoria> categoriasFiltro = [];
   late String idioma;
+  late int utilizadorId;
 
   // Busca as categorias do idioma selecionado
   Future<void> carregaCategorias() async {
     final prefs = await SharedPreferences.getInstance();
     final idiomaId = prefs.getInt("idiomaId") ?? 1;
     idioma = prefs.getString("idioma") ?? "pt";
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    utilizadorId = utilizador.utilizadorId;
 
     CategoriaRepository categoriaRepository = CategoriaRepository();
     categorias = await categoriaRepository.fetchCategoriasDB(idiomaId);
@@ -67,60 +72,9 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
 
   // Busca os eventos inscritos
   Future<List<Evento>> fetchEventosInscrito() async {
-    /*final response = await http
-        .get(Uri.parse('https://api.yourservice.com/events-inscrito'));
+    EventoRepository eventosRepository = EventoRepository();
+    eventosInscrito = await eventosRepository.getEventosInscritos(utilizadorId);
 
-    if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((data) => Evento.fromJson(data)).toList();
-    } else {
-      throw Exception('Failed to load inscritos');
-    }*/
-
-    eventosInscrito = [];
-    /*   Evento(
-        1,
-        "Conferência de Tecnologia 2024",
-        1,
-        0,
-        "Junte-se a nós para a maior conferência de tecnologia do ano!",
-        1000,
-        500,
-        0,
-        "Virtual",
-        "",
-        "",
-        DateTime(2024, 06, 15, 10, 0), // June 15, 2024, 10:00 AM
-        DateTime(2024, 06, 17, 18, 0), // June 17, 2024, 6:00 PM
-        DateTime(2024, 06, 14), // Example for dataLimiteInsc
-        [],
-        1,
-        1,
-        false,
-        [1, 2, 3, 4, 5],
-      ),
-      Evento(
-        2,
-        "Festival de Música 2024",
-        2,
-        0,
-        "Viva um fim de semana de música, comida e diversão!",
-        5000,
-        3000,
-        0,
-        "Central Park, Nova York",
-        "",
-        "",
-        DateTime(2024, 07, 20, 12, 0), // July 20, 2024, 12:00 PM
-        DateTime(2024, 07, 22, 22, 0), // July 22, 2024, 10:00 PM
-        DateTime(2024, 07, 19), // Example for dataLimiteInsc
-        [],
-        2,
-        2,
-        true,
-        [],
-      ),
-    ];*/
     return eventosInscrito;
   }
 
@@ -330,12 +284,17 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
+                            return Center(
+                                child: CircularProgressIndicator(
+                              color: Theme.of(context).canvasColor,
+                            ));
                           } else if (snapshot.hasError) {
                             return Center(
-                              child: Text(
-                                  AppLocalizations.of(context)!.ocorreuErro),
+                              child: Container(
+                                color: Theme.of(context).canvasColor,
+                                child: Text(
+                                    AppLocalizations.of(context)!.ocorreuErro),
+                              ),
                             );
                           } else if (!snapshot.hasData ||
                               snapshot.data!.isEmpty) {
@@ -408,15 +367,35 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
                                   idioma: idioma,
                                 ),
                                 onTap: () {
-                                  Map<String, dynamic> args = {
-                                    "evento": e,
-                                    "categorias": categorias,
-                                  };
-                                  Navigator.pushNamed(
-                                    context,
-                                    '/consultarEvento',
-                                    arguments: args,
-                                  );
+                                  if (e.aprovado == true) {
+                                    Map<String, dynamic> args = {
+                                      "evento": e,
+                                      "categorias": categorias,
+                                    };
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/consultarEvento',
+                                      arguments: args,
+                                    );
+                                  } else {
+                                    // Navega para o ecra de criacao de eventos
+                                    Map<String, dynamic> args = {
+                                      "edicao": true,
+                                      "eventoId": e.eventoId,
+                                    };
+                                    final result = Navigator.pushNamed(
+                                      context,
+                                      '/criarEvento',
+                                      arguments: args,
+                                    );
+                                    if (result != null &&
+                                        result is bool &&
+                                        result == true) {
+                                      _isLoading = true;
+                                      actualizaOsContadoresDeEventos();
+                                      _isLoading = false;
+                                    }
+                                  }
                                 },
                               );
                             }).toList(),

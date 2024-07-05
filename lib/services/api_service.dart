@@ -115,4 +115,25 @@ class ApiService {
       throw Exception('Failed to put data');
     }
   }
+
+  // makes a DELETE request
+  Future<dynamic> deleteRequest(String endpoint) async {
+    if (_authToken == null) {
+      throw Exception('Auth token is not set. Please authenticate first.');
+    }
+    print('$_baseUrl/$endpoint');
+    final response = await http.delete(
+      Uri.parse('$_baseUrl/$endpoint'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': '$_authToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to delete data');
+    }
+  }
 }

@@ -37,6 +37,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
   bool _isLoading = true;
   late int utilizadorId;
   bool isSaving = false;
+  bool temFormularios = false;
 
   @override
   void initState() {
@@ -48,7 +49,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
   Future<void> initialize() async {
     await getIdioma();
     evento = widget.evento;
-
+    temFormularios = await temFormularios1();
     isSecondTabEnabled = evento!.utilizadorCriou == utilizadorId;
     setState(() {
       _isLoading = false;
@@ -79,8 +80,14 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
         child: FilledButton(
           style:
               ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
-          onPressed: () {
-            // ToDO: cancelar inscricao
+          onPressed: () async {
+            // cancelar inscricao
+            EventoRepository eventoRepository = EventoRepository();
+            eventoRepository.cancelarInscricao(evento.eventoId!, utilizadorId);
+            setState(() {
+              evento.numeroInscritos = evento.numeroInscritos - 1;
+              evento.utilizadoresInscritos!.remove(utilizadorId);
+            });
           },
           child: Text(
             AppLocalizations.of(context)!.cancelarInscriao,
@@ -154,14 +161,30 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
           child: Text(AppLocalizations.of(context)!.inscrever),
         ),
       );
-    } else if (podeCancelarEventof) {
+    } else if (podeCancelarEventof && evento.cancelado == false) {
       return SizedBox(
         height: altura * 0.065,
         child: FilledButton(
           style:
               ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
-          onPressed: () {
-            // TODO: Implementar o cancelamento do evento
+          onPressed: () async {
+            // Cancelamento do evento pelo owner
+            setState(() {
+              isSaving = true;
+            });
+            EventoRepository eventoRepository = EventoRepository();
+            eventoRepository.cancelarEvento(evento.eventoId!);
+            setState(() {
+              isSaving = false;
+              evento.cancelado = true;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context)!.eventoCancelado,
+                ),
+              ),
+            );
           },
           child: Text(
               "${AppLocalizations.of(context)!.cancelar} ${AppLocalizations.of(context)!.evento}"),
@@ -172,8 +195,17 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
     }
   }
 
-  Future<List<int>> getUtilizadoresInscritos() async {
-    return evento!.utilizadoresInscritos!;
+  Future<List<Utilizador>> getUtilizadoresInscritos(int eventoId) async {
+    EventoRepository eventoRepository = EventoRepository();
+    return eventoRepository.getUtilizadoresInscritos(eventoId);
+  }
+
+  // verifica se tem formularios de inscricao e qualidade
+  Future<bool> temFormularios1() async {
+    EventoRepository eventoRepository = EventoRepository();
+    int inscricao = await eventoRepository.getFormId(evento!, "INSCR");
+    int qualidade = await eventoRepository.getFormId(evento!, "QUALIDADE");
+    return inscricao != 0 || qualidade != 0;
   }
 
   @override
@@ -444,7 +476,8 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                               Expanded(
                                                 child: FutureBuilder(
                                                   future:
-                                                      getUtilizadoresInscritos(),
+                                                      getUtilizadoresInscritos(
+                                                          evento!.eventoId!),
                                                   builder: (context, snapshot) {
                                                     if (snapshot
                                                             .connectionState ==
@@ -481,61 +514,79 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                                             (context, index) {
                                                           return ListTile(
                                                             title: Text(
-                                                              "Utilizador ${evento!.utilizadoresInscritos![index]}",
+                                                              snapshot
+                                                                  .data![index]
+                                                                  .getNomeCompleto(),
                                                             ),
-                                                            // TODO: Alterar a imagem do utilizador
-                                                            leading:
-                                                                CircleAvatar(
-                                                              child: Container(
-                                                                decoration:
-                                                                    const BoxDecoration(
-                                                                  shape: BoxShape
-                                                                      .circle,
-                                                                  image:
-                                                                      DecorationImage(
-                                                                    image: NetworkImage(
-                                                                        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            trailing:
-                                                                IconButton(
-                                                              onPressed: () {
-                                                                // TODO: Fazer navagacao paraa pagina da resposta deste utilizador
-
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            RespostaIndividualScreen(
-                                                                      formularioId:
-                                                                          1,
-                                                                      utilizador:
-                                                                          index,
+                                                            leading: snapshot
+                                                                        .data![
+                                                                            index]
+                                                                        .fotoUrl ==
+                                                                    null
+                                                                ? CircleAvatar(
+                                                                    backgroundColor:
+                                                                        Theme.of(context)
+                                                                            .secondaryHeaderColor,
+                                                                    child:
+                                                                        Center(
+                                                                      child: Text(snapshot
+                                                                          .data![
+                                                                              index]
+                                                                          .getIniciais()),
+                                                                    ),
+                                                                  )
+                                                                : CircleAvatar(
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        shape: BoxShape
+                                                                            .circle,
+                                                                        image:
+                                                                            DecorationImage(
+                                                                          image:
+                                                                              NetworkImage(snapshot.data![index].fotoUrl ?? ""),
+                                                                        ),
+                                                                      ),
                                                                     ),
                                                                   ),
-                                                                );
-                                                              },
-                                                              icon: Icon(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .canvasColor,
-                                                                FontAwesomeIcons
-                                                                    .clipboard,
-                                                              ),
-                                                              style:
-                                                                  ButtonStyle(
-                                                                backgroundColor:
-                                                                    WidgetStateProperty
-                                                                        .all(
-                                                                  Theme.of(
-                                                                          context)
-                                                                      .primaryColor,
-                                                                ),
-                                                              ),
-                                                            ),
+                                                            trailing: temFormularios
+                                                                ? IconButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      // navega para o ecrã de respostas individuais
+                                                                      Navigator
+                                                                          .push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              RespostaIndividualScreen(
+                                                                            evento:
+                                                                                evento!,
+                                                                            utilizador:
+                                                                                snapshot.data![index].utilizadorId,
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                    icon: Icon(
+                                                                      color: Theme.of(
+                                                                              context)
+                                                                          .canvasColor,
+                                                                      FontAwesomeIcons
+                                                                          .clipboard,
+                                                                    ),
+                                                                    style:
+                                                                        ButtonStyle(
+                                                                      backgroundColor:
+                                                                          WidgetStateProperty
+                                                                              .all(
+                                                                        Theme.of(context)
+                                                                            .primaryColor,
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                : const SizedBox(),
                                                           );
                                                         },
                                                       );

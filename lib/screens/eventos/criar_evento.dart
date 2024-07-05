@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -8,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
 import 'package:softshares_mobile/Repositories/cidade_repository.dart';
 import 'package:softshares_mobile/Repositories/evento_repository.dart';
+import 'package:softshares_mobile/Repositories/formulario_repository.dart';
 import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
 import 'package:softshares_mobile/l10n/app_localizations_extension.dart';
 import 'package:softshares_mobile/models/categoria.dart';
@@ -106,10 +109,51 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     });
   }
 
+  Future<void> convertAndSaveImages(
+      List<Imagem> imagemList, List<XFile> images) async {
+    for (Imagem imagem in imagemList) {
+      final downloadedImage = await downloadImage(imagem.url!);
+      if (downloadedImage != null) {
+        final tempFile = File(downloadedImage.url!);
+        images.add(XFile(tempFile.path,
+            name: downloadedImage.nome, length: downloadedImage.tamanho));
+      }
+    }
+    setState(() {});
+  }
+
+  // Carrega os dados do evento para edição
   Future<void> carregaDadosEdicao(int eventoId) async {
+    Formulario? formQualidade;
+    Formulario? formInscricao;
+
+    setState(() {
+      _isLoading = true;
+    });
     EventoRepository eventoRepository = EventoRepository();
     try {
       var evento = await eventoRepository.obtemEvento(eventoId);
+      var formInscrId = await eventoRepository.getFormId(evento, "INSCR");
+
+      var formQualidadeId =
+          await eventoRepository.getFormId(evento, "QUALIDADE");
+
+      // Carrega os formulário de inscrição
+      if (formInscrId != 0) {
+        FormularioRepository formularioRepository = FormularioRepository();
+        formInscricao =
+            await formularioRepository.getFormulariobyId(formInscrId);
+      }
+
+      //carrega o formulário de qualidade
+      if (formQualidadeId != 0) {
+        FormularioRepository formularioRepository = FormularioRepository();
+        formQualidade =
+            await formularioRepository.getFormulariobyId(formQualidadeId);
+      }
+
+      convertAndSaveImages(evento.imagens!, images);
+
       setState(() {
         _tituloController.text = evento.titulo;
         _localizacaoController.text = evento.localizacao;
@@ -126,13 +170,16 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
         permiteConvidados = evento.nmrConvidados != 0;
         nmrConvidados = evento.nmrConvidados;
         descricao = evento.descricao;
-        forms = [];
-        if (evento.formInsc != null) {
-          forms.add(evento.formInsc!);
+        longitude = double.parse(evento.longitude);
+        latitude = double.parse(evento.latitude);
+        _descricao.text = evento.descricao;
+        if (formInscricao != null) {
+          forms.add(formInscricao);
         }
-        if (evento.formQualidade != null) {
-          forms.add(evento.formQualidade!);
+        if (formQualidade != null) {
+          forms.add(formQualidade);
         }
+        _isLoading = false;
       });
     } catch (e) {
       print("Erro ao carregar dados do evento: $e");
@@ -147,6 +194,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
   @override
   void initState() {
     super.initState();
+    forms = [];
     edicao = widget.edicao;
     eventoId = widget.eventoId ?? 0;
     carregarCategoriasSubcats().then((value) {
@@ -163,7 +211,6 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     permiteConvidados = false;
     nmrConvidados = 0;
     descricao = "";
-    forms = [];
   }
 
   @override
@@ -811,12 +858,14 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               ConfiguracaoFormularioScreen(
-                                            adicionaFormulario:
-                                                _adicionaFormulario,
-                                            formId: forms.isEmpty
-                                                ? 1
-                                                : forms.last.formId + 1,
-                                          ),
+                                                  adicionaFormulario:
+                                                      _adicionaFormulario,
+                                                  formId: !edicao
+                                                      ? forms.isEmpty
+                                                          ? 1
+                                                          : forms.last.formId +
+                                                              1
+                                                      : 0),
                                         ),
                                       );
                                     } else {
@@ -948,9 +997,18 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                                     .first
                                                 : null,
                                           );
-                                          // Cria o evento via API
-                                          eventoRepository
-                                              .criarEvento(eventoCriar);
+                                          //executa a submissão do evento
+                                          if (!edicao) {
+                                            // Cria o evento via API
+                                            eventoRepository
+                                                .criarEvento(eventoCriar);
+                                          } else {
+                                            //edita o evento via API
+                                            eventoCriar.eventoId = eventoId;
+                                            eventoRepository
+                                                .editarEvento(eventoCriar);
+                                          }
+
                                           setState(() {
                                             isSaving = false;
                                           });
@@ -964,7 +1022,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
                                                         .savedWithSuccess),
                                               ),
                                             );
-                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop(true);
                                           }
                                         } else {
                                           ScaffoldMessenger.of(context)
