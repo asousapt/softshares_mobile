@@ -554,18 +554,17 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                                                 ? IconButton(
                                                                     onPressed:
                                                                         () {
-                                                                      // TODO: Fazer navagacao paraa pagina da resposta deste utilizador
-
+                                                                      // navega para o ecrã de respostas individuais
                                                                       Navigator
                                                                           .push(
                                                                         context,
                                                                         MaterialPageRoute(
                                                                           builder: (context) =>
                                                                               RespostaIndividualScreen(
-                                                                            eventoid:
-                                                                                1,
+                                                                            evento:
+                                                                                evento!,
                                                                             utilizador:
-                                                                                index,
+                                                                                snapshot.data![index].utilizadorId,
                                                                           ),
                                                                         ),
                                                                       );

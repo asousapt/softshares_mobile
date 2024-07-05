@@ -2,13 +2,15 @@ import 'package:softshares_mobile/models/formularios_dinamicos/pergunta_formular
 import 'package:softshares_mobile/models/utilizador.dart';
 
 class RespostaDetalhe {
-  final int repostaId;
+  final int? respostaId;
+  final int perguntaId;
   final Pergunta? pergunta;
   final String resposta;
   final Utilizador? utilizador;
 
   RespostaDetalhe({
-    required this.repostaId,
+    this.respostaId,
+    required this.perguntaId,
     required this.resposta,
     this.pergunta,
     this.utilizador,
@@ -16,8 +18,9 @@ class RespostaDetalhe {
 
   factory RespostaDetalhe.fromJson(Map<String, dynamic> json) {
     return RespostaDetalhe(
-      repostaId: json['perguntaId'],
-      resposta: json['resposta'],
+      respostaId: json['respostaId'] ?? 0,
+      perguntaId: json['perguntaId'] ?? 0,
+      resposta: json['resposta'] ?? '',
       pergunta:
           json['pergunta'] != null ? Pergunta.fromJson(json['pergunta']) : null,
       utilizador: json['utilizador'] != null
@@ -28,81 +31,9 @@ class RespostaDetalhe {
 
   Map<String, dynamic> toJsonCriar() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['formulariodetalhesid'] = repostaId;
+    data['formulariodetalhesid'] = perguntaId;
     data['resposta'] = resposta;
     return data;
-  }
-
-  static Future<List<RespostaDetalhe>> getRespostasDetalhe({
-    required int utilizadorId,
-    required int respostaFormId,
-  }) async {
-    await Future.delayed(Duration(seconds: 2)); // Simulate network delay
-
-    List<RespostaDetalhe> dummyRespostas = [
-      RespostaDetalhe(
-        repostaId: 1,
-        resposta: 'John Doe',
-        pergunta: Pergunta(
-          detalheId: 1,
-          pergunta: 'Qual é o seu nome?',
-          tipoDados: TipoDados.textoLivre,
-          obrigatorio: true,
-          min: 0,
-          max: 0,
-          tamanho: 100,
-          valoresPossiveis: [],
-          ordem: 1,
-        ),
-      ),
-      RespostaDetalhe(
-        repostaId: 2,
-        resposta: '25',
-        pergunta: Pergunta(
-          detalheId: 2,
-          pergunta: 'Qual é a sua idade?',
-          tipoDados: TipoDados.numerico,
-          obrigatorio: true,
-          min: 1,
-          max: 120,
-          tamanho: 0,
-          valoresPossiveis: [],
-          ordem: 2,
-        ),
-      ),
-      RespostaDetalhe(
-        repostaId: 3,
-        resposta: 'true',
-        pergunta: Pergunta(
-          detalheId: 3,
-          pergunta: 'É vegetariano?',
-          tipoDados: TipoDados.logico,
-          obrigatorio: false,
-          min: 0,
-          max: 0,
-          tamanho: 0,
-          valoresPossiveis: [],
-          ordem: 3,
-        ),
-      ),
-      RespostaDetalhe(
-        repostaId: 4,
-        resposta: 'Manhã',
-        pergunta: Pergunta(
-          detalheId: 4,
-          pergunta: 'Escolha um horário',
-          tipoDados: TipoDados.seleccao,
-          obrigatorio: false,
-          min: 0,
-          max: 0,
-          tamanho: 0,
-          valoresPossiveis: ['Manhã', 'Tarde', 'Noite'],
-          ordem: 4,
-        ),
-      ),
-    ];
-
-    return dummyRespostas;
   }
 
   // Obtem todas as respostas a determinado um formulário

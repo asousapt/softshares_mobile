@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:softshares_mobile/Repositories/evento_repository.dart';
+import 'package:softshares_mobile/Repositories/formulario_repository.dart';
 import 'package:softshares_mobile/l10n/app_localizations_extension.dart';
+import 'package:softshares_mobile/models/evento.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/pergunta_formulario.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/resposta_form.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../Repositories/respostadetalhe_repository.dart';
+
 class RespostaIndividualScreen extends StatefulWidget {
   const RespostaIndividualScreen({
     super.key,
-    required this.eventoid,
+    required this.evento,
     required this.utilizador,
   });
 
-  final int eventoid;
+  final Evento evento;
   final int utilizador;
 
   @override
@@ -21,100 +26,150 @@ class RespostaIndividualScreen extends StatefulWidget {
   }
 }
 
-class _RespostaIndividualScreenState extends State<RespostaIndividualScreen> {
+class _RespostaIndividualScreenState extends State<RespostaIndividualScreen>
+    with SingleTickerProviderStateMixin {
   Formulario? formulario;
   String? tituloForm;
   String? tipoForm;
-  List<Pergunta> perguntas = [];
-  List<RespostaDetalhe> respostas = [];
+  List<RespostaDetalhe> respostasformInsc = [];
+  List<RespostaDetalhe> respostasformQualidade = [];
   bool _isLoading = true;
+  late TabController _tabController;
+  bool _secondTabActivated = false;
+  late int utilizadorId;
+  late Evento evento;
+  late int formInscId;
+  late int formQualId;
+  Formulario? formInsc;
+  Formulario? formQual;
 
   @override
   void initState() {
+    utilizadorId = widget.utilizador;
+    evento = widget.evento;
+
     super.initState();
-    fetchFormulario();
-    fetchRespostas();
+    _tabController = TabController(length: 2, vsync: this);
+    fetchFormularios().then((value) {
+      fetchRespostas();
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   // Retorna o formulario da API
-  Future<void> fetchFormulario() async {
-    await Future.delayed(Duration(seconds: 2));
-    Formulario fetchedFormulario = Formulario(
-      formId: 1,
-      titulo: 'Formulário de Teste',
-      tipoFormulario: TipoFormulario.inscr,
-      perguntas: [
-        Pergunta(
-          detalheId: 1,
-          pergunta: 'Qual é o seu nome?',
-          tipoDados: TipoDados.textoLivre,
-          obrigatorio: true,
-          min: 0,
-          max: 0,
-          tamanho: 100,
-          valoresPossiveis: [],
-          ordem: 1,
-        ),
-        Pergunta(
-          detalheId: 2,
-          pergunta: 'Qual é a sua idade?',
-          tipoDados: TipoDados.numerico,
-          obrigatorio: true,
-          min: 1,
-          max: 120,
-          tamanho: 0,
-          valoresPossiveis: [],
-          ordem: 2,
-        ),
-        Pergunta(
-          detalheId: 3,
-          pergunta: 'É vegetariano?',
-          tipoDados: TipoDados.logico,
-          obrigatorio: false,
-          min: 0,
-          max: 0,
-          tamanho: 0,
-          valoresPossiveis: [],
-          ordem: 3,
-        ),
-        Pergunta(
-          detalheId: 4,
-          pergunta: 'Escolha um horário',
-          tipoDados: TipoDados.seleccao,
-          obrigatorio: false,
-          min: 0,
-          max: 0,
-          tamanho: 0,
-          valoresPossiveis: ['Manhã', 'Tarde', 'Noite'],
-          ordem: 4,
-        ),
-      ],
-    );
-
+  Future<void> fetchFormularios() async {
     setState(() {
-      formulario = fetchedFormulario;
-      perguntas = fetchedFormulario.perguntas;
+      _isLoading = true;
+    });
+    EventoRepository eventoRepository = EventoRepository();
+    int formInscIdl = await eventoRepository.getFormId(evento, "INSCR");
+    int formQualIdl = await eventoRepository.getFormId(evento, "QUALIDADE");
+    setState(() {
+      formInscId = formInscIdl;
+      formQualId = formQualIdl;
+    });
+
+    if (formInscId > 0) {
+      FormularioRepository formularioRepository = FormularioRepository();
+
+      Formulario fetchedFormulario =
+          await formularioRepository.getFormulariobyId(formInscId);
+
+      setState(() {
+        formInsc = fetchedFormulario;
+      });
+
+      if (formQualId > 0) {
+        Formulario fetchedFormularioQual =
+            await formularioRepository.getFormulariobyId(formQualId);
+        setState(() {
+          _secondTabActivated = true;
+          formQual = fetchedFormularioQual;
+        });
+      }
+    }
+    setState(() {
       _isLoading = false;
-      tituloForm = fetchedFormulario.titulo;
-      tipoForm = AppLocalizations.of(context)!
-          .getEnumValue(fetchedFormulario.tipoFormulario!);
     });
   }
 
   // Retorna as respostas ao formulario da API
   Future<void> fetchRespostas() async {
-    try {
-      List<RespostaDetalhe> fetchedRespostas =
-          await RespostaDetalhe.getRespostasDetalhe(
-        utilizadorId: widget.utilizador,
-        respostaFormId: widget.eventoid,
-      );
-      setState(() {
-        respostas = fetchedRespostas;
-      });
-    } catch (e) {
-      print(e);
-    }
+    setState(() {
+      _isLoading = true;
+    });
+    RespostaDetalheRepository respostaDetalheRepository =
+        RespostaDetalheRepository();
+    List<RespostaDetalhe> respostasInscl =
+        await respostaDetalheRepository.getRespostasDetalhe(
+            evento.eventoId!, "EVENTO", formInscId, utilizadorId);
+
+    List<RespostaDetalhe> respostasQuall =
+        await respostaDetalheRepository.getRespostasDetalhe(
+            evento.eventoId!, "EVENTO", formQualId, utilizadorId);
+    setState(() {
+      respostasformQualidade = respostasQuall;
+      respostasformInsc = respostasInscl;
+      _isLoading = false;
+    });
+  }
+
+  // constroi o ecra de respostas ao formulario
+  Widget buildFormContent(
+    BuildContext context,
+    double altura,
+    double largura,
+    Formulario? form,
+    List<RespostaDetalhe> respostas,
+  ) {
+    return Container(
+      height: altura * 0.9,
+      color: Theme.of(context).canvasColor,
+      child: Container(
+        margin: EdgeInsets.symmetric(
+            vertical: altura * 0.02, horizontal: largura * 0.02),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              form?.titulo ?? '',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            Text(form!.tipoFormulario!.name),
+            SizedBox(height: altura * 0.02),
+            Expanded(
+                child: respostas.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: respostas.length,
+                        itemBuilder: (context, index) {
+                          RespostaDetalhe resposta = respostas[index];
+                          return ListTile(
+                            title: Text(
+                              resposta.pergunta?.pergunta ?? '',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(resposta.resposta ?? ''),
+                          );
+                        },
+                      )
+                    : Center(
+                        child: Text(AppLocalizations.of(context)!.naoHaDados),
+                      )),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -123,8 +178,16 @@ class _RespostaIndividualScreenState extends State<RespostaIndividualScreen> {
     double altura = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar:
-          AppBar(title: Text(AppLocalizations.of(context)!.respostaFormulario)),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.respostaFormulario),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: [
+            Tab(text: AppLocalizations.of(context)!.inscr),
+            Tab(text: AppLocalizations.of(context)!.qualidade),
+          ],
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(
             vertical: altura * 0.02, horizontal: largura * 0.02),
@@ -133,45 +196,30 @@ class _RespostaIndividualScreenState extends State<RespostaIndividualScreen> {
                 child: CircularProgressIndicator(
                 backgroundColor: Theme.of(context).canvasColor,
               ))
-            : Container(
-                height: altura * 0.9,
-                color: Theme.of(context).canvasColor,
-                child: Container(
-                  margin: EdgeInsets.symmetric(
-                      vertical: altura * 0.02, horizontal: largura * 0.02),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        tituloForm ?? '',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
+            : TabBarView(
+                controller: _tabController,
+                children: [
+                  formInsc != null
+                      ? buildFormContent(
+                          context, altura, largura, formInsc, respostasformInsc)
+                      : Container(
+                          color: Theme.of(context).canvasColor,
+                          child: Center(
+                            child:
+                                Text(AppLocalizations.of(context)!.naoHaDados),
+                          ),
                         ),
-                      ),
-                      Text(tipoForm ?? ''),
-                      SizedBox(height: altura * 0.02),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: respostas.length,
-                          itemBuilder: (context, index) {
-                            RespostaDetalhe resposta = respostas[index];
-                            return ListTile(
-                              title: Text(
-                                resposta.pergunta?.pergunta ?? '',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Text(resposta.resposta),
-                            );
-                          },
+                  _secondTabActivated && formQual != null
+                      ? buildFormContent(context, altura, largura, formQual!,
+                          respostasformQualidade)
+                      : Container(
+                          color: Theme.of(context).canvasColor,
+                          child: Center(
+                            child:
+                                Text(AppLocalizations.of(context)!.naoHaDados),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
+                ],
               ),
       ),
     );
