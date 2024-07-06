@@ -4,8 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class EcraRegistar extends StatefulWidget {
-  EcraRegistar({
+class EcraDadosConta extends StatefulWidget {
+  EcraDadosConta({
     super.key,
     required this.mudaIdioma,
   });
@@ -13,12 +13,12 @@ class EcraRegistar extends StatefulWidget {
   final Function(String idioma) mudaIdioma;
 
   @override
-  State<EcraRegistar> createState() {
-    return _EcraRegistarState();
+  State<EcraDadosConta> createState() {
+    return _EcraDadosContaState();
   }
 }
 
-class _EcraRegistarState extends State<EcraRegistar> {
+class _EcraDadosContaState extends State<EcraDadosConta> {
   String version = 'Loading...';
   String pNome = '';
   String uNome = '';
@@ -72,7 +72,6 @@ class _EcraRegistarState extends State<EcraRegistar> {
       uNome = _controlUNome.text;
       email = _controlEmail.text;
       pass = _controlPass.text;
-      pass2 = _controlPass2.text;
     });
     //bd.inserirvalor(Email, Passricao);
   }
@@ -97,74 +96,46 @@ class _EcraRegistarState extends State<EcraRegistar> {
             child: Column(mainAxisSize: MainAxisSize.max, children: [
               const SizedBox(height: 10),
               Text(
-                AppLocalizations.of(context)!.criarConta,
+                AppLocalizations.of(context)!.inserirDadosConta,
                 style: const TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               Text(
                 AppLocalizations.of(context)!.comecaAgora,
                 style: const TextStyle(fontSize: 14),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               Container(
                 margin: const EdgeInsets.only(left: 8, right: 8, bottom: 30),
                 child: Form(
                   key: _formKey,
                   child: Column(children: [
                     TextFormField(
-                      controller: _controlEmail,
-                      decoration: const InputDecoration(
-                        labelText: "Email",
-                        prefixIcon: Icon(Icons.account_circle_outlined),
+                      controller: _controlPNome,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.primeiroNome,
+                        prefixIcon: const Icon(Icons.account_circle_outlined),
                       ),
                       validator: (value) {
-                        if (value == null ||
-                            value.isEmpty ||
-                            !isValidEmail(value)) {
-                          return AppLocalizations.of(context)!.insiraEmaiValido;
+                        if (value == null || value.isEmpty) {
+                          return "${AppLocalizations.of(context)!.porfavorInsiraO}${AppLocalizations.of(context)!.primeiroNome}";
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      controller: _controlPass,
+                      controller: _controlUNome,
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.password,
-                        prefixIcon: const Icon(Icons.lock_outline_rounded),
+                        labelText: AppLocalizations.of(context)!.ultimoNome,
+                        prefixIcon: const Icon(Icons.account_circle_outlined),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.password}";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      controller: _controlPass2,
-                      decoration: InputDecoration(
-                        labelText:
-                            AppLocalizations.of(context)!.repetirPassword,
-                        prefixIcon: const Icon(Icons.lock_outline_rounded),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.password}";
-                        } else if (value != pass) {
-                          print(
-                              "Valor de value - $value, Valor de pass1 - $pass");
-                          return AppLocalizations.of(context)!
-                              .passwordsDiferentes;
+                          return "${AppLocalizations.of(context)!.porfavorInsiraO}${AppLocalizations.of(context)!.ultimoNome}";
                         }
                         return null;
                       },
@@ -258,7 +229,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 40,
-                            vertical: 20), // Adjust padding as needed
+                            vertical: 10), // Adjust padding as needed
                       ),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -269,13 +240,12 @@ class _EcraRegistarState extends State<EcraRegistar> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 15),
                     ElevatedButton(
                       onPressed: sub,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
-                          vertical: 20,
+                          vertical: 10,
                         ),
                       ),
                       child: const Row(

@@ -131,18 +131,6 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       categorias = categoriasL;
       subcategorias = subcategoriasL;
       _isLoading = false;
-      for (int i = 0; i < form!.perguntas.length; i++) {
-        if (form!.perguntas[i].tipoDados == TipoDados.textoLivre ||
-            form!.perguntas[i].tipoDados == TipoDados.numerico) {
-          _controllers[i] = TextEditingController();
-        }
-        if (form!.perguntas[i].tipoDados == TipoDados.logico) {
-          _booleanValues[i] = false;
-        }
-        if (form!.perguntas[i].tipoDados == TipoDados.seleccao) {
-          _dropdownValues[i] = null;
-        }
-      }
     });
   }
 
@@ -154,6 +142,18 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       final json2 = await api.getRequest("formulario//idformm/${idform}");
       setState(() {
         form = Formulario.fromJson(json2['data']);
+        for (int i = 0; i < form!.perguntas.length; i++) {
+        if (form!.perguntas[i].tipoDados == TipoDados.textoLivre ||
+            form!.perguntas[i].tipoDados == TipoDados.numerico) {
+          _controllers[i] = TextEditingController();
+        }
+        if (form!.perguntas[i].tipoDados == TipoDados.logico) {
+          _booleanValues[i] = false;
+        }
+        if (form!.perguntas[i].tipoDados == TipoDados.seleccao) {
+          _dropdownValues[i] = null;
+        }
+      }
       });
     } else {
       setState(() {
