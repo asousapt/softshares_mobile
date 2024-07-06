@@ -65,16 +65,24 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
     utilizadorId = utilizador.utilizadorId;
   }
 
-  // renderiza o botao de inscrever, cancelar inscricao ou cancelar evento
-  Widget? inscreveOuCancela(Evento evento, double altura) {
+  Future<Widget>? inscreveOuCancela(Evento evento, double altura) async {
     EventoRepository eventoRepository = EventoRepository();
-    bool podeCancelarf =
-        eventoRepository.podeCancelarInscricao(evento, utilizadorId);
-    bool podeInscreverf = eventoRepository.podeInscrever(evento, utilizadorId);
-    bool podeCancelarEventof =
-        eventoRepository.podeCancelarEvento(evento, utilizadorId);
 
-    if (podeCancelarf == true && podeInscreverf == false) {
+    bool respondeFormQualidade = await eventoRepository
+        .podeResponderQuestQualidade(evento, utilizadorId);
+
+    bool podeCancelarf =
+        await eventoRepository.podeCancelarInscricao(evento, utilizadorId);
+
+    bool podeInscreverf =
+        await eventoRepository.podeInscrever(evento, utilizadorId);
+
+    bool podeCancelarEventof =
+        await eventoRepository.podeCancelarEvento(evento, utilizadorId);
+
+    if (podeCancelarf == true &&
+        podeInscreverf == false &&
+        respondeFormQualidade == false) {
       return SizedBox(
         height: altura * 0.065,
         child: FilledButton(
@@ -83,7 +91,8 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
           onPressed: () async {
             // cancelar inscricao
             EventoRepository eventoRepository = EventoRepository();
-            eventoRepository.cancelarInscricao(evento.eventoId!, utilizadorId);
+            await eventoRepository.cancelarInscricao(
+                evento.eventoId!, utilizadorId);
             setState(() {
               evento.numeroInscritos = evento.numeroInscritos - 1;
               evento.utilizadoresInscritos!.remove(utilizadorId);
@@ -98,7 +107,9 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
           ),
         ),
       );
-    } else if (podeInscreverf == true && podeCancelarf == false) {
+    } else if (podeInscreverf == true &&
+        podeCancelarf == false &&
+        respondeFormQualidade == false) {
       return SizedBox(
         height: altura * 0.065,
         child: FilledButton(
@@ -173,7 +184,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
               isSaving = true;
             });
             EventoRepository eventoRepository = EventoRepository();
-            eventoRepository.cancelarEvento(evento.eventoId!);
+            await eventoRepository.cancelarEvento(evento.eventoId!);
             setState(() {
               isSaving = false;
               evento.cancelado = true;
@@ -190,8 +201,67 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
               "${AppLocalizations.of(context)!.cancelar} ${AppLocalizations.of(context)!.evento}"),
         ),
       );
+    } else if (evento.cancelado == false &&
+        podeInscreverf == false &&
+        podeCancelarf == false &&
+        respondeFormQualidade == true) {
+      return SizedBox(
+        height: altura * 0.065,
+        child: FilledButton(
+          onPressed: () async {
+            // navega para o ecrã de resposta ao form de qualidade caso exista
+            setState(() {
+              isSaving = true;
+            });
+            EventoRepository eventoRepository = EventoRepository();
+            final int formularioId =
+                await eventoRepository.getFormId(evento, "QUALIDADE");
+            setState(() {
+              isSaving = false;
+            });
+            bool respondeu = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RespostaFormScreen(
+                    formularioId: formularioId,
+                    evento: evento,
+                    tipo: "QUALIDADE"),
+              ),
+            );
+            print("respondeu: $respondeu");
+            if (respondeu) {
+              setState(() {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.dadosGravados,
+                    ),
+                  ),
+                );
+              });
+            }
+          },
+          child: Text(AppLocalizations.of(context)!.questionarioQualidade),
+        ),
+      );
+    } else if (evento.cancelado == true) {
+      return SizedBox(
+        height: altura * 0.065,
+        child: FilledButton(
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context)!.eventoCancelado,
+                ),
+              ),
+            );
+          },
+          child: Text(AppLocalizations.of(context)!.eventoCancelado),
+        ),
+      );
     } else {
-      return null;
+      return const SizedBox();
     }
   }
 
@@ -440,8 +510,32 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                             SizedBox(
                                               height: altura * 0.065,
                                               width: double.infinity,
-                                              child: inscreveOuCancela(
-                                                  evento!, altura),
+                                              child: FutureBuilder(
+                                                  future: inscreveOuCancela(
+                                                      evento!, altura),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState
+                                                            .waiting) {
+                                                      return const Center(
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      );
+                                                    } else if (snapshot
+                                                        .hasError) {
+                                                      return Center(
+                                                        child: Text(
+                                                          AppLocalizations.of(
+                                                                  context)!
+                                                              .ocorreuErro,
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      return snapshot.data
+                                                          as Widget;
+                                                    }
+                                                  }),
                                             ),
                                           ],
                                         ),

@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:softshares_mobile/time_utils.dart';
 
 class NotificationCard extends StatelessWidget {
-  const NotificationCard({
-    super.key,
-    required this.texto,
-    required this.icone,
-  });
+  const NotificationCard(
+      {super.key,
+      required this.texto,
+      required this.icone,
+      required this.data,
+      required this.idioma});
 
   final String texto;
   final Icon icone;
+  final DateTime data;
+  final String idioma;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +25,7 @@ class NotificationCard extends StatelessWidget {
         border: Border.all(color: Colors.black),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -36,7 +39,15 @@ class NotificationCard extends StatelessWidget {
                 ),
               ),
             ],
-          )
+          ),
+          const SizedBox(height: 10),
+          Text(
+            dataFormatada(idioma, data),
+            style: const TextStyle(
+              color: Colors.black54,
+              fontSize: 12,
+            ),
+          ),
         ],
       ),
     );

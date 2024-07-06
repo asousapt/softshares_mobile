@@ -434,6 +434,27 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
                                                       .ocorreuErro),
                                             ));
                                           }
+                                        } else {
+                                          // Trata da resposta de um formulario de qualidade
+                                          sucesso = await eventoRepository
+                                              .respostaFormQualidadeEvento(
+                                            widget.evento!,
+                                            respostaF,
+                                            utilizadorId,
+                                          );
+                                          if (sucesso) {
+                                            Navigator.of(context).pop(true);
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .ocorreuErro),
+                                              ),
+                                            );
+                                          }
                                         }
                                       }
                                     }

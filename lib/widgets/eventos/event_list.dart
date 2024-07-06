@@ -35,19 +35,21 @@ class EventListView extends StatelessWidget {
             itemBuilder: (context, index) {
               return Container(
                 decoration: BoxDecoration(
-                  border: Border.all(),
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).canvasColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: EventItem(
-                      evento: value[index],
-                      categorias: categorias,
-                      idioma: idioma,
-                    )),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: altura * 0.01),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).canvasColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: EventItem(
+                        evento: value[index],
+                        categorias: categorias,
+                        idioma: idioma,
+                      )),
+                ),
               );
             },
           );

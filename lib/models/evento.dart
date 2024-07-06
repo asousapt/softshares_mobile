@@ -103,7 +103,7 @@ class Evento {
       dataInicio: DateTime.parse(json['datainicio']),
       dataFim: DateTime.parse(json['datafim']),
       dataLimiteInsc: DateTime.parse(json['dataliminscricao']),
-      cancelado: json['cancelado'],
+      cancelado: json['cancelado'] ?? false,
       numeroMaxPart: json['nmrmaxparticipantes'],
       localizacao: json['localizacao'],
       latitude: json['latitude'],
@@ -234,6 +234,15 @@ class Evento {
       "idEvento": eventoId,
       "idUser": utilizadorId,
       "numConvidados": nmrConvidados,
+      "respostas": respostas,
+    };
+  }
+
+  Map<String, dynamic> toJsonRespostaQualidade(
+      int utilizadorId, List<Map<String, dynamic>> respostas) {
+    return {
+      "idEvento": eventoId,
+      "idUser": utilizadorId,
       "respostas": respostas,
     };
   }

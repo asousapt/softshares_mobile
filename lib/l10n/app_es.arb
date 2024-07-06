@@ -165,5 +165,7 @@
   "eventoCancelado": "Evento cancelado", 
   "respostasForm": "Respuestas de formularios", 
   "nome": "Nombre", 
-  "verTodasRespostas": "Ver todas las respuestas"
+  "verTodasRespostas": "Ver todas las respuestas", 
+  "multiplaEscolha": "Escolha Múltipla", 
+  "questionarioQualidade": "Encuesta sobre la calidad"
 }

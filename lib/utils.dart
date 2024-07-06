@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:softshares_mobile/models/imagem.dart';
+import 'package:softshares_mobile/services/api_service.dart';
 
 // Função que converte uma imagem de um URL para base64
 Future<Imagem?> convertImageUrlToBase64(String imageUrl) async {
@@ -90,4 +91,26 @@ List<Map<String, dynamic>> toJsonList<T>(
     }
   }
   return itemList;
+}
+
+// faz pedido para enviar email a API
+Future<bool> envioEmail(String email, String assunto, String mensagem) async {
+  try {
+    ApiService apiService = ApiService();
+    apiService.setAuthToken("tokenFixo");
+
+    Map<String, dynamic> data = {
+      'email': email,
+      'assunto': assunto,
+      'mensagem': mensagem,
+    };
+
+    var response = apiService.postRequest('enviar', data);
+    bool enviou = response as bool;
+
+    return enviou;
+  } catch (e) {
+    print('Erro ao enviar email: $e');
+    return false;
+  }
 }

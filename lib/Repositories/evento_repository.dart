@@ -99,6 +99,30 @@ class EventoRepository {
     }
   }
 
+  // Responde ao formulario de qualidade do evento
+  Future<bool> respostaFormQualidadeEvento(
+    Evento evento,
+    List<RespostaDetalhe> respostas,
+    int utilizadorId,
+  ) async {
+    List<Map<String, dynamic>> respostasmap;
+    if (respostas.isNotEmpty) {
+      respostasmap = respostas.map((e) => e.toJsonCriar()).toList();
+    } else {
+      respostasmap = [];
+    }
+
+    _apiService.setAuthToken("tokenFixo");
+    final response = await _apiService.postRequest("evento/formQualidade",
+        evento.toJsonRespostaQualidade(utilizadorId, respostasmap));
+
+    if (response['data'] != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // pedido do formulario dinamico do evento
   Future<int> getFormId(Evento evento, String formType) async {
     _apiService.setAuthToken("tokenFixo");
@@ -255,6 +279,39 @@ class EventoRepository {
         evento.utilizadorCriou == utilizadorId) {
       return true;
     }
+    return false;
+  }
+
+  Future<bool> podeResponderQuestQualidade(
+      Evento evento, int utilizadorId) async {
+    DateTime hoje = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+
+    if (evento.cancelado == true) return false;
+
+    int formId = 0;
+
+    if (evento.dataFim.isBefore(hoje) &&
+        evento.utilizadoresInscritos!.contains(utilizadorId)) {
+      // vamos verificar se existe algum form de qualidade para o evento
+      formId = await getFormId(evento, "QUALIDADE");
+
+      if (formId != 0) {
+        // vamos verificar se o utilizador ja respondeu ao form
+        _apiService.setAuthToken("tokenFixo");
+        final url =
+            "formulario/respondeu/$formId/tabela/EVENTO/registo/${evento.eventoId}/utilizador/$utilizadorId";
+        final response = await _apiService.getRequest(url);
+        bool jarespondeu = response['data'] as bool;
+        if (!jarespondeu) {
+          return true;
+        }
+      }
+    }
+
     return false;
   }
 }
