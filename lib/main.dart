@@ -160,7 +160,6 @@ class _MyAppState extends State<MyApp> {
         '/criarPontoInteresse': (context) => const CriarPontoInteresseScreen(),
         '/ListarGrupo': (context) => const ListarGrupoScreen(),
         '/definicoes': (context) => DefinicoesScreen(mudaIdioma: _mudaIdioma),
-        '/dadosConta' : (context) => EcraDadosConta(mudaIdioma: _mudaIdioma)
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/consultarEvento') {

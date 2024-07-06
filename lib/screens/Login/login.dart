@@ -64,9 +64,15 @@ class _EcraLoginState extends State<EcraLogin> {
       setState(() {
         _facebookData = facebookData;
       });
+      //Get and set user local with this data
+      _facebookData!.forEach((key, value) {
+      print('$key: $value');
+    });
       Navigator.pushNamed(context, '/escolherPolo');
     } else {
-      _loginFacebook();
+      await _loginFacebook();
+      //Get and set user local with this data
+      Navigator.pushNamed(context, '/escolherPolo');
     }
   }
 
@@ -95,7 +101,8 @@ class _EcraLoginState extends State<EcraLogin> {
     if(user == null){
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.googleFailed)));
     }else{
-      print("Nome do user: ${user.displayName}, Email: ${user.email}");
+      print("Sign in by google\nNome do user: ${user.displayName}, Email: ${user.email}");
+      //Get and set user local with this data
       Navigator.pushNamed(context, '/escolherPolo');
     }
   }

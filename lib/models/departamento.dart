@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Departamento {
   final int departamentoId;
   final String descricao;
@@ -24,4 +26,13 @@ class Departamento {
       'idiomaId': idiomaId,
     };
   }
+}
+
+List<DropdownMenuItem> getListaDepDropdown(List<Departamento> departamentos) {
+  return departamentos.map((e) {
+    return DropdownMenuItem(
+      value: e.departamentoId.toString(),
+      child: Text(e.descricao),
+    );
+  }).toList();
 }

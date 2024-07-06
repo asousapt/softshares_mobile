@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Funcao {
   final int funcaoId;
   final String descricao;
@@ -24,4 +26,14 @@ class Funcao {
       'idiomaId': idiomaId,
     };
   }
+
+}
+
+List<DropdownMenuItem> getListaFunDropdown(List<Funcao> funcoes) {
+  return funcoes.map((e) {
+    return DropdownMenuItem(
+      value: e.funcaoId.toString(),
+      child: Text(e.descricao),
+    );
+  }).toList();
 }

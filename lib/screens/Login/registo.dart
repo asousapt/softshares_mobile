@@ -3,6 +3,9 @@ import 'package:country_flags/country_flags.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/screens/Login/dadosConta.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:softshares_mobile/services/google_signin_api.dart';
 
 class EcraRegistar extends StatefulWidget {
   EcraRegistar({
@@ -20,16 +23,14 @@ class EcraRegistar extends StatefulWidget {
 
 class _EcraRegistarState extends State<EcraRegistar> {
   String version = 'Loading...';
-  String pNome = '';
-  String uNome = '';
   String email = '';
   String pass = '';
   String pass2 = '';
+  Map<String, dynamic>? _facebookData;
+  AccessToken? _accessToken;
 
   late TextEditingController _controlEmail;
   late TextEditingController _controlPass;
-  late TextEditingController _controlPNome;
-  late TextEditingController _controlUNome;
   late TextEditingController _controlPass2;
   //Basededados bd = Basededados();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -39,17 +40,81 @@ class _EcraRegistarState extends State<EcraRegistar> {
     super.initState();
     _controlEmail = TextEditingController();
     _controlPass = TextEditingController();
-    _controlPNome = TextEditingController();
-    _controlUNome = TextEditingController();
     _controlPass2 = TextEditingController();
     getVersion();
+  }
+
+  Future<void> getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      version = packageInfo.version;
+    });
+  }
+
+  _loginFacebook() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+    if (result.status == LoginStatus.success) {
+      _accessToken = result.accessToken;
+
+      final facebookData = await FacebookAuth.instance.getUserData();
+      _facebookData = facebookData;
+    } else {
+      print(result.status);
+      print(result.message);
+    }
+    _facebookData!.forEach((key, value) {
+      print('$key: $value');
+    });
+  }
+
+  _checkIfisLoggedInFacebook() async {
+    final accessToken = await FacebookAuth.instance.accessToken;
+
+    if (accessToken != null) {
+      print("Acess Token - ${accessToken.toJson()}");
+      final facebookData = await FacebookAuth.instance.getUserData();
+      _accessToken = accessToken;
+      setState(() {
+        _facebookData = facebookData;
+      });
+      print("Facebook Data: $_facebookData");
+    } else {
+      _loginFacebook();
+    }
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => EcraDadosConta(
+                  mudaIdioma: widget.mudaIdioma,
+                  email: _facebookData!['email'],
+                  isToken: true,
+                  token: _accessToken!.tokenString,
+                )));
+  }
+
+  Future signInGoogle() async {
+    final user = await GoogleSignInApi.login();
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.googleFailed)));
+    } else {
+      print("Nome do user: ${user.displayName}, Email: ${user.email}");
+    }
+    final googleAuth = await user!.authentication;
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => EcraDadosConta(
+                  mudaIdioma: widget.mudaIdioma,
+                  email: user.email,
+                  isToken: true,
+                  token: googleAuth.accessToken,
+                )));
   }
 
   @override
   void dispose() {
     //libertar recurso
-    _controlPNome.dispose();
-    _controlUNome.dispose();
     _controlPass2.dispose();
     _controlEmail.dispose();
     _controlPass.dispose();
@@ -68,8 +133,6 @@ class _EcraRegistarState extends State<EcraRegistar> {
 
   void sub() {
     setState(() {
-      pNome = _controlPNome.text;
-      uNome = _controlUNome.text;
       email = _controlEmail.text;
       pass = _controlPass.text;
       pass2 = _controlPass2.text;
@@ -77,25 +140,28 @@ class _EcraRegistarState extends State<EcraRegistar> {
     //bd.inserirvalor(Email, Passricao);
   }
 
-  Future<void> getVersion() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    setState(() {
-      version = packageInfo.version;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    double altura = MediaQuery.of(context).size.height;
+    double largura = MediaQuery.of(context).size.width;
     return Scaffold(
-        body: Padding(
-      padding: const EdgeInsets.only(left: 12, right: 12, top: 90),
-      child: SingleChildScrollView(
-          child: Column(children: [
-        Container(
-          color: Theme.of(context).canvasColor,
-          child: Expanded(
+        body: SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: altura * 0.01,
+        ),
+        child: SingleChildScrollView(
+            child: Column(children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: largura * 0.02),
+            height: altura * 0.85,
+            decoration: BoxDecoration(
+              color: Theme.of(context).canvasColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            margin: EdgeInsets.symmetric(horizontal: largura * 0.02),
             child: Column(mainAxisSize: MainAxisSize.max, children: [
-              const SizedBox(height: 10),
+              SizedBox(height: altura * 0.05),
               Text(
                 AppLocalizations.of(context)!.criarConta,
                 style: const TextStyle(
@@ -103,12 +169,12 @@ class _EcraRegistarState extends State<EcraRegistar> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: altura * 0.02),
               Text(
                 AppLocalizations.of(context)!.comecaAgora,
                 style: const TextStyle(fontSize: 14),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: altura * 0.02),
               Container(
                 margin: const EdgeInsets.only(left: 8, right: 8, bottom: 30),
                 child: Form(
@@ -129,7 +195,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: altura * 0.02),
                     TextFormField(
                       obscureText: true,
                       enableSuggestions: false,
@@ -146,7 +212,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: altura * 0.02),
                     TextFormField(
                       obscureText: true,
                       enableSuggestions: false,
@@ -169,21 +235,29 @@ class _EcraRegistarState extends State<EcraRegistar> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 30),
+                    SizedBox(height: altura * 0.03),
                     SizedBox(
-                      height: 50,
+                      height: altura * 0.05,
                       width: double.infinity,
                       child: FilledButton(
                         onPressed: () {
                           sub();
                           if (_formKey.currentState!.validate()) {
-                            Navigator.pushNamed(context, '/dadosConta');
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EcraDadosConta(
+                                          mudaIdioma: widget.mudaIdioma,
+                                          email: email,
+                                          isToken: false,
+                                          pass: pass,
+                                        )));
                           }
                         },
                         child: Text(AppLocalizations.of(context)!.register),
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: altura * 0.01),
                     Row(mainAxisSize: MainAxisSize.min, children: [
                       GestureDetector(
                         onTap: () {
@@ -254,7 +328,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
                     const Divider(color: Colors.grey),
                     // Secção do SSO
                     ElevatedButton(
-                      onPressed: sub,
+                      onPressed: _checkIfisLoggedInFacebook,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 40,
@@ -269,9 +343,9 @@ class _EcraRegistarState extends State<EcraRegistar> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 15),
+                    SizedBox(height: altura * 0.01),
                     ElevatedButton(
-                      onPressed: sub,
+                      onPressed: signInGoogle,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
@@ -292,42 +366,42 @@ class _EcraRegistarState extends State<EcraRegistar> {
               ),
             ]),
           ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.jaTemConta,
-              style: const TextStyle(
-                fontSize: 16,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.jaTemConta,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Color.fromRGBO(230, 230, 230, 1),
+                ),
+              ),
+              TextButton(
+                onPressed: () => {Navigator.pushNamed(context, "/login")},
+                child: Text(AppLocalizations.of(context)!.login,
+                    style: const TextStyle(
+                        color: Color(0xFF83B1FF),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline)),
+              )
+            ],
+          ),
+          Row(
+            children: [
+              const Icon(
+                Icons.copyright,
                 color: Color.fromRGBO(230, 230, 230, 1),
               ),
-            ),
-            TextButton(
-              onPressed: () => {Navigator.pushNamed(context, "/login")},
-              child: Text(AppLocalizations.of(context)!.login,
-                  style: const TextStyle(
-                      color: Color(0xFF83B1FF),
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline)),
-            )
-          ],
-        ),
-        Row(
-          children: [
-            const Icon(
-              Icons.copyright,
-              color: Color.fromRGBO(230, 230, 230, 1),
-            ),
-            const SizedBox(width: 3),
-            Text(
-              "Softinsa v$version",
-              style: const TextStyle(color: Color.fromRGBO(230, 230, 230, 1)),
-            )
-          ],
-        )
-      ])),
+              SizedBox(width: 3),
+              Text(
+                "Softinsa v$version",
+                style: const TextStyle(color: Color.fromRGBO(230, 230, 230, 1)),
+              )
+            ],
+          )
+        ])),
+      ),
     ));
   }
 }
