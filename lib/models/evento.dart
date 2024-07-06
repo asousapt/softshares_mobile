@@ -238,6 +238,15 @@ class Evento {
     };
   }
 
+  Map<String, dynamic> toJsonRespostaQualidade(
+      int utilizadorId, List<Map<String, dynamic>> respostas) {
+    return {
+      "idEvento": eventoId,
+      "idUser": utilizadorId,
+      "respostas": respostas,
+    };
+  }
+
   String dataFormatada(String local) {
     String dataF = "";
 

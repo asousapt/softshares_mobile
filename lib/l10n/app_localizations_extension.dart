@@ -25,6 +25,8 @@ extension AppLocalizationsExtension on AppLocalizations {
         return seleccao;
       case TipoDados.logico:
         return logico;
+      case TipoDados.multiplaEscolha:
+        return multiplaEscolha;
       default:
         return '';
     }
