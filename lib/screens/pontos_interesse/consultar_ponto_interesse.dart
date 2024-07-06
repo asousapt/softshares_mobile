@@ -45,6 +45,7 @@ class _ConsultPontoInteresseScreenState
   List<Commentario> comentarios = [];
   final TextEditingController comentarioController = TextEditingController();
   bool tinhaAvaliado = false;
+  int avaliacaoId = 0;
 
   Future<void> carregaDados() async {
     pontoInteresse = widget.pontoInteresse;
@@ -53,15 +54,17 @@ class _ConsultPontoInteresseScreenState
     final idiomaId = prefs.getInt("idiomaId") ?? 1;
     await fetchComentarios();
     user = Utilizador.fromJson(jsonDecode(prefs.getString('utilizadorObj')!));
-    final ratingAntigo = await api.getRequest('avaliacao/poi/${pontoInteresse!.pontoInteresseId}/utilizador/${user!.utilizadorId}');
+    final ratingAntigo = await api.getRequest(
+        'avaliacao/poi/${pontoInteresse!.pontoInteresseId}/utilizador/${user!.utilizadorId}');
     if (ratingAntigo['data'] != 0) {
-    tinhaAvaliado = true;
-    setState(() {
-      rating = ratingAntigo['data']['avaliacao'] as int;
-    });
-  } else {
-    tinhaAvaliado = false;
-  }
+      tinhaAvaliado = true;
+      setState(() {
+        rating = ratingAntigo['data']['avaliacao'] as int;
+        avaliacaoId = ratingAntigo['data']['avaliacaoid'] as int;
+      });
+    } else {
+      tinhaAvaliado = false;
+    }
     print(ratingAntigo);
     CategoriaRepository categoriaRepository = CategoriaRepository();
     List<Categoria> categoriasdb =
@@ -78,16 +81,16 @@ class _ConsultPontoInteresseScreenState
     });
   }
 
-  void enviarAvaliacao() async{
+  void enviarAvaliacao() async {
     setState(() {
       comentarioAtual = comentarioController.text;
     });
     if (comentarioAtual != "") {
-      final Map<String,dynamic> commentJson = {
+      final Map<String, dynamic> commentJson = {
         "tipo": "POI",
-        "idRegisto":pontoInteresse!.pontoInteresseId,
+        "idRegisto": pontoInteresse!.pontoInteresseId,
         "utilizadorid": user!.utilizadorId,
-        "comentario":comentarioAtual,
+        "comentario": comentarioAtual,
         "comentarioPai ": null,
       };
       await api.postRequest("comentario/add", commentJson);
@@ -96,29 +99,40 @@ class _ConsultPontoInteresseScreenState
     if (rating == 0) {
       invalidRating == true;
     } else {
-      final Map<String,dynamic> avaliacaoJson = {
+      final Map<String, dynamic> criarAvaliacaoJson = {
         "tipo": "POI",
-        "idRegisto":pontoInteresse!.pontoInteresseId,
+        "idRegisto": pontoInteresse!.pontoInteresseId,
         "utilizadorid": user!.utilizadorId,
         "avaliacao": rating,
       };
-      print(avaliacaoJson);
-      await api.postRequest("avaliacao/add", avaliacaoJson);
+      final Map<String, dynamic> atualizarAvaliacaoJson = {
+        "itemavaliacaoid": pontoInteresse!.pontoInteresseId,
+        "utilizadorid": user!.utilizadorId,
+        "avaliacao": rating,
+      };
+      print(atualizarAvaliacaoJson);
+      if (tinhaAvaliado) {
+        print("Atualiza");
+        await api.putRequest(
+            "avaliacao/update/$avaliacaoId", atualizarAvaliacaoJson);
+      } else {
+        await api.postRequest("avaliacao/add", criarAvaliacaoJson);
+      }
     }
   }
 
   Future<void> fetchComentarios() async {
     try {
       _isLoading = true;
-      final lista = await api.getRequest('comentario/tabela/POI/registo/${pontoInteresse!.pontoInteresseId}');
+      final lista = await api.getRequest(
+          'comentario/tabela/POI/registo/${pontoInteresse!.pontoInteresseId}');
       final listaFormatted = lista['data'][0]['comentarios'];
       if (listaFormatted is! List) {
         throw Exception("Failed to load data: Expected a list in 'data'");
       }
 
       // Parse the JSON data into a list of PontoInteresse objects
-      List<Commentario> listaUpdated =
-          listaFormatted.map<Commentario>((item) {
+      List<Commentario> listaUpdated = listaFormatted.map<Commentario>((item) {
         try {
           return Commentario.fromJson(item);
         } catch (e) {
@@ -157,146 +171,173 @@ class _ConsultPontoInteresseScreenState
       ),
       drawer: const MainDrawer(),
       bottomNavigationBar: BottomNavigation(seleccao: 1),
-      body: SafeArea(
-        top: true,
-        bottom: true,
-        child: Container(
-          margin: EdgeInsets.only(
-            top: altura * 0.01,
-            left: largura * 0.01,
-            right: largura * 0.01,
-            bottom: altura * 0.01,
-          ),
-          height: altura * 0.9,
-          decoration: BoxDecoration(color: Theme.of(context).canvasColor, borderRadius: BorderRadius.circular(20)),
-          child: _isLoading
-              ? Center(
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).canvasColor,
-                  ),
-                )
-              : SingleChildScrollView(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).canvasColor,
-                      
-                    ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: Colors.white,))
+          : categorias.isEmpty
+              ? Container(
+                  height: altura * 0.8,
+                  color: Colors.transparent,
+                  child: Center(
                     child: Column(
                       children: [
-                        Center(
-                          child: FadeInImage(
-                            fit: BoxFit.fill,
-                            height: altura * 0.2,
-                            width: double.infinity,
-                            placeholder:
-                                const AssetImage("Images/Restaurante.jpg"),
-                            image: pontoInteresse!.imagens != null &&
-                      pontoInteresse!.imagens!.isNotEmpty
-                  ? NetworkImage(pontoInteresse!.imagens![0])
-                  : const AssetImage("Images/Restaurante.jpg") as ImageProvider,
-              imageErrorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: altura * 0.2,
-                  width: double.infinity,
-                  color: Colors.grey[200],
-                  child: const Icon(
-                    Icons.broken_image,
-                    color: Colors.grey,
-                    size: 50,
-                  ),
-                );
-              },
-                          ),
-                        ),
-                        SizedBox(height: altura * 0.02),
-                        Text(
-                          pontoInteresse!.titulo,
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        EstrelasRating(rating: pontoInteresse!.avaliacao!),
-                        SizedBox(height: altura * 0.02),
-                        Row(
-                          children: [
-                            const Icon(
-                              FontAwesomeIcons.locationDot,
-                              color: Colors.red,
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: largura * 0.02),
-                              child: Text(pontoInteresse!.localizacao),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: altura * 0.02),
-                        Center(
-                          child: Container(
-                            color: Colors.red,
-                            height: altura * 0.25,
-                            width: largura * 0.85,
-                            child: const Center(
-                              child: Text("Mapa"),
-                            ),
-                          ),
-                        ),
-                        DividerWithText(
-                            text: AppLocalizations.of(context)!.descricao),
-                        Text(pontoInteresse!.descricao),
-                        DividerWithText(
-                            text: AppLocalizations.of(context)!.avaliar),
-                        TextFormField(
-                          controller: comentarioController,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            hintText: AppLocalizations.of(context)!
-                                .deixaComentario,
-                            border:
-                                InputBorder.none, // Remove the border
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 10.0), // Add padding
-                          ),
-                        ),
-                        if (_isLoading)
-                        Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      else
-                        Row(
-                          children: [
-                            Expanded(
-                              child: RatingPicker(
-                                  initialRating: rating,
-                                  onRatingSelected: atualizarRating),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                enviarAvaliacao();
-                              },
-                              child: Text(
-                                  AppLocalizations.of(context)!.avaliar),
-                            ),
-                          ],
-                        ),
-                        const Divider(
-                          color: Color.fromRGBO(29, 90, 161, 1),
-                        ),
-                        Text(AppLocalizations.of(context)!.outrosComentarios),
-                        SizedBox(
-                          height: altura * 0.5,
-                          child: SingleChildScrollView(
-                            child: CommentSection(
-                              comentarios: comentarios
-                            ),
-                          ),
-                        )
+                        Text(AppLocalizations.of(context)!.naoHaDados),
                       ],
                     ),
                   ),
+                )
+              : SafeArea(
+                  top: true,
+                  bottom: true,
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      top: altura * 0.01,
+                      left: largura * 0.01,
+                      right: largura * 0.01,
+                      bottom: altura * 0.01,
+                    ),
+                    height: altura * 0.9,
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).canvasColor,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: _isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).canvasColor,
+                            ),
+                          )
+                        : SingleChildScrollView(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).canvasColor,
+                              ),
+                              child: Column(
+                                children: [
+                                  Center(
+                                    child: FadeInImage(
+                                      fit: BoxFit.fill,
+                                      height: altura * 0.2,
+                                      width: double.infinity,
+                                      placeholder: const AssetImage(
+                                          "Images/Restaurante.jpg"),
+                                      image: pontoInteresse!.imagens != null &&
+                                              pontoInteresse!
+                                                  .imagens!.isNotEmpty
+                                          ? NetworkImage(
+                                              pontoInteresse!.imagens![0])
+                                          : const AssetImage(
+                                                  "Images/Restaurante.jpg")
+                                              as ImageProvider,
+                                      imageErrorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Container(
+                                          height: altura * 0.2,
+                                          width: double.infinity,
+                                          color: Colors.grey[200],
+                                          child: const Icon(
+                                            Icons.broken_image,
+                                            color: Colors.grey,
+                                            size: 50,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(height: altura * 0.02),
+                                  Text(
+                                    pontoInteresse!.titulo,
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  EstrelasRating(
+                                      rating: pontoInteresse!.avaliacao!),
+                                  SizedBox(height: altura * 0.02),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        FontAwesomeIcons.locationDot,
+                                        color: Colors.red,
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            left: largura * 0.02),
+                                        child:
+                                            Text(pontoInteresse!.localizacao),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: altura * 0.02),
+                                  Center(
+                                    child: Container(
+                                      color: Colors.red,
+                                      height: altura * 0.25,
+                                      width: largura * 0.85,
+                                      child: const Center(
+                                        child: Text("Mapa"),
+                                      ),
+                                    ),
+                                  ),
+                                  DividerWithText(
+                                      text: AppLocalizations.of(context)!
+                                          .descricao),
+                                  Text(pontoInteresse!.descricao),
+                                  DividerWithText(
+                                      text: AppLocalizations.of(context)!
+                                          .avaliar),
+                                  TextFormField(
+                                    controller: comentarioController,
+                                    maxLines: null,
+                                    decoration: InputDecoration(
+                                      hintText: AppLocalizations.of(context)!
+                                          .deixaComentario,
+                                      border:
+                                          InputBorder.none, // Remove the border
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 10.0), // Add padding
+                                    ),
+                                  ),
+                                  if (_isLoading)
+                                    Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  else
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: RatingPicker(
+                                              initialRating: rating,
+                                              onRatingSelected:
+                                                  atualizarRating),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            enviarAvaliacao();
+                                          },
+                                          child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .avaliar),
+                                        ),
+                                      ],
+                                    ),
+                                  const Divider(
+                                    color: Color.fromRGBO(29, 90, 161, 1),
+                                  ),
+                                  Text(AppLocalizations.of(context)!
+                                      .outrosComentarios),
+                                  SizedBox(
+                                    height: altura * 0.5,
+                                    child: SingleChildScrollView(
+                                      child: CommentSection(
+                                          comentarios: comentarios),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                  ),
                 ),
-        ),
-      ),
     );
   }
 }

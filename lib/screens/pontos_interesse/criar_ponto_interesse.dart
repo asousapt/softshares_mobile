@@ -38,7 +38,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   String? _categoriaId;
   String? _subCategoriaId;
   String? descricao;
-  int idiomaId = 0, cidadeId = 0;
+  int idiomaId = 0, cidadeId = 0, poloId = 0;
   double latitude = 0.0, longitude = 0.0;
   Formulario? form = null;
   bool defaultValues = false;
@@ -117,6 +117,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   Future<void> carregarDados() async {
     final prefs = await SharedPreferences.getInstance();
     idiomaId = prefs.getInt("idiomaId") ?? 1;
+    poloId = prefs.getInt("poloId") ?? 1;
     user = Utilizador.fromJson(jsonDecode(prefs.getString('utilizadorObj')!));
     CategoriaRepository categoriaRepository = CategoriaRepository();
     List<Categoria> categoriasL =
@@ -124,8 +125,6 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
     SubcategoriaRepository subcategoriaRepository = SubcategoriaRepository();
     List<Subcategoria> subcategoriasL =
         await subcategoriaRepository.fetchSubcategoriasDB(idiomaId);
-    CidadeRepository cidadeRepository = CidadeRepository();
-    int cidadeId = await cidadeRepository.obtemCidadeId(latitude, longitude);
 
     setState(() {
       categorias = categoriasL;
@@ -143,17 +142,17 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       setState(() {
         form = Formulario.fromJson(json2['data']);
         for (int i = 0; i < form!.perguntas.length; i++) {
-        if (form!.perguntas[i].tipoDados == TipoDados.textoLivre ||
-            form!.perguntas[i].tipoDados == TipoDados.numerico) {
-          _controllers[i] = TextEditingController();
+          if (form!.perguntas[i].tipoDados == TipoDados.textoLivre ||
+              form!.perguntas[i].tipoDados == TipoDados.numerico) {
+            _controllers[i] = TextEditingController();
+          }
+          if (form!.perguntas[i].tipoDados == TipoDados.logico) {
+            _booleanValues[i] = false;
+          }
+          if (form!.perguntas[i].tipoDados == TipoDados.seleccao) {
+            _dropdownValues[i] = null;
+          }
         }
-        if (form!.perguntas[i].tipoDados == TipoDados.logico) {
-          _booleanValues[i] = false;
-        }
-        if (form!.perguntas[i].tipoDados == TipoDados.seleccao) {
-          _dropdownValues[i] = null;
-        }
-      }
       });
     } else {
       setState(() {
@@ -214,7 +213,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
     return mensagem;
   }
 
-  void converterImagens() async{
+  void converterImagens() async {
     imagens = await convertListXfiletoImagem(images);
   }
 
@@ -225,7 +224,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
     final int cat = int.parse(_categoriaId!);
     final int sub = int.parse(_subCategoriaId!);
     final uti = user!.utilizadorId;
-    
+
     converterImagens();
 
     final Map<String, dynamic> data = {
@@ -238,19 +237,30 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       "idiomaid": idiomaId,
       "cidadeid": cidadeId,
       "utilizadorcriou": uti,
+      "poloid": poloId,
       "imagens": [],
-      "formRespostas":
-          getRespostas().map((resposta) => resposta.toJsonCriar()).toList(),
+      "formRespostas": form != null
+          ? getRespostas().map((resposta) => resposta.toJsonCriar()).toList()
+          : [],
     };
     print("This is the data: $data");
     return data;
   }
 
-  void sendData() {
+  void sendData() async {
     if (_formKey.currentState!.validate()) {
       String mensagem = createMensagem(context);
 
       Map<String, dynamic> json = createJson();
+      // Perform the asynchronous operation
+      CidadeRepository cidadeRepository = CidadeRepository();
+      int cidadeIdValue =
+          await cidadeRepository.obtemCidadeId(latitude, longitude);
+
+      // Update the state synchronously
+      setState(() {
+        cidadeId = cidadeIdValue;
+      });
       Future<bool> confirma = confirmExit(
         context,
         AppLocalizations.of(context)!.criarPontoInteresse,
@@ -468,7 +478,10 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
           ),
         ),
         body: _isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(
+                child: CircularProgressIndicator(
+                color: Colors.white,
+              ))
             : categorias.isEmpty
                 ? Container(
                     height: altura * 0.8,
