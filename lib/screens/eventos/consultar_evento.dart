@@ -594,23 +594,27 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                                   },
                                                 ),
                                               ),
-                                              Center(
-                                                child: FilledButton(
-                                                  child: Text(
-                                                      "Ver todas as respostas"),
-                                                  onPressed: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            TabelaRespostasScreen(
-                                                          evento: evento!,
-                                                        ),
+                                              temFormularios
+                                                  ? Center(
+                                                      child: FilledButton(
+                                                        child: Text(
+                                                            AppLocalizations.of(
+                                                                    context)!
+                                                                .verTodasRespostas),
+                                                        onPressed: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  TabelaRespostasScreen(
+                                                                evento: evento!,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
                                                       ),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
+                                                    )
+                                                  : const SizedBox(),
                                             ],
                                           ),
                                         ),

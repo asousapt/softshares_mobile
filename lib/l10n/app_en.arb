@@ -163,5 +163,8 @@
   "inserirDadosConta" : "Enter Account Data",
   "googleFailed" : "Google entry failed",
   "detalhesTopico": "Thread Details", 
-  "eventoCancelado": "The event was cancelled"
+  "eventoCancelado": "The event was cancelled", 
+  "respostasForm": "Form Answers", 
+  "nome": "Name", 
+  "verTodasRespostas": "See all answers"
 }

@@ -176,7 +176,7 @@ class _TabelaRespostasScreenState extends State<TabelaRespostasScreen>
                   columns: [
                     DataColumn(
                       label: Text(
-                        AppLocalizations.of(context)!.nomegrupo,
+                        AppLocalizations.of(context)!.nome,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -241,7 +241,7 @@ class _TabelaRespostasScreenState extends State<TabelaRespostasScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Respostas do Formulário"),
+        title: Text(AppLocalizations.of(context)!.respostasForm),
         bottom: TabBar(
           controller: _tabController,
           tabs: [

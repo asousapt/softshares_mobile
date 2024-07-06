@@ -162,5 +162,8 @@
   "detalhesTopico": "Detalhes da linha",
   "inserirDadosConta" : "Ingrese los datos de la cuenta",
   "googleFailed" : "La entrada de Google falló",
-  "eventoCancelado": "Evento cancelado"
+  "eventoCancelado": "Evento cancelado", 
+  "respostasForm": "Respuestas de formularios", 
+  "nome": "Nombre", 
+  "verTodasRespostas": "Ver todas las respuestas"
 }
