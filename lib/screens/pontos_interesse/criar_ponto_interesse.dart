@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -40,7 +41,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   String? descricao;
   int idiomaId = 0, cidadeId = 0, poloId = 0;
   double latitude = 0.0, longitude = 0.0;
-  Formulario? form = null;
+  Formulario? form;
   bool defaultValues = false;
   List<Categoria> categorias = [];
   List<Subcategoria> subcategorias = [];
@@ -60,57 +61,18 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
     });
   }
 
-  /*Formulario fetchedFormulario = Formulario(
-    formId: 1,
-    titulo: 'Formulário de Teste',
-    tipoFormulario: TipoFormulario.inscr,
-    perguntas: [
-      Pergunta(
-        detalheId: 1,
-        pergunta: 'Qual é o seu nome?',
-        tipoDados: TipoDados.textoLivre,
-        obrigatorio: true,
-        min: 0,
-        max: 0,
-        tamanho: 100,
-        valoresPossiveis: [],
-        ordem: 1,
-      ),
-      Pergunta(
-        detalheId: 2,
-        pergunta: 'Qual é a sua idade?',
-        tipoDados: TipoDados.numerico,
-        obrigatorio: true,
-        min: 1,
-        max: 120,
-        tamanho: 0,
-        valoresPossiveis: [],
-        ordem: 2,
-      ),
-      Pergunta(
-        detalheId: 3,
-        pergunta: 'É vegetariano?',
-        tipoDados: TipoDados.logico,
-        obrigatorio: false,
-        min: 0,
-        max: 0,
-        tamanho: 0,
-        valoresPossiveis: [],
-        ordem: 3,
-      ),
-      Pergunta(
-        detalheId: 4,
-        pergunta: 'Escolha um horário',
-        tipoDados: TipoDados.seleccao,
-        obrigatorio: false,
-        min: 0,
-        max: 0,
-        tamanho: 0,
-        valoresPossiveis: ['Manhã', 'Tarde', 'Noite'],
-        ordem: 4,
-      ),
-    ],
-  );*/
+  Future<void> convertAndSaveImages(
+      List<Imagem> imagemList, List<XFile> images) async {
+    for (Imagem imagem in imagemList) {
+      final downloadedImage = await downloadImage(imagem.url!);
+      if (downloadedImage != null) {
+        final tempFile = File(downloadedImage.url!);
+        images.add(XFile(tempFile.path,
+            name: downloadedImage.nome, length: downloadedImage.tamanho));
+      }
+    }
+    setState(() {});
+  }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 

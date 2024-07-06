@@ -11,12 +11,12 @@ import 'package:softshares_mobile/widgets/pontos__de_interesse/escolherRating.da
 import 'package:softshares_mobile/widgets/pontos__de_interesse/estrelas.dart';
 import 'package:softshares_mobile/widgets/gerais/text_tools.dart';
 import 'package:softshares_mobile/widgets/comentarios_section.dart';
-import 'package:softshares_mobile/models/comentario.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'dart:convert';
 import 'package:softshares_mobile/services/api_service.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ConsultPontoInteresseScreen extends StatefulWidget {
   const ConsultPontoInteresseScreen({
@@ -106,7 +106,6 @@ class _ConsultPontoInteresseScreenState
         "avaliacao": rating,
       };
       final Map<String, dynamic> atualizarAvaliacaoJson = {
-        "itemavaliacaoid": pontoInteresse!.pontoInteresseId,
         "utilizadorid": user!.utilizadorId,
         "avaliacao": rating,
       };
@@ -114,7 +113,7 @@ class _ConsultPontoInteresseScreenState
       if (tinhaAvaliado) {
         print("Atualiza");
         await api.putRequest(
-            "avaliacao/update/$avaliacaoId", atualizarAvaliacaoJson);
+            "avaliacao/update/POI/${pontoInteresse!.pontoInteresseId}", atualizarAvaliacaoJson);
       } else {
         await api.postRequest("avaliacao/add", criarAvaliacaoJson);
       }
@@ -269,15 +268,35 @@ class _ConsultPontoInteresseScreenState
                                   ),
                                   SizedBox(height: altura * 0.02),
                                   Center(
-                                    child: Container(
-                                      color: Colors.red,
-                                      height: altura * 0.25,
-                                      width: largura * 0.85,
-                                      child: const Center(
-                                        child: Text("Mapa"),
-                                      ),
-                                    ),
-                                  ),
+                                              child: SizedBox(
+                                                height: altura * 0.25,
+                                                width: largura * 0.85,
+                                                child: GoogleMap(
+                                                  markers: {
+                                                    Marker(
+                                                      markerId:
+                                                          const MarkerId("1"),
+                                                      position: LatLng(
+                                                        double.parse(
+                                                            pontoInteresse!.latitude!),
+                                                        double.parse(
+                                                            pontoInteresse!.longitude!),
+                                                      ),
+                                                    ),
+                                                  },
+                                                  initialCameraPosition:
+                                                      CameraPosition(
+                                                    target: LatLng(
+                                                      double.parse(
+                                                          pontoInteresse!.latitude!),
+                                                      double.parse(
+                                                          pontoInteresse!.longitude!),
+                                                    ),
+                                                    zoom: 15,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                   DividerWithText(
                                       text: AppLocalizations.of(context)!
                                           .descricao),
