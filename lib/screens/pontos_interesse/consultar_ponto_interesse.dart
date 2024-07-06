@@ -17,6 +17,7 @@ import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'dart:convert';
 import 'package:softshares_mobile/services/api_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:softshares_mobile/widgets/gerais/galeria_widget.dart';
 
 class ConsultPontoInteresseScreen extends StatefulWidget {
   const ConsultPontoInteresseScreen({
@@ -113,7 +114,8 @@ class _ConsultPontoInteresseScreenState
       if (tinhaAvaliado) {
         print("Atualiza");
         await api.putRequest(
-            "avaliacao/update/POI/${pontoInteresse!.pontoInteresseId}", atualizarAvaliacaoJson);
+            "avaliacao/update/POI/${pontoInteresse!.pontoInteresseId}",
+            atualizarAvaliacaoJson);
       } else {
         await api.postRequest("avaliacao/add", criarAvaliacaoJson);
       }
@@ -171,7 +173,10 @@ class _ConsultPontoInteresseScreenState
       drawer: const MainDrawer(),
       bottomNavigationBar: BottomNavigation(seleccao: 1),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Colors.white,))
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: Colors.white,
+            ))
           : categorias.isEmpty
               ? Container(
                   height: altura * 0.8,
@@ -268,35 +273,33 @@ class _ConsultPontoInteresseScreenState
                                   ),
                                   SizedBox(height: altura * 0.02),
                                   Center(
-                                              child: SizedBox(
-                                                height: altura * 0.25,
-                                                width: largura * 0.85,
-                                                child: GoogleMap(
-                                                  markers: {
-                                                    Marker(
-                                                      markerId:
-                                                          const MarkerId("1"),
-                                                      position: LatLng(
-                                                        double.parse(
-                                                            pontoInteresse!.latitude!),
-                                                        double.parse(
-                                                            pontoInteresse!.longitude!),
-                                                      ),
-                                                    ),
-                                                  },
-                                                  initialCameraPosition:
-                                                      CameraPosition(
-                                                    target: LatLng(
-                                                      double.parse(
-                                                          pontoInteresse!.latitude!),
-                                                      double.parse(
-                                                          pontoInteresse!.longitude!),
-                                                    ),
-                                                    zoom: 15,
-                                                  ),
-                                                ),
-                                              ),
+                                    child: SizedBox(
+                                      height: altura * 0.25,
+                                      width: largura * 0.85,
+                                      child: GoogleMap(
+                                        markers: {
+                                          Marker(
+                                            markerId: const MarkerId("1"),
+                                            position: LatLng(
+                                              double.parse(
+                                                  pontoInteresse!.latitude!),
+                                              double.parse(
+                                                  pontoInteresse!.longitude!),
                                             ),
+                                          ),
+                                        },
+                                        initialCameraPosition: CameraPosition(
+                                          target: LatLng(
+                                            double.parse(
+                                                pontoInteresse!.latitude!),
+                                            double.parse(
+                                                pontoInteresse!.longitude!),
+                                          ),
+                                          zoom: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                   DividerWithText(
                                       text: AppLocalizations.of(context)!
                                           .descricao),
@@ -316,29 +319,31 @@ class _ConsultPontoInteresseScreenState
                                           horizontal: 10.0), // Add padding
                                     ),
                                   ),
-                                  if (_isLoading)
-                                    Center(
-                                      child: CircularProgressIndicator(),
-                                    )
-                                  else
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: RatingPicker(
-                                              initialRating: rating,
-                                              onRatingSelected:
-                                                  atualizarRating),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            enviarAvaliacao();
-                                          },
-                                          child: Text(
-                                              AppLocalizations.of(context)!
-                                                  .avaliar),
-                                        ),
-                                      ],
-                                    ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: RatingPicker(
+                                            initialRating: rating,
+                                            onRatingSelected: atualizarRating),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          enviarAvaliacao();
+                                        },
+                                        child: Text(
+                                            AppLocalizations.of(context)!
+                                                .avaliar),
+                                      ),
+                                    ],
+                                  ),
+                                  DividerWithText(
+                                      text: AppLocalizations.of(context)!
+                                          .imageGallery),
+                                  GaleriaWidget(
+                                              urls: pontoInteresse!.imagens != null
+                                                  ? pontoInteresse!.imagens!
+                                                  : [],
+                                            ),
                                   const Divider(
                                     color: Color.fromRGBO(29, 90, 161, 1),
                                   ),

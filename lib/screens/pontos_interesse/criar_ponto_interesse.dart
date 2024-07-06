@@ -61,19 +61,6 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
     });
   }
 
-  Future<void> convertAndSaveImages(
-      List<Imagem> imagemList, List<XFile> images) async {
-    for (Imagem imagem in imagemList) {
-      final downloadedImage = await downloadImage(imagem.url!);
-      if (downloadedImage != null) {
-        final tempFile = File(downloadedImage.url!);
-        images.add(XFile(tempFile.path,
-            name: downloadedImage.nome, length: downloadedImage.tamanho));
-      }
-    }
-    setState(() {});
-  }
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Future<void> carregarDados() async {
@@ -189,6 +176,9 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
 
     converterImagens();
 
+    List<Map<String, dynamic>> listaImagens =
+        toJsonList(imagens, (Imagem img) => img.toJson());
+
     final Map<String, dynamic> data = {
       "subcategoriaid": sub,
       "titulo": titulo,
@@ -200,7 +190,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       "cidadeid": cidadeId,
       "utilizadorcriou": uti,
       "poloid": poloId,
-      "imagens": [],
+      "imagens": listaImagens,
       "formRespostas": form != null
           ? getRespostas().map((resposta) => resposta.toJsonCriar()).toList()
           : [],
@@ -212,9 +202,6 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   void sendData() async {
     if (_formKey.currentState!.validate()) {
       String mensagem = createMensagem(context);
-
-      Map<String, dynamic> json = createJson();
-      // Perform the asynchronous operation
       CidadeRepository cidadeRepository = CidadeRepository();
       int cidadeIdValue =
           await cidadeRepository.obtemCidadeId(latitude, longitude);
@@ -223,6 +210,10 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       setState(() {
         cidadeId = cidadeIdValue;
       });
+
+      Map<String, dynamic> json = createJson();
+      // Perform the asynchronous operation
+      
       Future<bool> confirma = confirmExit(
         context,
         AppLocalizations.of(context)!.criarPontoInteresse,
