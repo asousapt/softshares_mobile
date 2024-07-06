@@ -3,11 +3,9 @@ import 'package:softshares_mobile/Repositories/evento_repository.dart';
 import 'package:softshares_mobile/Repositories/formulario_repository.dart';
 import 'package:softshares_mobile/l10n/app_localizations_extension.dart';
 import 'package:softshares_mobile/models/evento.dart';
-import 'package:softshares_mobile/models/formularios_dinamicos/pergunta_formulario.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/formulario.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/resposta_form.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../../Repositories/respostadetalhe_repository.dart';
 
 class RespostaIndividualScreen extends StatefulWidget {
@@ -145,7 +143,9 @@ class _RespostaIndividualScreenState extends State<RespostaIndividualScreen>
                 fontSize: 20,
               ),
             ),
-            Text(form!.tipoFormulario!.name),
+            Text(
+              AppLocalizations.of(context)!.getEnumValue(form!.tipoFormulario!),
+            ),
             SizedBox(height: altura * 0.02),
             Expanded(
                 child: respostas.isNotEmpty
@@ -183,8 +183,14 @@ class _RespostaIndividualScreenState extends State<RespostaIndividualScreen>
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: AppLocalizations.of(context)!.inscr),
-            Tab(text: AppLocalizations.of(context)!.qualidade),
+            Tab(
+              text: AppLocalizations.of(context)!
+                  .getEnumValue(TipoFormulario.inscr),
+            ),
+            Tab(
+              text: AppLocalizations.of(context)!
+                  .getEnumValue(TipoFormulario.inscr),
+            ),
           ],
         ),
       ),

@@ -86,4 +86,17 @@ class FuncaoRepository {
       print(e);
     }
   }
+
+  Future<String> getFuncaoByIdAndIdioma(int funcaoId, int idiomaId) async {
+    String descricao = "";
+    final db = await _database.database;
+    final funcao = await db.rawQuery(
+        'SELECT descricao FROM funcao where funcaoId = $funcaoId and idiomaId = $idiomaId');
+
+    if (funcao.isNotEmpty) {
+      descricao = funcao[0]['descricao'].toString();
+    }
+
+    return descricao;
+  }
 }

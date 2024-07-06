@@ -80,4 +80,18 @@ class DepartamentoRepository {
       print(e);
     }
   }
+
+  Future<String> getDepartamentoByIdAndIdioma(
+      int departamentoId, int idiomaId) async {
+    String descricao = "";
+    final db = await _database.database;
+    final departamento = await db.rawQuery(
+        'SELECT descricao FROM departamento WHERE departamentoId = $departamentoId AND idiomaId = $idiomaId');
+
+    if (departamento.isNotEmpty) {
+      descricao = departamento.first['descricao'].toString();
+    }
+
+    return descricao;
+  }
 }
