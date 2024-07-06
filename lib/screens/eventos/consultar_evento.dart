@@ -604,7 +604,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                                       MaterialPageRoute(
                                                         builder: (context) =>
                                                             TabelaRespostasScreen(
-                                                          formularioId: 1,
+                                                          evento: evento!,
                                                         ),
                                                       ),
                                                     );
