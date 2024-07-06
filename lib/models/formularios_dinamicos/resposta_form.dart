@@ -24,7 +24,7 @@ class RespostaDetalhe {
       pergunta:
           json['pergunta'] != null ? Pergunta.fromJson(json['pergunta']) : null,
       utilizador: json['utilizador'] != null
-          ? Utilizador.fromJson(json['utilizador'])
+          ? Utilizador.fromJsonSimplificado(json['utilizador'])
           : null,
     );
   }
