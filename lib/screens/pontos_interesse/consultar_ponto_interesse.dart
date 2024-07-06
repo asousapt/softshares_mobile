@@ -54,15 +54,21 @@ class _ConsultPontoInteresseScreenState
     await fetchComentarios();
     user = Utilizador.fromJson(jsonDecode(prefs.getString('utilizadorObj')!));
     final ratingAntigo = await api.getRequest('avaliacao/poi/${pontoInteresse!.pontoInteresseId}/utilizador/${user!.utilizadorId}');
-    if (ratingAntigo['data'] != 0) tinhaAvaliado =true;
-
+    if (ratingAntigo['data'] != 0) {
+    tinhaAvaliado = true;
+    setState(() {
+      rating = ratingAntigo['data']['avaliacao'] as int;
+    });
+  } else {
+    tinhaAvaliado = false;
+  }
+    print(ratingAntigo);
     CategoriaRepository categoriaRepository = CategoriaRepository();
     List<Categoria> categoriasdb =
         await categoriaRepository.fetchCategoriasDB(idiomaId);
     setState(() {
       categorias = categoriasdb;
       _isLoading = false;
-      rating = ratingAntigo['data']['avaliacao'] as int;
     });
   }
 
