@@ -28,9 +28,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Utilizador? userIni;
   String fotoUrl = "";
   bool isSaving = false;
+  bool isloading = false;
 
   @override
   void initState() {
+    isloading = true;
     super.initState();
     userIni = widget.utilizador;
 
@@ -48,6 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       fotoEnvio: widget.utilizador.fotoEnvio,
       idiomaId: widget.utilizador.idiomaId,
     );
+    isloading = false;
   }
 
   // faz a validação dos dados antes de gravar
@@ -169,52 +172,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       });
                     }
                   });
-
-                  // Navigator.pop(context);
                 }
               },
             ),
           ],
           title: Text(AppLocalizations.of(context)!.perfil),
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(
-            left: 12,
-            right: 12,
-            top: 15,
-            bottom: 20,
-          ),
-          child: Stack(
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  UserProfileWidget(
-                    utilizador: user!,
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Container(
-                        color: Theme.of(context).canvasColor,
-                        child: TabPerfil(utilizador: user!),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              if (isSaving)
-                Container(
-                  color: Colors.white.withOpacity(0.4),
-                  child: Center(
-                    child: CircularProgressIndicator(
-                        color: Theme.of(context).canvasColor),
-                  ),
+        body: isloading
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).canvasColor,
                 ),
-            ],
-          ),
-        ),
+              )
+            : Padding(
+                padding: const EdgeInsets.only(
+                  left: 12,
+                  right: 12,
+                  top: 15,
+                  bottom: 20,
+                ),
+                child: Stack(
+                  children: [
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        UserProfileWidget(
+                          utilizador: user!,
+                        ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Container(
+                              color: Theme.of(context).canvasColor,
+                              child: TabPerfil(utilizador: user!),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (isSaving)
+                      Container(
+                        color: Colors.white.withOpacity(0.4),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                              color: Theme.of(context).canvasColor),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
       ),
     );
   }

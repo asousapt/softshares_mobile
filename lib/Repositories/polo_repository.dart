@@ -33,10 +33,9 @@ class PoloRepository {
   }
 
   Future<List<Polo>> fetchPolosFromDb() async {
-    print("vou iniciar a busca");
     final db = await _databaseService.database;
     final polos = await db.query('polo');
-    print("Polos: $polos");
+
     return polos.map((item) => Polo.fromJson(item)).toList();
   }
 }
