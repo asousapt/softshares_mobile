@@ -32,7 +32,7 @@ class _ListarGrupoScreenState extends State<ListarGrupoScreen> {
       _isLoading = true;
     });
 
-    grupos = await fetchGrupos();
+    grupos = []; //await fetchGrupos();
 
     setState(() {
       listaGruposFiltrada = grupos;
