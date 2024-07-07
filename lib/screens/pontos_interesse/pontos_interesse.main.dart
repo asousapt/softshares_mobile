@@ -119,12 +119,30 @@ class _PontosDeInteresseMainScreenState
       PopupMenuButton<String>(
         icon: const Icon(Icons.filter_list),
         onSelected: (String value) {
-          filtraPorTexto(value);
-          print("Value is: " + value);
+          filtraPorCategoria(value);
         },
         itemBuilder: (BuildContext context) => getCatLista(categoriasFiltro),
       ),
     ];
+  }
+
+  void filtraPorCategoria(String categoria) {
+    int cat = int.parse(categoria);
+
+    setState(() {
+      if (cat == 0) {
+        listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
+      } else {
+        listaPontosDeInteresseFiltrados =
+            listaPontosDeInteresse.where((element) => element.categoriaId == cat).toList();
+      }
+
+      if (listaPontosDeInteresseFiltrados.isEmpty) {
+        containerColorPontosDeInteresse = Theme.of(context).canvasColor;
+      } else {
+        containerColorPontosDeInteresse = Colors.transparent;
+      }
+    });
   }
 
   void filtraPorTexto(String texto) {

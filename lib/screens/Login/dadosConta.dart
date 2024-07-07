@@ -370,45 +370,6 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
                                           ),
                                         ),
                                       ]),
-                                  const Divider(color: Colors.grey),
-                                  // Secção do SSO
-                                  ElevatedButton(
-                                    onPressed: sub,
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 40,
-                                          vertical:
-                                              20), // Adjust padding as needed
-                                    ),
-                                    child: const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(FontAwesomeIcons.facebook),
-                                        SizedBox(width: 4),
-                                        Text("Facebook"),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 15),
-                                  ElevatedButton(
-                                    onPressed: sub,
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 40,
-                                        vertical: 20,
-                                      ),
-                                    ),
-                                    child: const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(FontAwesomeIcons.google),
-                                        SizedBox(width: 4),
-                                        Text("Google"),
-                                      ],
-                                    ),
-                                  ),
                                 ]),
                               ),
                             ),
