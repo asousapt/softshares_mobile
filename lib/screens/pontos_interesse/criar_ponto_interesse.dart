@@ -235,15 +235,6 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
                 await api.postRequest('pontoInteresse/addMobile', json),
                 Navigator.pushNamed(context, '/pontosInteresse')
               }
-            //post respostas
-            else
-              {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(AppLocalizations.of(context)!.ocorreuErro),
-                  ),
-                )
-              }
           });
     }
   }
