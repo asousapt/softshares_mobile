@@ -61,10 +61,10 @@ class PontoInteresse {
         ? DateTime.parse(json['dataalteracao'])
         : null;
     final criador = json['utilizadoraprova'] as int?;
-    final avaliacao = json['avgavaliacao'] != null 
-      ? double.tryParse(json['avgavaliacao']) 
-      : null;
-    final imagens = (json['imagens'] as List<dynamic>?)
+    final avaliacao = json['avgavaliacao'] != null
+        ? double.tryParse(json['avgavaliacao'])
+        : null;
+    final imagens = (json['imagem'] as List<dynamic>?)
         ?.map((item) => item as String)
         .toList();
 

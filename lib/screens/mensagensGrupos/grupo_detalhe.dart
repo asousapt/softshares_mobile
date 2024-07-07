@@ -65,7 +65,7 @@ class GrupoDetalheScreen extends StatelessWidget {
             ),
             SizedBox(height: altura * 0.02),
             Text(
-              grupo.nome,
+              "grupo.nome",
               style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -119,7 +119,7 @@ class GrupoDetalheScreen extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (context) => MensagemDetalheScreen(
                                     mensagemId: 0,
-                                    nome: grupo.nome,
+                                    nome: "grupo.nome",
                                     imagemUrl: grupo.imagem!,
                                     msgGrupo: true),
                               ),

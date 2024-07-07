@@ -3,8 +3,8 @@ import 'package:softshares_mobile/models/utilizador.dart';
 
 class Grupo {
   int? grupoId;
-  String nome;
   String descricao;
+  int subcategoriaId;
   Subcategoria? subcategoria;
   List<Utilizador>? utilizadores;
   bool publico = false;
@@ -13,7 +13,7 @@ class Grupo {
 
   Grupo({
     this.grupoId,
-    required this.nome,
+    required this.subcategoriaId,
     required this.descricao,
     this.subcategoria,
     this.utilizadores,
@@ -21,9 +21,40 @@ class Grupo {
     this.imagem,
     required this.utilizadorCriouId,
   });
-}
 
-Future<List<Grupo>> fetchGrupos() async {
+  factory Grupo.fromJson(Map<String, dynamic> json) {
+    return Grupo(
+      grupoId: json['grupoId'],
+      descricao: json['descricao'],
+      subcategoriaId: json['subcategoriaId'],
+      subcategoria: json['subcategoria'] != null
+          ? Subcategoria.subcategoriaFromJson(json['subcategoria'])
+          : null,
+      utilizadores: json['utilizadores'] != null
+          ? (json['utilizadores'] as List)
+              .map((e) => Utilizador.fromJson(e))
+              .toList()
+          : null,
+      publico: json['publico'],
+      imagem: json['imagem'],
+      utilizadorCriouId: json['utilizadorCriouId'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'grupoId': grupoId,
+      'descricao': descricao,
+      'subcategoriaId': subcategoriaId,
+      'subcategoria': subcategoria?.toJson(),
+      'utilizadores': utilizadores?.map((e) => e.toJson()).toList(),
+      'publico': publico,
+      'imagem': imagem,
+      'utilizadorCriouId': utilizadorCriouId,
+    };
+  }
+
+/* Future<List<Grupo>> fetchGrupos() async {
   await Future.delayed(Duration(seconds: 2));
 
   return [
@@ -122,5 +153,5 @@ Map<String, Object?> grupotojson(Grupo grupo) {
     'publico': grupo.publico,
     'imagem': grupo.imagem,
     'utilizadorCriouId': grupo.utilizadorCriouId,
-  };
+  };*/
 }

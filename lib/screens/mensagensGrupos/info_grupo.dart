@@ -30,9 +30,9 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
   }
 
   Future<void> actualizaDados() async {
-    Grupo fetchedGrupo = await fetchGrupobyId(widget.grupoId);
+    // Grupo fetchedGrupo = await fetchGrupobyId(widget.grupoId);
     setState(() {
-      grupo = fetchedGrupo;
+      //grupo = fetchedGrupo;
       _isLoading = false;
     });
   }
@@ -88,7 +88,7 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
                   ),
                   SizedBox(height: altura * 0.02),
                   Text(
-                    grupo!.nome,
+                    "grupo!.nome",
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

@@ -23,7 +23,6 @@ class CriarGrupoScreen extends StatefulWidget {
 }
 
 class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
-  final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _descricaoController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool publico = false;
@@ -43,7 +42,6 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
 
   // inicializa os dados do formulario do grupo em modo de edição
   void _initializeFormWithExistingData(Grupo group) {
-    _nomeController.text = group.nome;
     _descricaoController.text = group.descricao;
     publico = group.publico;
     if (group.imagem != null && group.imagem!.isNotEmpty) {
@@ -84,8 +82,7 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
       canPop: false,
       onPopInvoked: (didPop) {
         if (!didPop) {
-          if (_descricaoController.text.isNotEmpty ||
-              _nomeController.text.isNotEmpty) {
+          if (_descricaoController.text.isNotEmpty) {
             Future<bool> confirma = confirmExit(
               context,
               AppLocalizations.of(context)!.sairSemGuardar,
@@ -159,25 +156,6 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
                                   ),
                                   SizedBox(height: altura * 0.02),
                                   //FotoPicker(onImagesPicked: _onImagesPicked),
-                                  TextFormField(
-                                    controller: _nomeController,
-                                    maxLength: 60,
-                                    decoration: InputDecoration(
-                                      labelText: AppLocalizations.of(context)!
-                                          .nomegrupo,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return AppLocalizations.of(context)!
-                                            .campoObrigatorio;
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: altura * 0.02),
                                   TextFormField(
                                     controller: _descricaoController,
                                     maxLength: 140,
@@ -281,8 +259,7 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          if (_descricaoController.text.isNotEmpty ||
-                              _nomeController.text.isNotEmpty) {
+                          if (_descricaoController.text.isNotEmpty) {
                             Future<bool> confirma = confirmExit(
                               context,
                               AppLocalizations.of(context)!.sairSemGuardar,
