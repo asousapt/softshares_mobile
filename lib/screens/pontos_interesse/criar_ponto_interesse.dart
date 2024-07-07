@@ -193,7 +193,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       "cidadeid": cidadeId,
       "utilizadorcriou": uti,
       "poloid": poloId,
-      "imagens": [],
+      "imagens": listaImagens,
       "formRespostas": form != null
           ? getRespostas().map((resposta) => resposta.toJsonCriar()).toList()
           : [],
@@ -216,7 +216,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
 
       Map<String, dynamic> json = createJson();
       // Perform the asynchronous operation
-      
+
       Future<bool> confirma = confirmExit(
         context,
         AppLocalizations.of(context)!.criarPontoInteresse,
