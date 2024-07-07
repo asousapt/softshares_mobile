@@ -163,7 +163,10 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
   }
 
   void converterImagens() async {
-    imagens = await convertListXfiletoImagem(images);
+    List<Imagem> imagensconvert = await convertListXfiletoImagem(images);
+    setState(() {
+      imagens = imagensconvert;
+    });
   }
 
   Map<String, dynamic> createJson() {
@@ -190,7 +193,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
       "cidadeid": cidadeId,
       "utilizadorcriou": uti,
       "poloid": poloId,
-      "imagens": listaImagens,
+      "imagens": [],
       "formRespostas": form != null
           ? getRespostas().map((resposta) => resposta.toJsonCriar()).toList()
           : [],
