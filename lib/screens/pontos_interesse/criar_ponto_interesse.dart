@@ -162,7 +162,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
     return mensagem;
   }
 
-  void converterImagens() async {
+  Future<void> converterImagens() async {
     List<Imagem> imagensconvert = await convertListXfiletoImagem(images);
     setState(() {
       imagens = imagensconvert;
@@ -177,10 +177,14 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
     final int sub = int.parse(_subCategoriaId!);
     final uti = user!.utilizadorId;
 
-    converterImagens();
-
     List<Map<String, dynamic>> listaImagens =
         toJsonList(imagens, (Imagem img) => img.toJson());
+
+    if (imagens.isEmpty) print("Lista de imagens vazia");
+
+    if (images.isEmpty) print("Lista de xfiles vazia");
+
+    if (listaImagens.isEmpty) print("Lista que vai ser enviada vazia");
 
     final Map<String, dynamic> data = {
       "subcategoriaid": sub,
@@ -214,6 +218,8 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
         cidadeId = cidadeIdValue;
       });
 
+      await converterImagens();
+
       Map<String, dynamic> json = createJson();
       // Perform the asynchronous operation
 
@@ -223,9 +229,21 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
         mensagem,
       );
 
-      confirma.then((value) => {
-            if (value) {api.postRequest('pontoInteresse/add', json)}
+      confirma.then((value) async => {
+            if (value)
+              {
+                await api.postRequest('pontoInteresse/addMobile', json),
+                Navigator.pushNamed(context, '/pontosInteresse')
+              }
             //post respostas
+            else
+              {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!.ocorreuErro),
+                  ),
+                )
+              }
           });
     }
   }
