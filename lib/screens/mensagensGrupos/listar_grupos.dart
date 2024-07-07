@@ -138,8 +138,8 @@ class _ListarGrupoScreenState extends State<ListarGrupoScreen> {
                           child: ListTile(
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(
-                                listaGruposFiltrada[index].imagem ??
-                                    'https://via.placeholder.com/150',
+                                // listaGruposFiltrada[index].imagem ??
+                                'https://via.placeholder.com/150',
                               ),
                             ),
                             title: Text(

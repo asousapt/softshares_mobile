@@ -33,6 +33,7 @@ class GrupoDetalheScreen extends StatelessWidget {
                 height: 150,
                 child: Stack(
                   children: [
+                    /*
                     CircleAvatar(
                         radius: 180,
                         backgroundImage: NetworkImage(
@@ -58,7 +59,7 @@ class GrupoDetalheScreen extends StatelessWidget {
                           },
                         ),
                       ),
-                    ),
+                    ), */
                   ],
                 ),
               ),
@@ -114,7 +115,7 @@ class GrupoDetalheScreen extends StatelessWidget {
                           onPressed: () {
                             // TODO: Implementar a função de juntar-se ao grupo
                             // falta ir buscar o id da mensagem
-                            Navigator.push(
+                            /*      Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => MensagemDetalheScreen(
@@ -123,7 +124,7 @@ class GrupoDetalheScreen extends StatelessWidget {
                                     imagemUrl: grupo.imagem!,
                                     msgGrupo: true),
                               ),
-                            );
+                            );*/
                           },
                           child:
                               Text(AppLocalizations.of(context)!.juntarGrupo),
