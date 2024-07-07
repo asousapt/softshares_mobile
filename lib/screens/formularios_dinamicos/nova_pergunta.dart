@@ -172,7 +172,7 @@ class _NovaPerguntaScreenState extends State<NovaPerguntaScreen> {
       case TipoDados.numerico:
         content = buildNumericoWidget(context);
         break;
-      case TipoDados.seleccao:
+      case TipoDados.seleccao || TipoDados.multiplaEscolha:
         content = buildSeleccaoWidget(context);
         break;
       default:
@@ -298,7 +298,8 @@ class _NovaPerguntaScreenState extends State<NovaPerguntaScreen> {
                                 return;
                               }
                               break;
-                            case TipoDados.seleccao:
+                            case TipoDados.seleccao ||
+                                  TipoDados.multiplaEscolha:
                               if (valoresPossiveis.isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -327,7 +328,8 @@ class _NovaPerguntaScreenState extends State<NovaPerguntaScreen> {
                             tamanho: _tamanhoController.text.isEmpty
                                 ? 0
                                 : int.parse(_tamanhoController.text),
-                            valoresPossiveis: tipoDados == TipoDados.seleccao
+                            valoresPossiveis: tipoDados == TipoDados.seleccao ||
+                                    tipoDados == TipoDados.multiplaEscolha
                                 ? valoresPossiveis
                                 : [],
                             ordem: ordem,
