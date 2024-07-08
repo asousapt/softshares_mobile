@@ -253,11 +253,12 @@ class _RespostaFormScreenState extends State<RespostaFormScreen> {
           break;
 
         case TipoDados.multiplaEscolha:
-          respostas.add(RespostaDetalhe(
-            perguntaId: pergunta.detalheId,
-            resposta: _multiSelectValues[index]!
-                .join(', '), // Join multiple choices with comma
-          ));
+          for (var value in _multiSelectValues[index]!) {
+            respostas.add(RespostaDetalhe(
+              perguntaId: pergunta.detalheId,
+              resposta: value,
+            ));
+          }
           break;
 
         default:

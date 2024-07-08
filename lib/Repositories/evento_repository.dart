@@ -35,6 +35,56 @@ class EventoRepository {
     }
   }
 
+  // busca todos os eventos disponiveis no polo num range de 365 dias antes e depois de determinada categoria
+  Future<List<Evento>> getEventosBycat(int categoriaId) async {
+    _apiService.setAuthToken("tokenFixo");
+    final prefs = await SharedPreferences.getInstance();
+    final poloId = prefs.getInt("poloId").toString();
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    int utilizadorId = utilizador.utilizadorId;
+    final DateTime now = DateTime.now();
+    final DateTime firstDay = DateTime(now.year, now.month, now.day - 365);
+    final DateTime lastDay = DateTime(now.year, now.month, now.day + 365);
+
+    final url =
+        "evento/$poloId/data/range/${firstDay.toIso8601String()}/${lastDay.toIso8601String()}/utilizador/${utilizadorId.toString()}/categoria/$categoriaId";
+    final response = await _apiService.getRequest(url);
+
+    final eventosformattr = response['data'] as List;
+
+    if (eventosformattr.isEmpty) {
+      return [];
+    } else {
+      return eventosformattr.map((e) => Evento.fromJson(e)).toList();
+    }
+  }
+
+  // busca todos os eventos disponiveis no polo num range de 365 dias antes e depois de determinada categoria
+  Future<List<Evento>> getEventosByStr(String pesquisa) async {
+    _apiService.setAuthToken("tokenFixo");
+    final prefs = await SharedPreferences.getInstance();
+    final poloId = prefs.getInt("poloId").toString();
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    int utilizadorId = utilizador.utilizadorId;
+    final DateTime now = DateTime.now();
+    final DateTime firstDay = DateTime(now.year, now.month, now.day - 365);
+    final DateTime lastDay = DateTime(now.year, now.month, now.day + 365);
+
+    final url =
+        "evento/$poloId/data/range/${firstDay.toIso8601String()}/${lastDay.toIso8601String()}/utilizador/${utilizadorId.toString()}/filtro/$pesquisa";
+    final response = await _apiService.getRequest(url);
+
+    final eventosformattr = response['data'] as List;
+
+    if (eventosformattr.isEmpty) {
+      return [];
+    } else {
+      return eventosformattr.map((e) => Evento.fromJson(e)).toList();
+    }
+  }
+
   // Busca os eventos em que o utilizador esta inscrito
   Future<List<Evento>> getEventosInscritos(int utilizadorId) async {
     _apiService.setAuthToken("tokenFixo");

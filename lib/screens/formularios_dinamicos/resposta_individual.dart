@@ -111,8 +111,10 @@ class _RespostaIndividualScreenState extends State<RespostaIndividualScreen>
         await respostaDetalheRepository.getRespostasDetalhe(
             evento.eventoId!, "EVENTO", formQualId, utilizadorId);
     setState(() {
-      respostasformQualidade = respostasQuall;
-      respostasformInsc = respostasInscl;
+      respostasformQualidade =
+          respostaDetalheRepository.groupRespostas(respostasQuall);
+      respostasformInsc =
+          respostaDetalheRepository.groupRespostas(respostasInscl);
       _isLoading = false;
     });
   }

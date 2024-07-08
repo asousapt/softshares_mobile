@@ -75,6 +75,7 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
                       height: 150,
                       child: Stack(
                         children: [
+                          /*
                           CircleAvatar(
                             radius: 180,
                             backgroundImage: NetworkImage(
@@ -82,6 +83,7 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
                                   'https://via.placeholder.com/150',
                             ),
                           ),
+                       */
                         ],
                       ),
                     ),

@@ -48,6 +48,7 @@ class Pergunta {
     data['tamanho'] = tamanho;
     data['options'] = valoresPossiveis;
     data['order'] = ordem;
+    data['size'] = tamanho;
     return data;
   }
 

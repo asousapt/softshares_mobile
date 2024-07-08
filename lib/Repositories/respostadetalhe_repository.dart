@@ -1,3 +1,4 @@
+import 'package:softshares_mobile/models/formularios_dinamicos/pergunta_formulario.dart';
 import 'package:softshares_mobile/models/formularios_dinamicos/resposta_form.dart';
 import 'package:softshares_mobile/services/api_service.dart';
 
@@ -47,5 +48,36 @@ class RespostaDetalheRepository {
       print(e);
       return [];
     }
+  }
+
+  // agrupa respostas da mesma pergunta
+  List<RespostaDetalhe> groupRespostas(List<RespostaDetalhe> respostas) {
+    Map<int, Map<String, dynamic>> groupedRespostas = {};
+
+    for (var respostaDetalhe in respostas) {
+      if (!groupedRespostas.containsKey(respostaDetalhe.perguntaId)) {
+        groupedRespostas[respostaDetalhe.perguntaId] = {
+          'pergunta': respostaDetalhe.pergunta,
+          'respostas': [],
+        };
+      }
+      groupedRespostas[respostaDetalhe.perguntaId]!['respostas']
+          .add(respostaDetalhe.resposta);
+    }
+
+    List<RespostaDetalhe> combinedRespostas = [];
+
+    groupedRespostas.forEach((perguntaId, data) {
+      Pergunta? pergunta = data['pergunta'];
+      List<String> respostasList = List<String>.from(data['respostas']);
+
+      combinedRespostas.add(RespostaDetalhe(
+        perguntaId: perguntaId,
+        pergunta: pergunta,
+        resposta: respostasList.join(', '),
+      ));
+    });
+
+    return combinedRespostas;
   }
 }

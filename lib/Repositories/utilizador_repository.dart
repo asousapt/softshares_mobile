@@ -68,4 +68,19 @@ class UtilizadorRepository {
 
     return descricao;
   }
+
+  Future<List<Utilizador>> getUtilizadoresSimplificado() async {
+    apiService.setAuthToken("tokenFixo");
+    try {
+      var response = await apiService.getRequest('utilizadores/listas');
+
+      final utilizadoresFormatted = response['data'] as List;
+
+      return utilizadoresFormatted
+          .map((e) => Utilizador.fromJsonSimplificado(e))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to load utilizadores: $e');
+    }
+  }
 }

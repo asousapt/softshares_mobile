@@ -1,4 +1,3 @@
-import 'package:softshares_mobile/services/api_service.dart';
 import 'dart:convert';
 
 import 'package:softshares_mobile/models/imagem.dart';
@@ -39,13 +38,30 @@ class Utilizador {
 
   // retorna  as iniciais do utilizador
   String getIniciais() {
-    return "${pNome[0]}${uNome[0]}".toUpperCase();
+    return "${pNome[0]} ${uNome[0]}".toUpperCase();
   }
 
   // Utilizador para JSON
   Map<String, dynamic> toJson() {
     return {
       'utilizadorid': utilizadorId,
+      'pnome': pNome,
+      'unome': uNome,
+      'email': email,
+      'sobre': sobre,
+      'poloid': poloId,
+      'preferencias': preferencias,
+      'funcaoid': funcaoId,
+      'departamentoid': departamentoId,
+      'fotoUrl': fotoUrl,
+      'fotoEnvio': fotoEnvio?.toJson(),
+      'idiomaid': idiomaId,
+    };
+  }
+
+  Map<String, dynamic> toJsonGrupo() {
+    return {
+      'id': utilizadorId,
       'pnome': pNome,
       'unome': uNome,
       'email': email,
