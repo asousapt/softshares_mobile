@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
 class MensagemItem extends StatelessWidget {
-  const MensagemItem(
-      {super.key,
-      required this.nome,
-      required this.mensagemTexto,
-      required this.hora,
-      required this.lida,
-      required this.imagemUrl,});
+  const MensagemItem({
+    super.key,
+    required this.nome,
+    required this.mensagemTexto,
+    required this.hora,
+    required this.imagemUrl,
+  });
 
   final String nome;
   final String mensagemTexto;
   final String hora;
-  final bool lida;
+
   final String imagemUrl;
 
   @override
@@ -36,7 +36,6 @@ class MensagemItem extends StatelessWidget {
                     nome,
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: lida ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -45,7 +44,6 @@ class MensagemItem extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       color: Colors.grey.shade600,
-                      fontWeight: lida ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ],
@@ -56,7 +54,6 @@ class MensagemItem extends StatelessWidget {
             hora,
             style: TextStyle(
               fontSize: 12,
-              fontWeight: lida ? FontWeight.bold : FontWeight.normal,
             ),
           ),
         ],

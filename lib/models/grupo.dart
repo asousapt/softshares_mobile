@@ -11,6 +11,7 @@ class Grupo {
   List<Utilizador>? utilizadores;
   bool publico;
   List<String>? fotourls;
+  String? fotoUrl1;
   int utilizadorCriouId;
 
   Grupo({
@@ -24,15 +25,16 @@ class Grupo {
     required this.utilizadorCriouId,
     this.categoriaId,
     this.fotourls,
+    this.fotoUrl1,
   });
 
   factory Grupo.fromJson(Map<String, dynamic> json) {
     return Grupo(
-      grupoId: json['grupoId'],
+      grupoId: json['grupoid'],
       nome: json['nome'],
       descricao: json['descricao'],
-      subcategoriaId: json['subcategoriaId'],
-      categoriaId: json['categoriaId'],
+      subcategoriaId: json['subcategoriaid'],
+      categoriaId: json['categoriaid'],
       utilizadores: json['utilizadores'] != null
           ? (json['utilizadores'] as List)
               .map((e) => Utilizador.fromJsonSimplificado(e))
@@ -42,9 +44,11 @@ class Grupo {
       imagem: json['imagem'] != null
           ? (json['imagem'] as List).map((e) => Imagem.fromJson(e)).toList()
           : null,
-      utilizadorCriouId: json['utilizadorCriouId'],
-      fotourls:
-          json['fotourls'] != null ? List<String>.from(json['fotourls']) : null,
+      utilizadorCriouId: json['utilizadorCriou'] ?? 0,
+      fotourls: json['fotoUrl'] != null && json['fotoUrl'] != ''
+          ? [json['fotoUrl']]
+          : [],
+      fotoUrl1: json['fotoUrl1'] ?? '',
     );
   }
 

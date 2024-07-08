@@ -73,6 +73,7 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
     });
   }
 
+  // Carrega a lista de utilizadores
   Future<void> carregaListaUtils() async {
     UtilizadorRepository utilizadorRepository = UtilizadorRepository();
     List<Utilizador> listaUtils =
@@ -389,10 +390,13 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
                                                 publico: publico,
                                                 utilizadores:
                                                     listaUtilizadoresSelecionados,
-                                                categoriaId:
-                                                    int.parse(_categoriaId!),
-                                                subcategoriaId:
-                                                    int.parse(_subCategoriaId!),
+                                                categoriaId: publico
+                                                    ? int.parse(_categoriaId!)
+                                                    : null,
+                                                subcategoriaId: publico
+                                                    ? int.parse(
+                                                        _subCategoriaId!)
+                                                    : null,
                                                 imagem: imagens,
                                                 utilizadorCriouId: utilizadorId,
                                               );

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:softshares_mobile/Repositories/grupo_repository.dart';
 import 'package:softshares_mobile/models/grupo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/grupo_detalhe.dart';
+import 'package:softshares_mobile/screens/mensagensGrupos/info_grupo.dart';
 
 class ListarGrupoScreen extends StatefulWidget {
   const ListarGrupoScreen({super.key});
@@ -32,7 +34,8 @@ class _ListarGrupoScreenState extends State<ListarGrupoScreen> {
       _isLoading = true;
     });
 
-    grupos = []; //await fetchGrupos();
+    GrupoRepository grupoRepository = GrupoRepository();
+    List<Grupo> grupos = await grupoRepository.getGrupos();
 
     setState(() {
       listaGruposFiltrada = grupos;
@@ -126,7 +129,7 @@ class _ListarGrupoScreenState extends State<ListarGrupoScreen> {
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(
-                              // Navega para a tela de detalhes do grupo
+                              // Navega para o ecra de detalhes do grupo
                               context,
                               MaterialPageRoute(
                                 builder: (context) => GrupoDetalheScreen(
@@ -136,12 +139,28 @@ class _ListarGrupoScreenState extends State<ListarGrupoScreen> {
                             );
                           },
                           child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                // listaGruposFiltrada[index].imagem ??
-                                'https://via.placeholder.com/150',
-                              ),
-                            ),
+                            leading: listaGruposFiltrada[index]
+                                    .fotourls!
+                                    .isEmpty
+                                ? CircleAvatar(
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
+                                    child: Text(
+                                      listaGruposFiltrada[index]
+                                          .nome[0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)!.canvasColor,
+                                      ),
+                                    ),
+                                  )
+                                : CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                      listaGruposFiltrada[index].fotourls![0],
+                                    ),
+                                  ),
                             title: Text(
                               listaGruposFiltrada[index].descricao,
                               style: const TextStyle(

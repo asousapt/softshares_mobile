@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/models/notificacoes.dart';
 import 'package:softshares_mobile/models/utilizador.dart';

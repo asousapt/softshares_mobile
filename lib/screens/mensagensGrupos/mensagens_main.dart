@@ -31,7 +31,7 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
     await Future.delayed(Duration(seconds: 2));
 
     List<Mensagem> mensagens = [];
-    /*Mensagem(
+    /* Mensagem(
         mensagemId: 1,
         mensagemTexto: 'Hello John!',
         remetente: Utilizador(1, 'Alice', 'Johnson',
@@ -235,7 +235,7 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
                     imagemUrl:
                         'https://via.placeholder.com/150', // Placeholder image
                     hora: dataFormatadaMsg(mensagens[index].dataEnvio, 'pt'),
-                    lida: mensagens[index].vista!,
+                    //lida: mensagens[index].vista!,
                   ),
                 );
               },
