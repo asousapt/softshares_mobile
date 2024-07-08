@@ -167,5 +167,7 @@
   "nome": "Nombre", 
   "verTodasRespostas": "Ver todas las respuestas", 
   "multiplaEscolha": "Escolha Múltipla", 
-  "questionarioQualidade": "Encuesta sobre la calidad"
+  "questionarioQualidade": "Encuesta sobre la calidad",
+  "confirmarSaida" : "Confirmar pago",
+  "temCerteza" : "Quieres finalizar tu sesión?"
 }

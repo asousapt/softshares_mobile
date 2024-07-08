@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:softshares_mobile/services/google_signin_api.dart';
+import 'package:softshares_mobile/widgets/gerais/dialog.dart';
+
 class MainDrawer extends StatefulWidget {
   const MainDrawer({super.key});
 
@@ -134,10 +136,19 @@ class _MainDrawerState extends State<MainDrawer> {
             ),
             ListTile(
               onTap: () async {
-                prefs.setBool('isChecked', false);
-                await FacebookAuth.instance.logOut();
-                await GoogleSignInApi.logout();
-                Navigator.pushNamed(context, "/login");
+                Future<bool> confirma = confirmExit(
+                  context,
+                  AppLocalizations.of(context)!.confirmarSaida,
+                  AppLocalizations.of(context)!.temCerteza
+                );
+                confirma.then((value) async {
+                  if (value) {
+                    prefs.setBool('isChecked', false);
+                    await FacebookAuth.instance.logOut();
+                    await GoogleSignInApi.logout();
+                    Navigator.pushNamed(context, "/login");
+                  }
+                });
               },
               contentPadding: const EdgeInsets.only(left: 15, top: 10),
               leading: const Icon(FontAwesomeIcons.rightFromBracket),

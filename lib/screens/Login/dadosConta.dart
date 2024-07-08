@@ -7,6 +7,8 @@ import 'package:softshares_mobile/models/departamento.dart';
 import 'package:softshares_mobile/models/funcao.dart';
 import 'package:softshares_mobile/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/services/google_signin_api.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class EcraDadosConta extends StatefulWidget {
   EcraDadosConta(
@@ -14,11 +16,12 @@ class EcraDadosConta extends StatefulWidget {
       required this.mudaIdioma,
       required this.email,
       this.pass,
-      required this.isToken,
-      this.token});
+      required this.tipo,
+      this.token,
+      this.nome});
 
-  final String? email, pass, token;
-  final bool isToken;
+  final String? email, pass, token, nome;
+  final String tipo;
 
   final Function(String idioma) mudaIdioma;
 
@@ -38,18 +41,30 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
 
   late TextEditingController _controlPNome;
   late TextEditingController _controlUNome;
+  late TextEditingController _bioController;
   //Basededados bd = Basededados();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _loading = true;
   ApiService api = ApiService();
+  AccessToken? _accessToken;
 
   @override
   void initState() {
     super.initState();
+    if (widget.tipo == "facebook" || widget.tipo == "google") {
+      List<String> name = widget.nome!.split(' ');
+      setState(() {
+        pNome = name[0];
+        uNome = name[1];
+      });
+    }
+    print("Nome1: ${widget.nome}");
+    print("Nome2: $pNome - $uNome");
     api.setAuthToken('tokenFixo');
     carregarDados();
-    _controlPNome = TextEditingController();
-    _controlUNome = TextEditingController();
+    _controlPNome = TextEditingController(text: pNome);
+    _controlUNome = TextEditingController(text: uNome);
+    _bioController = TextEditingController();
     getVersion();
   }
 
@@ -61,7 +76,8 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
         throw Exception("Failed to load data: Expected a list in 'data'");
       }
 
-      final listaFormatted2 = listaFormatted.where((e) => e["idiomaId"] == idiomaId);
+      final listaFormatted2 =
+          listaFormatted.where((e) => e["idiomaId"] == idiomaId);
 
       // Parse the JSON data into a list of PontoInteresse objects
       List<Funcao> listaUpdated = listaFormatted2.map<Funcao>((item) {
@@ -90,7 +106,8 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
       if (listaFormatted is! List) {
         throw Exception("Failed to load data: Expected a list in 'data'");
       }
-      final listaFormatted2 = listaFormatted.where((e) => e["idiomaId"] == idiomaId);
+      final listaFormatted2 =
+          listaFormatted.where((e) => e["idiomaId"] == idiomaId);
 
       // Parse the JSON data into a list of PontoInteresse objects
       List<Departamento> listaUpdated =
@@ -277,6 +294,14 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
                                         },
                                       );
                                     },
+                                  ),
+                                  SizedBox(height: altura * 0.03),
+                                  TextFormField(
+                                    controller: _bioController,
+                                    decoration: InputDecoration(
+                                      labelText: AppLocalizations.of(context)!.sobreMim,
+                                    ),
+                                    maxLines: 3,
                                   ),
                                   SizedBox(height: altura * 0.03),
                                   SizedBox(

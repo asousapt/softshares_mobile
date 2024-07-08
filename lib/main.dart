@@ -16,7 +16,6 @@ import 'package:softshares_mobile/screens/Login/login.dart';
 import 'package:softshares_mobile/screens/Login/recuperar_pass.dart';
 import 'package:softshares_mobile/screens/Login/registo.dart';
 import 'package:softshares_mobile/screens/Login/repor_pass.dart';
-import 'package:softshares_mobile/screens/Login/dadosConta.dart';
 import 'package:softshares_mobile/screens/drawerLateral/contacte_suporte.dart';
 import 'package:softshares_mobile/screens/drawerLateral/notifications_alert.dart';
 import 'package:softshares_mobile/screens/drawerLateral/perfil.dart';

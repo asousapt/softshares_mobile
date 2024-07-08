@@ -1,22 +1,43 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  // Configure on dotenv file
-  final String _baseUrl = (dotenv.env['API_URL'] as String);
-
+  final String _baseUrl = dotenv.env['API_URL'] as String;
   String? _authToken;
 
-  void setAuthToken(String token) {
-    _authToken = token;
+  ApiService() {
+    _initialize();
   }
 
-  // faz get no endpoint de autenticação
-  Future<void> fetchAuthToken(
-      String endpoint, Map<String, dynamic> credentials) async {
+  Future<void> _initialize() async {
+    final prefs = await SharedPreferences.getInstance();
+    _authToken = prefs.getString('token');
+
+    if (_authToken == null || _authToken!.isEmpty) {
+      String? utilizadorObj = prefs.getString('utilizadorObj');
+      if (utilizadorObj == null || utilizadorObj.isEmpty) {
+        // Handle the case where utilizadorObj is empty
+        // For example, fetch credentials from the user input or parameter
+        print("Utilizador object is empty. Please provide credentials.");
+      } else {
+        Map<String, dynamic> credentials = json.decode(utilizadorObj);
+        await fetchAuthToken(credentials);
+      }
+    }
+  }
+
+  Future<void> setAuthToken(String token) async {
+    _authToken = token;
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('token', token);
+  }
+
+  Future<void> fetchAuthToken(Map<String, dynamic> credentials) async {
+    final prefs = await SharedPreferences.getInstance();
     final response = await http.post(
-      Uri.parse('$_baseUrl/$endpoint'),
+      Uri.parse('$_baseUrl/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -25,14 +46,29 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final responseBody = json.decode(response.body);
-      _authToken =
-          responseBody['token']; // Assuming the token is in the 'token' field
+      await setAuthToken(responseBody['token']);
+      await prefs.setString(
+          'utilizadorObj', jsonEncode(responseBody['utilizador']));
     } else {
       throw Exception('Failed to authenticate');
     }
   }
 
-  // FAz um GET request
+  Future<void> fetchAuthTokenWithFallback(
+      Map<String, dynamic> fallbackCredentials) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? utilizadorObj = prefs.getString('utilizadorObj');
+    Map<String, dynamic> credentials;
+
+    if (utilizadorObj == null || utilizadorObj.isEmpty) {
+      credentials = fallbackCredentials;
+    } else {
+      credentials = json.decode(utilizadorObj);
+    }
+
+    await fetchAuthToken(credentials);
+  }
+
   Future<dynamic> getRequest(String endpoint) async {
     if (_authToken == null) {
       throw Exception('Auth token is not set. Please authenticate first.');
@@ -41,8 +77,6 @@ class ApiService {
     final response = await http.get(
       Uri.parse('$_baseUrl/$endpoint'),
       headers: <String, String>{
-        //Por enquanto não têm Bearer como prefix
-        //'Authorization': 'Bearer $_authToken',
         'Authorization': '$_authToken',
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -70,9 +104,7 @@ class ApiService {
     }
   }
 
-  // Makes a POST request
-  Future<dynamic> postRequest(
-      String endpoint, Map<String, dynamic> data) async {
+  Future<dynamic> postRequest(String endpoint, Map<String, dynamic> data) async {
     if (_authToken == null) {
       throw Exception('Auth token is not set. Please authenticate first.');
     }
@@ -94,7 +126,6 @@ class ApiService {
     }
   }
 
-// makes a PUT request
   Future<dynamic> putRequest(String endpoint, Map<String, dynamic> data) async {
     if (_authToken == null) {
       throw Exception('Auth token is not set. Please authenticate first.');
@@ -117,7 +148,6 @@ class ApiService {
     }
   }
 
-  // makes a DELETE request
   Future<dynamic> deleteRequest(String endpoint) async {
     if (_authToken == null) {
       throw Exception('Auth token is not set. Please authenticate first.');

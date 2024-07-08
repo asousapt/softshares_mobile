@@ -2,7 +2,6 @@ import 'dart:convert';
 import "package:flutter/material.dart";
 import 'package:country_flags/country_flags.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -15,11 +14,10 @@ import 'package:softshares_mobile/Repositories/polo_repository.dart';
 import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
 import 'package:softshares_mobile/Repositories/utilizador_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
-import 'package:softshares_mobile/models/departamento.dart';
 import 'package:softshares_mobile/models/polo.dart';
-import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/services/google_signin_api.dart';
+import 'package:softshares_mobile/services/api_service.dart';
 
 class EcraLogin extends StatefulWidget {
   const EcraLogin({
@@ -37,6 +35,7 @@ class EcraLogin extends StatefulWidget {
 
 class _EcraLoginState extends State<EcraLogin> {
   Map<String, dynamic>? _facebookData;
+  ApiService api = ApiService();
   AccessToken? _accessToken;
   bool _checking = true;
   String version = 'Loading...';
@@ -51,8 +50,9 @@ class _EcraLoginState extends State<EcraLogin> {
   late String idioma = 'pt';
 
   _checkIfisLoggedInFacebook() async {
+    final prefs = await SharedPreferences.getInstance();
     final accessToken = await FacebookAuth.instance.accessToken;
-
+    await prefs.setString("tipoLogin", "facebook");
     setState(() {
       _checking = false;
     });
@@ -66,12 +66,46 @@ class _EcraLoginState extends State<EcraLogin> {
       });
       //Get and set user local with this data
       _facebookData!.forEach((key, value) {
-      print('$key: $value');
-    });
-      Navigator.pushNamed(context, '/escolherPolo');
+        print('$key: $value');
+      });
     } else {
       await _loginFacebook();
       //Get and set user local with this data
+    }
+    await prefs.setString("email", _facebookData!['email']);
+    await prefs.setString("token", _accessToken!.tokenString);
+    carregaDados();
+  }
+
+  Future<void> carregaDados() async {
+    final context = this.context;
+    /*if (_formKey.currentState!.validate()) {
+                                          Navigator.pushNamed(context, '/home');
+                                        }*/
+    final prefs = await SharedPreferences.getInstance();
+
+    UtilizadorRepository utilizadorRepository = UtilizadorRepository();
+
+    Utilizador util = await utilizadorRepository.getUtilizador("37");
+
+    Map<String, dynamic> utilJson = util.toJson();
+
+    await prefs.setString("utilizadorObj", jsonEncode(utilJson));
+
+    await prefs.setBool('isChecked', isChecked);
+
+    await carregaPolos();
+    await carregaCategorias();
+    SubcategoriaRepository subcategoriaRepository = SubcategoriaRepository();
+    if (mounted) {
+      await subcategoriaRepository.carregaSubategorias(context);
+      DepartamentoRepository departamentoRepository = DepartamentoRepository();
+      await departamentoRepository.carregaDepartamentos(context);
+      FuncaoRepository funcaoRepositry = FuncaoRepository();
+      await funcaoRepositry.carregaFuncoes(context);
+      CidadeRepository cidadeRepository = CidadeRepository();
+      await cidadeRepository.carregaCidades(context);
+
       Navigator.pushNamed(context, '/escolherPolo');
     }
   }
@@ -95,15 +129,23 @@ class _EcraLoginState extends State<EcraLogin> {
     });
   }
 
-  Future signInGoogle() async{
-    print("Executes this");
+  Future signInGoogle() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("tipoLogin", "google");
     final user = await GoogleSignInApi.login();
-    if(user == null){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.googleFailed)));
-    }else{
-      print("Sign in by google\nNome do user: ${user.displayName}, Email: ${user.email}");
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.googleFailed)));
+    } else {
+      print(
+          "Sign in by google\nNome do user: ${user.displayName}, Email: ${user.email}");
+      final googleAuth = await user.authentication;
+      final authToken = await api.getRequestNoAuth("utilizadores/login");
+      //final authToken = await api.getRequestNoAuth("utilizadores/login");
+      await prefs.setString("email", user.email);
+      await prefs.setString("token", googleAuth.accessToken!);
       //Get and set user local with this data
-      Navigator.pushNamed(context, '/escolherPolo');
+      carregaDados();
     }
   }
 
@@ -111,7 +153,6 @@ class _EcraLoginState extends State<EcraLogin> {
     await FacebookAuth.instance.logOut();
     _accessToken = null;
     _facebookData = null;
-    setState(() {});
   }
 
   bool isValidEmail(String email) {
@@ -142,9 +183,40 @@ class _EcraLoginState extends State<EcraLogin> {
       });
     }
     if (isChecked) {
+      final tipo = await prefs.getString("tipoLogin");
+      if (tipo == "google"){
+        final email = prefs.getString("email");
+        final token = prefs.getString("token");
+        Map<String,dynamic> json = {
+          "tipo" : "google",
+          "email" : email,
+          "token" : token,
+        };
+        api.fetchAuthTokenWithFallback(json);
+      } else if (tipo == "facebook"){
+        final email = await prefs.getString("email");
+        final token = await prefs.getString("token");
+        Map<String,dynamic> json = {
+          "tipo" : "facebook",
+          "email" : email,
+          "token" : token,
+        };
+        api.fetchAuthTokenWithFallback(json);
+      } else if (tipo == "normal"){
+        final email = await prefs.getString("email");
+        final pass = await prefs.getString("pass");
+        Map<String,dynamic> json = {
+          "tipo" : "normal",
+          "email" : email,
+          "pass" : pass,
+        };
+        api.fetchAuthTokenWithFallback(json);
+      }
       Navigator.pushNamed(context, "/home");
+    } else {
+      await FacebookAuth.instance.logOut();
+      await GoogleSignInApi.logout();
     }
-    ;
   }
 
   @override
@@ -381,55 +453,10 @@ class _EcraLoginState extends State<EcraLogin> {
                                     width: double.infinity,
                                     child: FilledButton(
                                       onPressed: () async {
-                                        final context = this.context;
-                                        /*if (_formKey.currentState!.validate()) {
-                                          Navigator.pushNamed(context, '/home');
-                                        }*/
                                         final prefs = await SharedPreferences
                                             .getInstance();
-
-                                        UtilizadorRepository
-                                            utilizadorRepository =
-                                            UtilizadorRepository();
-
-                                        Utilizador util =
-                                            await utilizadorRepository
-                                                .getUtilizador("37");
-
-                                        Map<String, dynamic> utilJson =
-                                            util.toJson();
-
-                                        await prefs.setString("utilizadorObj",
-                                            jsonEncode(utilJson));
-
-                                        await prefs.setBool('isChecked',
-                                            isChecked);    
-
-                                        await carregaPolos();
-                                        await carregaCategorias();
-                                        SubcategoriaRepository
-                                            subcategoriaRepository =
-                                            SubcategoriaRepository();
-                                        if (mounted) {
-                                          await subcategoriaRepository
-                                              .carregaSubategorias(context);
-                                          DepartamentoRepository
-                                              departamentoRepository =
-                                              DepartamentoRepository();
-                                          await departamentoRepository
-                                              .carregaDepartamentos(context);
-                                          FuncaoRepository funcaoRepositry =
-                                              FuncaoRepository();
-                                          await funcaoRepositry
-                                              .carregaFuncoes(context);
-                                          CidadeRepository cidadeRepository =
-                                              CidadeRepository();
-                                          await cidadeRepository
-                                              .carregaCidades(context);
-
-                                          Navigator.pushNamed(
-                                              context, '/escolherPolo');
-                                        }
+                                        prefs.setString("tipoLogin", "normal");
+                                        await carregaDados();
                                       },
                                       child: Text(
                                           AppLocalizations.of(context)!.login),

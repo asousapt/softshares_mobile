@@ -168,5 +168,7 @@
   "nome": "Nome", 
   "verTodasRespostas": "Ver todas as respostas", 
   "multiplaEscolha": "Escolha Múltipla", 
-  "questionarioQualidade": "Questionario de Qualidade"
+  "questionarioQualidade": "Questionario de Qualidade",
+  "confirmarSaida" : "Confirmar Saida",
+  "temCerteza" : "Pretende terminar a sua sessão?"
 }

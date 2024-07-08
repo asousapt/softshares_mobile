@@ -168,5 +168,7 @@
   "nome": "Name", 
   "verTodasRespostas": "See all answers", 
   "multiplaEscolha": "Multiple Choice", 
-  "questionarioQualidade": "Quelity Survey"
+  "questionarioQualidade": "Quelity Survey",
+  "confirmarSaida" : "Confirm exit",
+  "temCerteza" : "Do you want to end your session?"
 }

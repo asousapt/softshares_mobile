@@ -38,10 +38,16 @@ class _EcraRegistarState extends State<EcraRegistar> {
   @override
   void initState() {
     super.initState();
+    inicializar();
     _controlEmail = TextEditingController();
     _controlPass = TextEditingController();
     _controlPass2 = TextEditingController();
     getVersion();
+  }
+
+  void inicializar() async {
+    await FacebookAuth.instance.logOut();
+    await GoogleSignInApi.logout();
   }
 
   Future<void> getVersion() async {
@@ -87,7 +93,8 @@ class _EcraRegistarState extends State<EcraRegistar> {
             builder: (context) => EcraDadosConta(
                   mudaIdioma: widget.mudaIdioma,
                   email: _facebookData!['email'],
-                  isToken: true,
+                  tipo: "facebook",
+                  nome: _facebookData!['name'],
                   token: _accessToken!.tokenString,
                 )));
   }
@@ -107,7 +114,8 @@ class _EcraRegistarState extends State<EcraRegistar> {
             builder: (context) => EcraDadosConta(
                   mudaIdioma: widget.mudaIdioma,
                   email: user.email,
-                  isToken: true,
+                  tipo: "google",
+                  nome: user.displayName,
                   token: googleAuth.accessToken,
                 )));
   }
@@ -249,7 +257,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
                                     builder: (context) => EcraDadosConta(
                                           mudaIdioma: widget.mudaIdioma,
                                           email: email,
-                                          isToken: false,
+                                          tipo: "normal",
                                           pass: pass,
                                         )));
                           }
