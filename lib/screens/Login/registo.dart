@@ -57,7 +57,7 @@ class _EcraRegistarState extends State<EcraRegistar> {
     });
   }
 
-  _loginFacebook() async {
+   Future<void>_loginFacebook() async {
     final LoginResult result = await FacebookAuth.instance.login();
     if (result.status == LoginStatus.success) {
       _accessToken = result.accessToken;
@@ -85,7 +85,8 @@ class _EcraRegistarState extends State<EcraRegistar> {
       });
       print("Facebook Data: $_facebookData");
     } else {
-      _loginFacebook();
+      print("goes to else");
+      await _loginFacebook();
     }
     Navigator.push(
         context,
