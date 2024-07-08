@@ -27,6 +27,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   List<Evento> listaEvFiltrada = [];
+  List<Evento> listaOriginal = [];
   List<Evento> eventosInscrito = [];
   List<Evento> listaEventos = [];
   Color containerColorEventos = Colors.transparent;
@@ -65,6 +66,7 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
     listaEventos = await eventosRepository.getEventos();
 
     setState(() {
+      listaOriginal = listaEventos;
       listaEvFiltrada = listaEventos;
     });
     return listaEvFiltrada;
@@ -141,6 +143,12 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
           onPressed: () {
             setState(() {
               _searchController.clear();
+              if (listaOriginal.isNotEmpty) {
+                containerColorEventos = Colors.transparent;
+              } else {
+                containerColorEventos = Theme.of(context).canvasColor;
+              }
+              listaEvFiltrada = listaOriginal;
             });
           },
         ),
@@ -173,49 +181,88 @@ class _EventosMainScreenState extends State<EventosMainScreen> {
   }
 
   // faz a filtragem da lista consoante o que é digitado na caixa de pesquisa
-  void filtraPorTexto(String texto) {
+  void filtraPorTexto(String texto) async {
     texto = texto.toLowerCase();
+    listaEvFiltrada = listaOriginal;
     setState(() {
-      listaEvFiltrada = listaEventos.where((element) {
-        String descricaoLower = element.descricao.toLowerCase();
-        String localizacaoLower = element.localizacao.toLowerCase();
-        String tituloLower = element.titulo.toLowerCase();
-        return descricaoLower.contains(texto) ||
-            localizacaoLower.contains(texto) ||
-            tituloLower.contains(texto);
-      }).toList();
+      _isLoading = true;
+    });
 
-      if (listaEvFiltrada.isEmpty) {
-        containerColorEventos = Theme.of(context).canvasColor;
-      } else {
-        containerColorEventos = Colors.transparent;
-      }
+    listaEvFiltrada = listaEventos.where((element) {
+      String descricaoLower = element.descricao.toLowerCase();
+      String localizacaoLower = element.localizacao.toLowerCase();
+      String tituloLower = element.titulo.toLowerCase();
+      return descricaoLower.contains(texto) ||
+          localizacaoLower.contains(texto) ||
+          tituloLower.contains(texto);
+    }).toList();
 
+    if (listaEvFiltrada.isNotEmpty) {
+      setState(() {
+        _isLoading = false;
+      });
+    } else {
+      // faz chamada à API
+      EventoRepository eventoRepository = EventoRepository();
+      List<Evento> listaEv =
+          await eventoRepository.getEventosByStr(Uri.encodeComponent(texto));
+      setState(() {
+        listaEvFiltrada = listaEv;
+      });
+    }
+
+    if (listaEvFiltrada.isEmpty) {
+      containerColorEventos = Theme.of(context).canvasColor;
+    } else {
+      containerColorEventos = Colors.transparent;
+    }
+    setState(() {
+      _isLoading = false;
       tituloTotalEventos =
           "${listaEvFiltrada.length.toString()} ${AppLocalizations.of(context)!.eventos}";
     });
   }
 
-  void filtraPorCategoria(String categoria) {
+  void filtraPorCategoria(String categoria) async {
     int cat = int.parse(categoria);
+    listaEvFiltrada = listaOriginal;
 
     setState(() {
-      if (cat == 0) {
-        listaEvFiltrada = listaEventos;
-      } else {
-        listaEvFiltrada =
-            listaEventos.where((element) => element.categoria == cat).toList();
-      }
-
-      if (listaEvFiltrada.isEmpty) {
-        containerColorEventos = Theme.of(context).canvasColor;
-      } else {
-        containerColorEventos = Colors.transparent;
-      }
-
-      tituloTotalEventos =
-          "${listaEvFiltrada.length.toString()} ${AppLocalizations.of(context)!.eventos}";
+      _isLoading = true;
     });
+
+    if (cat == 0) {
+      setState(() {
+        listaEvFiltrada = listaOriginal;
+      });
+    } else {
+      // Faz o consulta local na lista que tem em memoria para filtrar
+      listaEvFiltrada =
+          listaEventos.where((element) => element.categoria == cat).toList();
+      if (listaEvFiltrada.isNotEmpty) {
+        setState(() {
+          _isLoading = false;
+        });
+      } else {
+        // faz chamada à API para retornar dados de eventos por categoria
+        EventoRepository eventosRepository = EventoRepository();
+        List<Evento> leventoLoc = await eventosRepository.getEventosBycat(cat);
+        setState(() {
+          listaEvFiltrada = leventoLoc;
+          _isLoading = false;
+        });
+      }
+    }
+
+    if (listaEvFiltrada.isEmpty) {
+      containerColorEventos = Theme.of(context).canvasColor;
+    } else {
+      containerColorEventos = Colors.transparent;
+    }
+
+    tituloTotalEventos =
+        "${listaEvFiltrada.length.toString()} ${AppLocalizations.of(context)!.eventos}";
+    _isLoading = false;
   }
 
   @override
