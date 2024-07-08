@@ -4,12 +4,15 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/categoria_repository.dart';
+import 'package:softshares_mobile/Repositories/grupo_repository.dart';
 import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
 import 'package:softshares_mobile/Repositories/utilizador_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/grupo.dart';
+import 'package:softshares_mobile/models/imagem.dart';
 import 'package:softshares_mobile/models/subcategoria.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/utils.dart';
 import 'package:softshares_mobile/widgets/gerais/dialog.dart';
 import 'package:softshares_mobile/widgets/gerais/foto_picker.dart';
 
@@ -34,7 +37,7 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
   final TextEditingController _nomeController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool publico = false;
-  List<XFile> _selectedImages = [];
+  final List<XFile> _selectedImages = [];
   bool _isLoading = false;
   List<Utilizador> listaUtilizadores = [];
   List<Utilizador> listaUtilizadoresSelecionados = [];
@@ -110,7 +113,7 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
   // faz a seleção da imagem para o grupo
   void _updateImages(List<XFile> newImages) {
     setState(() {
-      _selectedImages = newImages;
+      _selectedImages[0] = newImages[0];
     });
   }
 
@@ -331,7 +334,7 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
                                       ),
                                       SizedBox(width: largura * 0.02),
                                       FilledButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           // validar se o utilizador selecionou uma imagem
                                           if (_selectedImages.isEmpty) {
                                             ScaffoldMessenger.of(context)
@@ -371,8 +374,57 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
                                               // Handle the edit case
                                               // Update existing group
                                             } else {
-                                              // Handle the create case
-                                              // Create new group
+                                              setState(() {
+                                                _isLoading = true;
+                                              });
+                                              // Vamos fazer a criação do novo grupo
+                                              List<Imagem> imagens = [];
+                                              imagens =
+                                                  await convertListXfiletoImagem(
+                                                      _selectedImages);
+                                              Grupo grupoCriar = Grupo(
+                                                descricao:
+                                                    _descricaoController.text,
+                                                nome: _nomeController.text,
+                                                publico: publico,
+                                                utilizadores:
+                                                    listaUtilizadoresSelecionados,
+                                                categoriaId:
+                                                    int.parse(_categoriaId!),
+                                                subcategoriaId:
+                                                    int.parse(_subCategoriaId!),
+                                                imagem: imagens,
+                                                utilizadorCriouId: utilizadorId,
+                                              );
+                                              GrupoRepository grupoRepository =
+                                                  GrupoRepository();
+                                              bool sucesso =
+                                                  await grupoRepository
+                                                      .createGrupo(grupoCriar);
+                                              if (sucesso) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .dadosGravados,
+                                                    ),
+                                                  ),
+                                                );
+                                                Navigator.of(context).pop();
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .ocorreuErro,
+                                                    ),
+                                                  ),
+                                                );
+                                              }
                                             }
                                           }
                                         },

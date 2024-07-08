@@ -53,13 +53,13 @@ class Grupo {
       'grupoId': grupoId,
       'nome': nome,
       'descricao': descricao,
-      'subcategoriaId': subcategoriaId,
-      'categoriaId': categoriaId,
-      'utilizadores': utilizadores?.map((e) => e.toJson()).toList(),
+      'subcategoriaid': subcategoriaId,
+      'categoriaid': categoriaId,
+      'users': utilizadores?.map((e) => e.toJsonGrupo()).toList(),
       'publico': publico,
       'imagem': imagem?.map((e) => e.toJson()).toList(),
-      'utilizadorCriouId': utilizadorCriouId,
-      'fotourls': fotourls,
+      'utilizadorcriou': utilizadorCriouId,
+      'fotourls': fotourls ?? [],
     };
   }
 }

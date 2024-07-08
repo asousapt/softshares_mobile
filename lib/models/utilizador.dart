@@ -59,6 +59,23 @@ class Utilizador {
     };
   }
 
+  Map<String, dynamic> toJsonGrupo() {
+    return {
+      'id': utilizadorId,
+      'pnome': pNome,
+      'unome': uNome,
+      'email': email,
+      'sobre': sobre,
+      'poloid': poloId,
+      'preferencias': preferencias,
+      'funcaoid': funcaoId,
+      'departamentoid': departamentoId,
+      'fotoUrl': fotoUrl,
+      'fotoEnvio': fotoEnvio?.toJson(),
+      'idiomaid': idiomaId,
+    };
+  }
+
   Map<String, dynamic> toJsonEnvio() {
     List<Map<String, dynamic>> listaImagens = [];
     if (fotoEnvio != null) {
