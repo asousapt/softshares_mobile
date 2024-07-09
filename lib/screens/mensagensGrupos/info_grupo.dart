@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/grupo_repository.dart';
 import 'package:softshares_mobile/models/grupo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/generic/galeria_fotos.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/criar_grupo.dart';
 
@@ -21,7 +25,7 @@ class GrupoInfoScreen extends StatefulWidget {
 class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
   Grupo? grupo;
   bool _isLoading = true;
-  int utilizadorId = 1;
+  late int utilizadorId;
 
   @override
   void initState() {
@@ -30,9 +34,20 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
   }
 
   Future<void> actualizaDados() async {
-    // Grupo fetchedGrupo = await fetchGrupobyId(widget.grupoId);
+    final prefs = await SharedPreferences.getInstance();
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    utilizadorId = utilizador.utilizadorId;
+
     setState(() {
-      //grupo = fetchedGrupo;
+      _isLoading = true;
+    });
+    GrupoRepository grupoRepository = GrupoRepository();
+    Grupo? fetchedGrupo = await grupoRepository.getGrupo(widget.grupoId);
+
+    print(fetchedGrupo?.nome ?? '');
+    setState(() {
+      grupo = fetchedGrupo;
       _isLoading = false;
     });
   }
@@ -75,22 +90,34 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
                       height: 150,
                       child: Stack(
                         children: [
-                          /*
-                          CircleAvatar(
-                            radius: 180,
-                            backgroundImage: NetworkImage(
-                              grupo!.imagem ??
-                                  'https://via.placeholder.com/150',
-                            ),
-                          ),
-                       */
+                          grupo != null &&
+                                  grupo!.fotoUrl1 != null &&
+                                  grupo!.fotoUrl1!.isNotEmpty
+                              ? CircleAvatar(
+                                  radius: 180,
+                                  backgroundImage:
+                                      NetworkImage(grupo!.fotoUrl1!),
+                                )
+                              : CircleAvatar(
+                                  radius: 180,
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                  child: Text(
+                                    grupo != null
+                                        ? grupo!.nome[0].toUpperCase()
+                                        : '',
+                                    style: TextStyle(
+                                        fontSize: 50,
+                                        color: Theme.of(context).canvasColor),
+                                  ),
+                                ),
                         ],
                       ),
                     ),
                   ),
                   SizedBox(height: altura * 0.02),
                   Text(
-                    "grupo!.nome",
+                    grupo?.nome ?? '',
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -139,14 +166,15 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
                                             horizontal: largura * 0.02,
                                             vertical: altura * 0.02),
                                         width: double.infinity,
-                                        child: Text(grupo!.descricao),
+                                        child: Text(grupo?.descricao ?? ''),
                                       ),
                                       // Tab de membros do grupo
                                       Column(
                                         children: [
                                           Expanded(
                                             child: ListView(
-                                              children: grupo!.utilizadores!
+                                              children: (grupo?.utilizadores ??
+                                                      [])
                                                   .map(
                                                     (utilizador) => ListTile(
                                                       leading: CircleAvatar(
@@ -222,8 +250,7 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
                                                     decoration: BoxDecoration(
                                                       image: DecorationImage(
                                                         image: NetworkImage(
-                                                          imageUrls[index],
-                                                        ),
+                                                            imageUrls[index]),
                                                         fit: BoxFit.cover,
                                                       ),
                                                     ),
@@ -242,6 +269,7 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
                           ),
                         ),
                         SizedBox(height: altura * 0.02),
+                        /*
                         Container(
                           margin:
                               EdgeInsets.symmetric(horizontal: largura * 0.02),
@@ -276,7 +304,7 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
                                         color: Theme.of(context).canvasColor),
                                   ),
                                 ),
-                        ),
+                        ),*/
                         SizedBox(height: altura * 0.02),
                       ],
                     ),

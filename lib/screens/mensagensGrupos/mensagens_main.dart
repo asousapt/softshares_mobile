@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/mensagem_repository.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/nova_mensagem.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -26,6 +29,7 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
   bool _isSearching = false;
   bool _isLoading = false;
   late String idioama;
+  late int utilizadorId;
 
   Future<void> actualizaDados() async {
     setState(() {
@@ -34,7 +38,12 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
 
     final prefs = await SharedPreferences.getInstance();
     var idioamal = prefs.getString('idioma') ?? 'pt';
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    int utilizadorIdl = utilizador.utilizadorId;
+
     setState(() {
+      utilizadorId = utilizadorIdl;
       idioama = idioamal;
     });
 
@@ -173,23 +182,20 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
                       arguments: {
                         'mensagemId': mensagens[index].mensagemId,
                         'nome': mensagens[index].destinatarioGrupo != null
-                            ? mensagens[index].destinatarioGrupo!.descricao
+                            ? mensagens[index].destinatarioGrupo!.nome
                             : mensagens[index]
                                 .destinatarioUtil!
                                 .getNomeCompleto(),
                         'imagemUrl': mensagens[index].destinatarioGrupo != null
-                            ? mensagens[index].destinatarioGrupo!.imagem
-                            : mensagens[index].destinatarioUtil!.fotoUrl,
+                            ? mensagens[index].destinatarioGrupo!.fotoUrl1
+                            : mensagens[index].destinatarioUtil!.fotoUrl ?? '',
                         'msgGrupo': mensagens[index].destinatarioGrupo != null
                             ? true
                             : false,
                         'grupoId': mensagens[index].destinatarioGrupo != null
                             ? mensagens[index].destinatarioGrupo!.grupoId
                             : 0,
-                        'utilizadorId': mensagens[index].destinatarioUtil !=
-                                null
-                            ? mensagens[index].destinatarioUtil!.utilizadorId
-                            : 0,
+                        'utilizadorId': utilizadorId,
                       },
                     );
                   },

@@ -24,4 +24,32 @@ class MensagemRepository {
 
     return mensagens;
   }
+
+  Future<List<Mensagem>> getConversa(int mensagemId) async {
+    apiService.setAuthToken("tokenFixo");
+
+    var response =
+        await apiService.getRequest("mensagens/lista/util/$mensagemId");
+
+    var mensagensFormatted = response['data'] as List;
+
+    List<Mensagem> mensagens =
+        mensagensFormatted.map((e) => Mensagem.fromJson(e)).toList();
+
+    return mensagens;
+  }
+
+  Future<List<Mensagem>> getConversaGr(int mensagemId) async {
+    apiService.setAuthToken("tokenFixo");
+
+    var response =
+        await apiService.getRequest("mensagens/lista/grupo/$mensagemId");
+
+    var mensagensFormatted = response['data'] as List;
+
+    List<Mensagem> mensagens =
+        mensagensFormatted.map((e) => Mensagem.fromJson(e)).toList();
+
+    return mensagens;
+  }
 }

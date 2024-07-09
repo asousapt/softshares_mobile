@@ -77,6 +77,7 @@ class _NovaMensagemState extends State<NovaMensagem> {
           icon: const Icon(FontAwesomeIcons.eraser),
           onPressed: () {
             setState(() {
+              listaUtilizadoresFiltrada = utilizadores;
               _searchController.clear();
             });
           },

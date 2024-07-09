@@ -4,7 +4,6 @@ import 'package:softshares_mobile/Repositories/grupo_repository.dart';
 import 'package:softshares_mobile/models/grupo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/grupo_detalhe.dart';
-import 'package:softshares_mobile/screens/mensagensGrupos/info_grupo.dart';
 
 class ListarGrupoScreen extends StatefulWidget {
   const ListarGrupoScreen({super.key});
@@ -35,20 +34,22 @@ class _ListarGrupoScreenState extends State<ListarGrupoScreen> {
     });
 
     GrupoRepository grupoRepository = GrupoRepository();
-    List<Grupo> grupos = await grupoRepository.getGrupos();
+    List<Grupo> gruposl = await grupoRepository.getGrupos();
 
     setState(() {
-      listaGruposFiltrada = grupos;
+      listaGruposFiltrada = gruposl;
+      grupos = gruposl;
       _isLoading = false;
     });
   }
 
   // Função que filtra a lista de grupos
   void filtraPorTexto(String texto) {
+    listaGruposFiltrada = grupos;
     texto = texto.toLowerCase();
     setState(() {
       listaGruposFiltrada = grupos.where((element) {
-        String descricaolower = element.descricao.toLowerCase();
+        String descricaolower = element.nome.toLowerCase();
 
         return descricaolower.contains(texto);
       }).toList();
@@ -86,6 +87,7 @@ class _ListarGrupoScreenState extends State<ListarGrupoScreen> {
           icon: const Icon(FontAwesomeIcons.eraser),
           onPressed: () {
             setState(() {
+              listaGruposFiltrada = grupos;
               _searchController.clear();
             });
           },
@@ -127,9 +129,8 @@ class _ListarGrupoScreenState extends State<ListarGrupoScreen> {
                       itemCount: listaGruposFiltrada.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              // Navega para o ecra de detalhes do grupo
+                          onTap: () async {
+                            bool sucesso = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => GrupoDetalheScreen(
@@ -137,6 +138,20 @@ class _ListarGrupoScreenState extends State<ListarGrupoScreen> {
                                 ),
                               ),
                             );
+                            if (sucesso) {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              GrupoRepository grupoRepository =
+                                  GrupoRepository();
+
+                              await grupoRepository.aderirGrupo(
+                                  listaGruposFiltrada[index].grupoId!);
+                              setState(() {
+                                _isLoading = false;
+                              });
+                              actualizaDados();
+                            }
                           },
                           child: ListTile(
                             leading: listaGruposFiltrada[index]
