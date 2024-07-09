@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Polo {
   final int poloid;
   final String descricao;
@@ -32,4 +34,13 @@ class Polo {
       'cidadeid': cidadeid,
     };
   }
+}
+
+List<DropdownMenuItem> getListaPoloDropdown(List<Polo> funcoes) {
+  return funcoes.map((e) {
+    return DropdownMenuItem(
+      value: e.poloid.toString(),
+      child: Text(e.descricao),
+    );
+  }).toList();
 }

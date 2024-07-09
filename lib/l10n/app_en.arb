@@ -170,5 +170,12 @@
   "multiplaEscolha": "Multiple Choice", 
   "questionarioQualidade": "Quelity Survey",
   "confirmarSaida" : "Confirm exit",
-  "temCerteza" : "Do you want to end your session?"
+  "temCerteza" : "Do you want to end your session?",
+  "denuciarComentario": "Report Comment",
+  "colocarRazao": "Enter the reason for reporting",
+  "denunciaEnviada" : "Report Sent",
+  "pontoInteresseCriado" : "Point of Interest Created",
+  "avaliacaoCriada" : "Rating created",
+  "avaliacaoAtualizada" : "Updated Rating",
+  "comentarioAdd" : "Comment Added and "
 }

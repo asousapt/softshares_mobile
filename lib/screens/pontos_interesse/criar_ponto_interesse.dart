@@ -233,7 +233,9 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
             if (value)
               {
                 await api.postRequest('pontoInteresse/addMobile', json),
-                Navigator.pushNamed(context, '/pontosInteresse')
+                Navigator.pushNamed(context, '/pontosInteresse'),
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.pontoInteresseCriado)))
               }
           });
     }

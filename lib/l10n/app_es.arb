@@ -169,5 +169,12 @@
   "multiplaEscolha": "Escolha Múltipla", 
   "questionarioQualidade": "Encuesta sobre la calidad",
   "confirmarSaida" : "Confirmar pago",
-  "temCerteza" : "Quieres finalizar tu sesión?"
+  "temCerteza" : "Quieres finalizar tu sesión?",
+  "denuciarComentario": "Informar comentario",
+  "colocarRazao": "Ingrese el motivo del informe",
+  "denunciaEnviada" : "Reporte enviado",
+  "pontoInteresseCriado" : "Punto de interés creado",
+  "avaliacaoCriada" : "Evaluación creada",
+  "avaliacaoAtualizada" : "Evaluación actualizada",
+  "comentarioAdd" : "Comentario añadido y "
 }

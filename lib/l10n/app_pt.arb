@@ -170,5 +170,12 @@
   "multiplaEscolha": "Escolha Múltipla", 
   "questionarioQualidade": "Questionario de Qualidade",
   "confirmarSaida" : "Confirmar Saida",
-  "temCerteza" : "Pretende terminar a sua sessão?"
+  "temCerteza" : "Pretende terminar a sua sessão?",
+  "denuciarComentario": "Denunciar Comentário",
+  "colocarRazao": "Introduza o motivo de denúncia",
+  "denunciaEnviada" : "Denuncia enviada",
+  "pontoInteresseCriado" : "Ponto de interesse criado",
+  "avaliacaoCriada" : "Avaliação Criada",
+  "avaliacaoAtualizada" : "Avaliação Atualizada",
+  "comentarioAdd" : "Comentário Adicionado e "
 }

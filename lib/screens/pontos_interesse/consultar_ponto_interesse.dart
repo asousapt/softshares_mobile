@@ -83,6 +83,7 @@ class _ConsultPontoInteresseScreenState
   }
 
   void enviarAvaliacao() async {
+    String message='';
     setState(() {
       comentarioAtual = comentarioController.text;
     });
@@ -96,10 +97,16 @@ class _ConsultPontoInteresseScreenState
       };
       await api.postRequest("comentario/add", commentJson);
       await fetchComentarios();
+      message = AppLocalizations.of(context)!.comentarioAdd;
     }
     if (rating == 0) {
-      invalidRating == true;
+      setState(() {
+        invalidRating == true;
+      });
     } else {
+      setState(() {
+        invalidRating == false;
+      });
       final Map<String, dynamic> criarAvaliacaoJson = {
         "tipo": "POI",
         "idRegisto": pontoInteresse!.pontoInteresseId,
@@ -112,12 +119,17 @@ class _ConsultPontoInteresseScreenState
       };
       print(atualizarAvaliacaoJson);
       if (tinhaAvaliado) {
-        print("Atualiza");
+        message += AppLocalizations.of(context)!.avaliacaoAtualizada;
         await api.putRequest(
             "avaliacao/update/POI/${pontoInteresse!.pontoInteresseId}",
             atualizarAvaliacaoJson);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(message)));
       } else {
+        message += AppLocalizations.of(context)!.avaliacaoCriada;
         await api.postRequest("avaliacao/add", criarAvaliacaoJson);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(message)));
       }
     }
   }
@@ -144,6 +156,7 @@ class _ConsultPontoInteresseScreenState
       }).toList();
       setState(() {
         comentarios = List.from(listaUpdated);
+        _isLoading = false;
       });
       print(comentarios);
     } catch (e) {
@@ -340,10 +353,10 @@ class _ConsultPontoInteresseScreenState
                                       text: AppLocalizations.of(context)!
                                           .imageGallery),
                                   GaleriaWidget(
-                                              urls: pontoInteresse!.imagens != null
-                                                  ? pontoInteresse!.imagens!
-                                                  : [],
-                                            ),
+                                    urls: pontoInteresse!.imagens != null
+                                        ? pontoInteresse!.imagens!
+                                        : [],
+                                  ),
                                   const Divider(
                                     color: Color.fromRGBO(29, 90, 161, 1),
                                   ),

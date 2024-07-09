@@ -3,12 +3,15 @@ import 'package:country_flags/country_flags.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/Repositories/idioma_repository.dart';
 import 'package:softshares_mobile/models/departamento.dart';
+import 'package:softshares_mobile/models/polo.dart';
 import 'package:softshares_mobile/models/funcao.dart';
 import 'package:softshares_mobile/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/services/google_signin_api.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:softshares_mobile/Repositories/polo_repository.dart';
 
 class EcraDadosConta extends StatefulWidget {
   EcraDadosConta(
@@ -34,9 +37,10 @@ class EcraDadosConta extends StatefulWidget {
 class _EcraDadosContaState extends State<EcraDadosConta> {
   List<Funcao> funcoes = [];
   List<Departamento> departamentos = [];
+  List<Polo> polos = [];
 
   String version = 'Loading...', pNome = '', uNome = '';
-  String? funcaoId, departamentoId;
+  String? funcaoId, departamentoId, poloId;
   int idiomaId = 1;
 
   late TextEditingController _controlPNome;
@@ -134,12 +138,20 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
     idiomaId = prefs.getInt("idiomaId") ?? 1;
     await fetchDepartamentos();
     await fetchFuncoes();
+    PoloRepository poloRep = PoloRepository();
+
+    final tempPolo = await poloRep.fetchPolos();
+
     setState(() {
+      polos = tempPolo;
       if (departamentos.isNotEmpty) {
         departamentoId = departamentos[0].departamentoId.toString();
       }
       if (funcoes.isNotEmpty) {
         funcaoId = funcoes[0].funcaoId.toString();
+      }
+      if (polos.isNotEmpty) {
+        poloId = polos[0].poloid.toString();
       }
       _loading = false;
     });
@@ -153,12 +165,19 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
     super.dispose();
   }
 
-  void sub() {
-    setState(() {
+  void sub() async{
+    final prefs = await SharedPreferences.getInstance();
+    final idioma = prefs.getString("idioma");
+    IdiomaRepository idiomaRep = IdiomaRepository();
+
+    setState(() async{
+      idiomaId = await idiomaRep.getIdiomaId(idioma!);
       pNome = _controlPNome.text;
       uNome = _controlUNome.text;
     });
-    //bd.inserirvalor(Email, Passricao);
+
+    
+
   }
 
   Future<void> getVersion() async {
@@ -266,7 +285,24 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
                                     padding: const EdgeInsets.only(
                                         left: 10, right: 10),
                                     hint: Text(AppLocalizations.of(context)!
-                                        .categoria),
+                                        .polo),
+                                    isExpanded: true,
+                                    value: poloId,
+                                    items: getListaPoloDropdown(polos),
+                                    onChanged: (value) {
+                                      setState(
+                                        () {
+                                          poloId = value;
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  SizedBox(height: altura * 0.02),
+                                  DropdownButtonFormField(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, right: 10),
+                                    hint: Text(AppLocalizations.of(context)!
+                                        .departamento),
                                     isExpanded: true,
                                     value: departamentoId,
                                     items: getListaDepDropdown(departamentos),
@@ -283,7 +319,7 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
                                     padding: const EdgeInsets.only(
                                         left: 10, right: 10),
                                     hint: Text(AppLocalizations.of(context)!
-                                        .categoria),
+                                        .funcao),
                                     isExpanded: true,
                                     value: funcaoId,
                                     items: getListaFunDropdown(funcoes),
@@ -296,14 +332,6 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
                                     },
                                   ),
                                   SizedBox(height: altura * 0.03),
-                                  TextFormField(
-                                    controller: _bioController,
-                                    decoration: InputDecoration(
-                                      labelText: AppLocalizations.of(context)!.sobreMim,
-                                    ),
-                                    maxLines: 3,
-                                  ),
-                                  SizedBox(height: altura * 0.03),
                                   SizedBox(
                                     height: 50,
                                     width: double.infinity,
@@ -312,7 +340,7 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
                                         sub();
                                         if (_formKey.currentState!.validate()) {
                                           Navigator.pushNamed(
-                                              context, '/dadosConta');
+                                              context, '/escolherPolo');
                                         }
                                       },
                                       child: Text(AppLocalizations.of(context)!
