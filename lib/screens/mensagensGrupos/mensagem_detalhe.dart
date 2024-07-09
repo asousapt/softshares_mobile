@@ -253,6 +253,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
 
   @override
   void initState() {
+    print(widget.mensagemId);
     super.initState();
     actualizaDados();
   }

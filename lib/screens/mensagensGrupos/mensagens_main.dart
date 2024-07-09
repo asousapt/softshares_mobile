@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:softshares_mobile/models/grupo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/mensagem_repository.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
-import 'package:softshares_mobile/models/subcategoria.dart';
-import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/nova_mensagem.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -26,56 +25,23 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
   Color containerColorMensagens = Colors.transparent;
   bool _isSearching = false;
   bool _isLoading = false;
-
-  Future<List<Mensagem>> fetchMensagens() async {
-    await Future.delayed(Duration(seconds: 2));
-
-    List<Mensagem> mensagens = [];
-    /*Mensagem(
-        mensagemId: 1,
-        mensagemTexto: 'Hello John!',
-        remetente: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
-        destinatarioUtil: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1, 'https://via.placeholder.com/150'),
-        dataEnvio: DateTime.now().subtract(Duration(hours: 1)),
-        anexos: [],
-        vista: true,
-      ),
-      Mensagem(
-        mensagemId: 2,
-        mensagemTexto: 'Meeting at 5 PM',
-        remetente: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
-        destinatarioGrupo: Grupo(
-          imagem: 'https://via.placeholder.com/150',
-          grupoId: 1,
-          nome: 'Team Meeting',
-          descricao: 'Team Meeting',
-          subcategoria: Subcategoria(1, 1, 'Meeting', 1),
-          utilizadores: [
-            Utilizador(1, 'Alice', 'Johnson', 'alice.johnson@example.com',
-                'Some info', 1, [1, 2], 1, 1),
-            Utilizador(2, 'John', 'Doe', 'john.doe@example.com', 'Some info', 1,
-                [1, 2], 1, 1)
-          ],
-          publico: false,
-          utilizadorCriouId: 1,
-        ),
-        dataEnvio: DateTime.now().subtract(Duration(days: 2)),
-        anexos: [],
-        vista: false,
-      ),
-    ]; */
-    return mensagens;
-  }
+  late String idioama;
 
   Future<void> actualizaDados() async {
     setState(() {
       _isLoading = true;
     });
 
-    mensagens = await fetchMensagens();
+    final prefs = await SharedPreferences.getInstance();
+    var idioamal = prefs.getString('idioma') ?? 'pt';
+    setState(() {
+      idioama = idioamal;
+    });
+
+    // Carregar mensagens
+    MensagemRepository mensagemRepository = MensagemRepository();
+    mensagens = await mensagemRepository.getMensagensMain();
+
     setState(() {
       listaEvFiltrada = mensagens;
 
@@ -229,13 +195,20 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
                   },
                   child: MensagemItem(
                     nome: mensagens[index].destinatarioGrupo != null
-                        ? mensagens[index].destinatarioGrupo!.descricao
+                        ? mensagens[index].destinatarioGrupo!.nome
                         : mensagens[index].destinatarioUtil!.getNomeCompleto(),
                     mensagemTexto: mensagens[index].mensagemTexto,
-                    imagemUrl:
-                        'https://via.placeholder.com/150', // Placeholder image
-                    hora: dataFormatadaMsg(mensagens[index].dataEnvio, 'pt'),
-                    lida: mensagens[index].vista!,
+                    imagemUrl: mensagens[index].destinatarioGrupo != null
+                        ? mensagens[index]
+                                .destinatarioGrupo!
+                                .fotoUrl1!
+                                .isNotEmpty
+                            ? mensagens[index].destinatarioGrupo!.fotoUrl1!
+                            : ''
+                        : mensagens[index].destinatarioUtil!.fotoUrl ?? '',
+
+                    hora: dataFormatadaMsg(mensagens[index].dataEnvio, idioama),
+                    //lida: mensagens[index].vista!,
                   ),
                 );
               },

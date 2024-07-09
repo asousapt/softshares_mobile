@@ -3,7 +3,7 @@ import 'package:softshares_mobile/models/alertas.dart';
 import 'package:softshares_mobile/services/api_service.dart';
 
 class AlertaRepository {
-  ApiService _apiService = ApiService();
+  final ApiService _apiService = ApiService();
 
   Future<List<Alerta>> getAlertas() async {
     final prefs = await SharedPreferences.getInstance();

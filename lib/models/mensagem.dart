@@ -7,7 +7,6 @@ class Mensagem {
   Utilizador remetente;
   Utilizador? destinatarioUtil;
   Grupo? destinatarioGrupo;
-  bool? vista = false;
   DateTime dataEnvio;
   List<String> anexos = [];
 
@@ -19,6 +18,33 @@ class Mensagem {
     this.destinatarioGrupo,
     required this.dataEnvio,
     required this.anexos,
-    this.vista,
   });
+
+  factory Mensagem.fromJson(Map<String, dynamic> json) {
+    DateTime parseDate(String dateString) {
+      try {
+        return DateTime.parse(dateString);
+      } catch (e) {
+        return DateTime.now();
+      }
+    }
+
+    return Mensagem(
+      mensagemId: json['mensagemid'] ?? 0,
+      mensagemTexto: json['mensagem'] ?? '',
+      remetente: Utilizador.fromJsonSimplificado(json['remetente']),
+      destinatarioUtil: json['destinatarioUtil'] != null
+          ? Utilizador.fromJsonSimplificado(json['destinatarioUtil'])
+          : null,
+      destinatarioGrupo: json['destinatarioGrupo'] != null
+          ? Grupo.fromJson(json['destinatarioGrupo'])
+          : null,
+      dataEnvio: json['datacriacao'] != null
+          ? parseDate(json['datacriacao'])
+          : DateTime.now(),
+      anexos: json['anexos'] != null
+          ? (json['anexos'] as List).map((e) => e.toString()).toList()
+          : [],
+    );
+  }
 }
