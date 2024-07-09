@@ -21,10 +21,19 @@ class MensagemItem extends StatelessWidget {
       padding: const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
       child: Row(
         children: <Widget>[
-          const CircleAvatar(
-            backgroundImage: NetworkImage('https://via.placeholder.com/150'),
-            maxRadius: 30,
-          ),
+          imagemUrl.isEmpty
+              ? CircleAvatar(
+                  maxRadius: 30,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: Text(
+                    nome[0].toUpperCase(),
+                    style: TextStyle(color: Theme.of(context).canvasColor),
+                  ),
+                )
+              : CircleAvatar(
+                  backgroundImage: NetworkImage(imagemUrl),
+                  maxRadius: 30,
+                ),
           const SizedBox(width: 16),
           Expanded(
             child: Container(
@@ -34,7 +43,7 @@ class MensagemItem extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     nome,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                     ),
                   ),
@@ -52,7 +61,7 @@ class MensagemItem extends StatelessWidget {
           ),
           Text(
             hora,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 12,
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:softshares_mobile/Repositories/utilizador_repository.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/criar_grupo.dart';
@@ -33,66 +34,15 @@ class _NovaMensagemState extends State<NovaMensagem> {
     actualizaDados();
   }
 
-  // Função que simula a obtenção de dados de utilizadores
-  Future<List<Utilizador>> fetchUtilizadores() async {
-    await Future.delayed(Duration(seconds: 2));
-
-    return [
-      /* Utilizador(
-          1,
-          'João',
-          'Silva',
-          'joao.silva@example.com',
-          'Developer with a passion for mobile applications.',
-          1,
-          [1, 2],
-          1,
-          1,
-          "https://via.placeholder.com/150"),
-      Utilizador(
-          2,
-          'Maria',
-          'Fernandes',
-          'maria.fernandes@example.com',
-          'Experienced project manager.',
-          1,
-          [3, 4],
-          2,
-          1,
-          "https://via.placeholder.com/150"),
-      Utilizador(
-          3,
-          'Carlos',
-          'Santos',
-          'carlos.santos@example.com',
-          'Graphic designer specializing in UI/UX.',
-          2,
-          [5, 6],
-          3,
-          2,
-          "https://via.placeholder.com/150"),
-      Utilizador(
-        4,
-        'Ana',
-        'Costa',
-        'ana.costa@example.com',
-        'Content writer and SEO expert.',
-        2,
-        [7, 8],
-        4,
-        2,
-        "https://via.placeholder.com/150",
-      ),*/
-    ];
-  }
-
   // Função que atualiza a lista de utilizadores
   Future<void> actualizaDados() async {
     setState(() {
       _isLoading = true;
     });
 
-    List<Utilizador> utilizadores = await fetchUtilizadores();
+    UtilizadorRepository utilizadorRepository = UtilizadorRepository();
+    utilizadores = await utilizadorRepository.getUtilizadoresSimplificado();
+
     setState(() {
       listaUtilizadores = utilizadores;
       listaUtilizadoresFiltrada = utilizadores;
@@ -245,12 +195,29 @@ class _NovaMensagemState extends State<NovaMensagem> {
                                 );
                               },
                               child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                    listaUtilizadoresFiltrada[index].fotoUrl ??
-                                        'https://via.placeholder.com/150',
-                                  ),
-                                ),
+                                leading: listaUtilizadoresFiltrada[index]
+                                        .fotoUrl!
+                                        .isEmpty
+                                    ? CircleAvatar(
+                                        backgroundColor:
+                                            Theme.of(context).primaryColor,
+                                        child: Text(
+                                          listaUtilizadoresFiltrada[index]
+                                              .getIniciais(),
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                Theme.of(context).canvasColor,
+                                          ),
+                                        ),
+                                      )
+                                    : CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                          listaUtilizadoresFiltrada[index]
+                                              .fotoUrl!,
+                                        ),
+                                      ),
                                 title: Text(
                                   listaUtilizadoresFiltrada[index]
                                       .getNomeCompleto(),

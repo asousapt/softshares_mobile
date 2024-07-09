@@ -21,17 +21,27 @@ class Mensagem {
   });
 
   factory Mensagem.fromJson(Map<String, dynamic> json) {
+    DateTime parseDate(String dateString) {
+      try {
+        return DateTime.parse(dateString);
+      } catch (e) {
+        return DateTime.now();
+      }
+    }
+
     return Mensagem(
       mensagemId: json['mensagemid'] ?? 0,
       mensagemTexto: json['mensagem'] ?? '',
       remetente: Utilizador.fromJsonSimplificado(json['remetente']),
       destinatarioUtil: json['destinatarioUtil'] != null
-          ? Utilizador.fromJson(json['destinatarioUtil'])
+          ? Utilizador.fromJsonSimplificado(json['destinatarioUtil'])
           : null,
       destinatarioGrupo: json['destinatarioGrupo'] != null
           ? Grupo.fromJson(json['destinatarioGrupo'])
           : null,
-      dataEnvio: DateTime.parse(json['dataEnvio']),
+      dataEnvio: json['datacriacao'] != null
+          ? parseDate(json['datacriacao'])
+          : DateTime.now(),
       anexos: json['anexos'] != null
           ? (json['anexos'] as List).map((e) => e.toString()).toList()
           : [],

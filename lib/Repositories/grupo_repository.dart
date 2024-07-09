@@ -23,6 +23,7 @@ class GrupoRepository {
     String util = prefs.getString("utilizadorObj") ?? "";
     Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
     int utilizadorId = utilizador.utilizadorId;
+
     apiService.setAuthToken("tokenFixo");
     var response = await apiService.getRequest("grupo/publicos/$utilizadorId");
 
