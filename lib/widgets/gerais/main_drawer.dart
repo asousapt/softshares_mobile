@@ -27,13 +27,6 @@ class _MainDrawerState extends State<MainDrawer> {
     super.initState();
   }
 
-  /*_logoutFacebook() async {
-    await FacebookAuth.instance.logOut();
-    _accessToken = null;
-    _facebookData = null;
-    setState(() {});
-  }*/
-
   // carrega o utilizador logado e polo que está seleccionado
   void carregaUtilizador() async {
     prefs = await SharedPreferences.getInstance();

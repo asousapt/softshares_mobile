@@ -58,12 +58,15 @@ class _EcraLoginState extends State<EcraLogin> {
     });
 
     if (accessToken != null) {
-      print(accessToken.toJson());
+      print("Acess token: ${accessToken.toJson()}");
       final facebookData = await FacebookAuth.instance.getUserData();
-      _accessToken = accessToken;
       setState(() {
+        _accessToken = accessToken;
         _facebookData = facebookData;
       });
+      await prefs.setString("email", _facebookData!['email']);
+      await prefs.setString("token", _accessToken!.tokenString);
+      carregaDados();
       //Get and set user local with this data
       _facebookData!.forEach((key, value) {
         print('$key: $value');
@@ -72,9 +75,6 @@ class _EcraLoginState extends State<EcraLogin> {
       await _loginFacebook();
       //Get and set user local with this data
     }
-    await prefs.setString("email", _facebookData!['email']);
-    await prefs.setString("token", _accessToken!.tokenString);
-    carregaDados();
   }
 
   Future<void> carregaDados() async {
@@ -111,21 +111,26 @@ class _EcraLoginState extends State<EcraLogin> {
   }
 
   _loginFacebook() async {
+    await _logoutFacebook();
+    final prefs = await SharedPreferences.getInstance();
     final LoginResult result = await FacebookAuth.instance.login();
     if (result.status == LoginStatus.success) {
       _accessToken = result.accessToken;
 
       final facebookData = await FacebookAuth.instance.getUserData();
       _facebookData = facebookData;
+      _facebookData!.forEach((key, value) {
+        print('$key: $value');
+      });
+      await prefs.setString("email", _facebookData!['email']);
+      await prefs.setString("token", _accessToken!.tokenString);
+      carregaDados();
     } else {
       print(result.status);
       print(result.message);
     }
     setState(() {
       _checking = false;
-    });
-    _facebookData!.forEach((key, value) {
-      print('$key: $value');
     });
   }
 
@@ -184,36 +189,37 @@ class _EcraLoginState extends State<EcraLogin> {
     }
     if (isChecked) {
       final tipo = await prefs.getString("tipoLogin");
-      if (tipo == "google"){
+      if (tipo == "google") {
         final email = prefs.getString("email");
         final token = prefs.getString("token");
-        Map<String,dynamic> json = {
-          "tipo" : "google",
-          "email" : email,
-          "token" : token,
+        Map<String, dynamic> json = {
+          "tipo": "google",
+          "email": email,
+          "token": token,
         };
         api.fetchAuthTokenWithFallback(json);
-      } else if (tipo == "facebook"){
+      } else if (tipo == "facebook") {
         final email = await prefs.getString("email");
         final token = await prefs.getString("token");
-        Map<String,dynamic> json = {
-          "tipo" : "facebook",
-          "email" : email,
-          "token" : token,
+        Map<String, dynamic> json = {
+          "tipo": "facebook",
+          "email": email,
+          "token": token,
         };
         api.fetchAuthTokenWithFallback(json);
-      } else if (tipo == "normal"){
+      } else if (tipo == "normal") {
         final email = await prefs.getString("email");
         final pass = await prefs.getString("pass");
-        Map<String,dynamic> json = {
-          "tipo" : "normal",
-          "email" : email,
-          "pass" : pass,
+        Map<String, dynamic> json = {
+          "tipo": "normal",
+          "email": email,
+          "pass": pass,
         };
         api.fetchAuthTokenWithFallback(json);
       }
       Navigator.pushNamed(context, "/home");
     } else {
+      print("will execute logout");
       await FacebookAuth.instance.logOut();
       await GoogleSignInApi.logout();
     }
@@ -222,6 +228,7 @@ class _EcraLoginState extends State<EcraLogin> {
   @override
   void initState() {
     super.initState();
+
     inicializar();
     controlEmail = TextEditingController();
     controlPass = TextEditingController();
