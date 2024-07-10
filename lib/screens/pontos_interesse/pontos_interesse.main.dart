@@ -31,6 +31,7 @@ class _PontosDeInteresseMainScreenState
   bool defaultValues = false;
   List<Categoria> categorias = [];
   List<Categoria> categoriasFiltro = [];
+  int? _selectedRating;
 
   @override
   void initState() {
@@ -60,6 +61,17 @@ class _PontosDeInteresseMainScreenState
     setState(() {
       categorias = categoriasdb;
     });
+  }
+
+  List<DropdownMenuItem<int>> buildRatingDropdownItems() {
+    List<DropdownMenuItem<int>> items = [];
+    for (int i = 5; i >= 1; i--) {
+      items.add(DropdownMenuItem<int>(
+        value: i,
+        child: Text('$i'),
+      ));
+    }
+    return items;
   }
 
   Future<void> fetchPontosDeInteresse() async {
@@ -123,6 +135,33 @@ class _PontosDeInteresseMainScreenState
         },
         itemBuilder: (BuildContext context) => getCatLista(categoriasFiltro),
       ),
+      IconButton(
+      onPressed: () {
+        // Reset selected rating when icon is tapped
+        setState(() {
+          _selectedRating = null;
+          listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
+        });
+      },
+      icon: Icon(Icons.star),
+    ),
+    DropdownButton<int>(
+      value: _selectedRating,
+      onChanged: (int? newValue) {
+        setState(() {
+          _selectedRating = newValue;
+          // Apply rating filter
+          if (_selectedRating != null) {
+            listaPontosDeInteresseFiltrados = listaPontosDeInteresse
+                .where((element) => element.avaliacao == _selectedRating)
+                .toList();
+          } else {
+            listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
+          }
+        });
+      },
+      items: buildRatingDropdownItems(),
+    )
     ];
   }
 

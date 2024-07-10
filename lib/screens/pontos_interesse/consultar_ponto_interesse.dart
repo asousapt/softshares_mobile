@@ -39,14 +39,14 @@ class _ConsultPontoInteresseScreenState
   List<Categoria> categorias = [];
   bool _isLoading = true;
   String? comentarioAtual;
-  int rating = 0;
+  int rating = 0, avaliacaoId = 0;
   bool invalidRating = false;
   Utilizador? user;
   ApiService api = ApiService();
   List<Commentario> comentarios = [];
   final TextEditingController comentarioController = TextEditingController();
   bool tinhaAvaliado = false;
-  int avaliacaoId = 0;
+  
 
   Future<void> carregaDados() async {
     pontoInteresse = widget.pontoInteresse;
@@ -364,10 +364,8 @@ class _ConsultPontoInteresseScreenState
                                       .outrosComentarios),
                                   SizedBox(
                                     height: altura * 0.5,
-                                    child: SingleChildScrollView(
-                                      child: CommentSection(
-                                          comentarios: comentarios),
-                                    ),
+                                    child: CommentSection(
+                                        comentarios: comentarios),
                                   )
                                 ],
                               ),
