@@ -33,4 +33,37 @@ class GrupoRepository {
 
     return grupos;
   }
+
+  Future<void> aderirGrupo(int grupoId) async {
+    final prefs = await SharedPreferences.getInstance();
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    int utilizadorId = utilizador.utilizadorId;
+
+    apiService.setAuthToken("tokenFixo");
+    var response = await apiService.postRequest("grupo/juntar", {
+      "grupoid": grupoId,
+      "utilizadorid": utilizadorId,
+    });
+  }
+
+  //Obtem a informacao do grupo atraves do id
+  Future<Grupo?> getGrupo(int grupoId) async {
+    apiService.setAuthToken("tokenFixo");
+    try {
+      var response = await apiService.getRequest("grupo/$grupoId");
+      if (response['data'] != null) {
+        print(response['data'][0]);
+        var grupoFormatted = response['data'][0] as Map<String, dynamic>;
+        Grupo grupo = Grupo.fromJson(grupoFormatted);
+        print(grupo.utilizadores!.length);
+        return grupo;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
 }

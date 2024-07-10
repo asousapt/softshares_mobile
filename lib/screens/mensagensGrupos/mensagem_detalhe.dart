@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:softshares_mobile/Repositories/mensagem_repository.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
-import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/generic/galeria_fotos.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/info_grupo.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/info_utilizador.dart';
@@ -36,208 +36,35 @@ class MensagemDetalheScreen extends StatefulWidget {
 class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final int utilizadorId = 1;
+  late int utilizadorId;
   List<Mensagem> mensagens = [];
   bool _isLoading = false;
   List<XFile> _selectedImages = [];
 
-  // Função que busca as mensagens
-  Future<List<Mensagem>> fetchMensagens() async {
-    await Future.delayed(Duration(seconds: 2));
-    List<Mensagem> messages = [];
-    /* Mensagem(
-        mensagemId: 1,
-        mensagemTexto: '',
-        remetente: Utilizador(
-            1,
-            'Alice',
-            'Johnson',
-            'alice.johnson@example.com',
-            'Some info',
-            1,
-            [1, 2],
-            1,
-            1,
-            'https://via.placeholder.com/150'),
-        destinatarioUtil: Utilizador(
-          2,
-          'John',
-          'Doe',
-          'john.doe@example.com',
-          'Some info',
-          1,
-          [1, 2],
-          1,
-          1,
-          'https://via.placeholder.com/150',
-        ),
-        dataEnvio: DateTime(
-          DateTime.now().year,
-          DateTime.now().month,
-          DateTime.now().day - 1,
-          DateTime.now().hour,
-          DateTime.now().minute,
-        ),
-        anexos: [
-          'https://via.placeholder.com/150',
-          'https://via.placeholder.com/150',
-          'https://via.placeholder.com/150',
-          'https://via.placeholder.com/150',
-          'https://via.placeholder.com/150',
-          'https://via.placeholder.com/150'
-        ],
-        vista: true,
-      ),
-      Mensagem(
-        mensagemId: 2,
-        mensagemTexto: 'Hi Alice! How are you doing?',
-        remetente: Utilizador(
-          2,
-          'John',
-          'Doe',
-          'john.doe@example.com',
-          'Some info',
-          1,
-          [1, 2],
-          1,
-          1,
-          'https://via.placeholder.com/150',
-        ),
-        destinatarioUtil: Utilizador(
-            1,
-            'Alice',
-            'Johnson',
-            'alice.johnson@example.com',
-            'Some info',
-            1,
-            [1, 2],
-            1,
-            1,
-            'https://via.placeholder.com/150'),
-        dataEnvio: DateTime.now().subtract(Duration(minutes: 50)),
-        anexos: [
-          'https://via.placeholder.com/150',
-          'https://via.placeholder.com/150',
-        ],
-        vista: true,
-      ),
-      Mensagem(
-        mensagemId: 3,
-        mensagemTexto: 'I\'m good, thanks! Just got back from vacation.',
-        remetente: Utilizador(
-          1,
-          'Alice',
-          'Johnson',
-          'alice.johnson@example.com',
-          'Some info',
-          1,
-          [1, 2],
-          1,
-          1,
-          'https://via.placeholder.com/150',
-        ),
-        destinatarioUtil: Utilizador(
-          2,
-          'John',
-          'Doe',
-          'john.doe@example.com',
-          'Some info',
-          1,
-          [1, 2],
-          1,
-          1,
-          'https://via.placeholder.com/150',
-        ),
-        dataEnvio: DateTime.now().subtract(Duration(minutes: 45)),
-        anexos: [],
-        vista: true,
-      ),
-      Mensagem(
-        mensagemId: 4,
-        mensagemTexto: 'That\'s awesome! Where did you go?',
-        remetente: Utilizador(
-          2,
-          'John',
-          'Doe',
-          'john.doe@example.com',
-          'Some info',
-          1,
-          [1, 2],
-          1,
-          1,
-          'https://via.placeholder.com/150',
-        ),
-        destinatarioUtil: Utilizador(
-          1,
-          'Alice',
-          'Johnson',
-          'alice.johnson@example.com',
-          'Some info',
-          1,
-          [1, 2],
-          1,
-          1,
-          'https://via.placeholder.com/150',
-        ),
-        dataEnvio: DateTime.now().subtract(Duration(minutes: 40)),
-        anexos: [],
-        vista: true,
-      ),
-      Mensagem(
-        mensagemId: 5,
-        mensagemTexto: 'I went to the mountains. It was so refreshing!',
-        remetente: Utilizador(
-            1,
-            'Alice',
-            'Johnson',
-            'alice.johnson@example.com',
-            'Some info',
-            1,
-            [1, 2],
-            1,
-            1,
-            'https://via.placeholder.com/150'),
-        destinatarioUtil: Utilizador(2, 'John', 'Doe', 'john.doe@example.com',
-            'Some info', 1, [1, 2], 1, 1),
-        dataEnvio: DateTime.now().subtract(Duration(minutes: 35)),
-        anexos: [],
-        vista: true,
-      ),
-      Mensagem(
-        mensagemId: 6,
-        mensagemTexto: 'Sounds amazing! I could use a vacation myself.',
-        remetente: Utilizador(
-          2,
-          'John',
-          'Doe',
-          'john.doe@example.com',
-          'Some info',
-          1,
-          [1, 2],
-          1,
-          1,
-          'https://via.placeholder.com/150',
-        ),
-        destinatarioUtil: Utilizador(1, 'Alice', 'Johnson',
-            'alice.johnson@example.com', 'Some info', 1, [1, 2], 1, 1),
-        dataEnvio: DateTime.now().subtract(Duration(minutes: 30)),
-        anexos: [],
-        vista: true,
-      ),
-    ];*/
-    return messages;
-  }
-
   Future<void> actualizaDados() async {
     setState(() {
+      utilizadorId = widget.utilizadorId!;
       _isLoading = true;
     });
+    MensagemRepository mensagemRepository = MensagemRepository();
+    if (!widget.msgGrupo) {
+      // carrega mensagens da base de dados
 
-    mensagens = await fetchMensagens();
+      List<Mensagem> mensagensL =
+          await mensagemRepository.getConversa(widget.mensagemId);
 
-    setState(() {
-      _isLoading = false;
-    });
+      setState(() {
+        mensagens = mensagensL;
+        _isLoading = false;
+      });
+    } else {
+      List<Mensagem> mensagensL =
+          await mensagemRepository.getConversaGr(widget.mensagemId);
+      setState(() {
+        mensagens = mensagensL;
+        _isLoading = false;
+      });
+    }
 
     // Faz scroll para a última mensagem
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -253,7 +80,6 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
 
   @override
   void initState() {
-    print(widget.mensagemId);
     super.initState();
     actualizaDados();
   }
@@ -351,6 +177,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                     if (index == mensagens.length) {
                       return SizedBox(height: altura * 0.1);
                     }
+                    print(mensagens[index].remetente.utilizadorId);
                     bool isSender =
                         mensagens[index].remetente.utilizadorId == utilizadorId;
                     return Container(
@@ -502,7 +329,10 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
               color: Theme.of(context).canvasColor,
               child: Row(
                 children: <Widget>[
-                  //FotoPicker(onImagesPicked: _onImagesPicked),
+                  /*FotoPicker(
+                    pickedImages: _selectedImages,
+                    onImagesPicked: _onImagesPicked,
+                  ), */
                   SizedBox(width: largura * 0.02),
                   Expanded(
                     child: TextField(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:softshares_mobile/Repositories/grupo_repository.dart';
 import 'package:softshares_mobile/models/grupo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -55,10 +56,10 @@ class GrupoDetalheScreen extends StatelessWidget {
               SizedBox(height: altura * 0.02),
               Text(
                 grupo.nome,
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                    color: Theme.of(context).canvasColor),
               ),
               SizedBox(height: altura * 0.02),
               Expanded(
@@ -91,7 +92,7 @@ class GrupoDetalheScreen extends StatelessWidget {
                           children: [
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.pop(context, false);
                               },
                               child:
                                   Text(AppLocalizations.of(context)!.cancelar),
@@ -99,18 +100,7 @@ class GrupoDetalheScreen extends StatelessWidget {
                             SizedBox(width: largura * 0.02),
                             FilledButton(
                               onPressed: () {
-                                // TODO: Implementar a função de juntar-se ao grupo
-                                // falta ir buscar o id da mensagem
-                                /*      Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MensagemDetalheScreen(
-                                          mensagemId: 0,
-                                          nome: "grupo.nome",
-                                          imagemUrl: grupo.imagem!,
-                                          msgGrupo: true),
-                                    ),
-                                  );*/
+                                Navigator.pop(context, true);
                               },
                               child: Text(
                                   AppLocalizations.of(context)!.juntarGrupo),
