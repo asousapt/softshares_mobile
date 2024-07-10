@@ -53,7 +53,7 @@ class _NovaMensagemState extends State<NovaMensagem> {
   // Função que retorna o id da mensagem que contém o utilizador
   int getMensagemId(List<Mensagem> msgs, int utilizadorId) {
     for (Mensagem msg in msgs) {
-      if (msg.remetente.utilizadorId == utilizadorId ||
+      if (msg.remetente!.utilizadorId == utilizadorId ||
           (msg.destinatarioUtil != null &&
               msg.destinatarioUtil!.utilizadorId == utilizadorId)) {
         return msg.mensagemId!;
@@ -191,6 +191,9 @@ class _NovaMensagemState extends State<NovaMensagem> {
                                           listaUtilizadoresFiltrada[index]
                                               .fotoUrl!,
                                       msgGrupo: false,
+                                      utilizadorId:
+                                          listaUtilizadoresFiltrada[index]
+                                              .utilizadorId,
                                     ),
                                   ),
                                 );

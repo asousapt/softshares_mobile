@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:softshares_mobile/Repositories/mensagem_repository.dart';
+import 'package:softshares_mobile/Repositories/utilizador_repository.dart';
+import 'package:softshares_mobile/models/grupo.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/generic/galeria_fotos.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/info_grupo.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/info_utilizador.dart';
@@ -37,6 +40,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late int utilizadorId;
+  late int grupoId;
   List<Mensagem> mensagens = [];
   bool _isLoading = false;
   List<XFile> _selectedImages = [];
@@ -44,7 +48,10 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
   Future<void> actualizaDados() async {
     setState(() {
       utilizadorId = widget.utilizadorId!;
+      print("UtilizadorId: $utilizadorId");
+      grupoId = widget.grupoId!;
       _isLoading = true;
+      print(utilizadorId);
     });
     MensagemRepository mensagemRepository = MensagemRepository();
     if (!widget.msgGrupo) {
@@ -103,7 +110,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
               children: <Widget>[
                 IconButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context, true);
                   },
                   icon: const Icon(Icons.arrow_back, color: Colors.black),
                 ),
@@ -177,9 +184,9 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                     if (index == mensagens.length) {
                       return SizedBox(height: altura * 0.1);
                     }
-                    print(mensagens[index].remetente.utilizadorId);
-                    bool isSender =
-                        mensagens[index].remetente.utilizadorId == utilizadorId;
+
+                    bool isSender = mensagens[index].remetente!.utilizadorId ==
+                        utilizadorId;
                     return Container(
                       padding: EdgeInsets.only(
                           left: largura * 0.02,
@@ -196,12 +203,12 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                               children: [
                                 CircleAvatar(
                                   backgroundImage: NetworkImage(
-                                      mensagens[index].remetente.fotoUrl!),
+                                      mensagens[index].remetente!.fotoUrl!),
                                   maxRadius: 12,
                                 ),
                                 SizedBox(width: largura * 0.02),
                                 Text(
-                                  mensagens[index].remetente.getNomeCompleto(),
+                                  mensagens[index].remetente!.getNomeCompleto(),
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -232,7 +239,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                                   style: const TextStyle(fontSize: 15),
                                 ),
                                 // Mostrar imagens se existirem
-                                if (mensagens[index].anexos.isNotEmpty)
+                                if (mensagens[index].anexos!.isNotEmpty)
                                   InkWell(
                                     onTap: () {
                                       // Navegar para a galeria de fotos
@@ -241,7 +248,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               PhotoGalleryScreen(
-                                            imageUrls: mensagens[index].anexos,
+                                            imageUrls: mensagens[index].anexos!,
                                             initialIndex: 0,
                                           ),
                                         ),
@@ -261,28 +268,28 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                                           mainAxisSpacing: altura * 0.02,
                                         ),
                                         itemCount:
-                                            mensagens[index].anexos.length > 4
+                                            mensagens[index].anexos!.length > 4
                                                 ? 4
                                                 : mensagens[index]
-                                                    .anexos
+                                                    .anexos!
                                                     .length,
                                         itemBuilder: (context, imgIndex) {
                                           if (imgIndex == 3 &&
-                                              mensagens[index].anexos.length >
+                                              mensagens[index].anexos!.length >
                                                   4) {
                                             return Stack(
                                               fit: StackFit.expand,
                                               children: [
                                                 Image.network(
                                                   mensagens[index]
-                                                      .anexos[imgIndex],
+                                                      .anexos![imgIndex],
                                                   fit: BoxFit.cover,
                                                 ),
                                                 Container(
                                                   color: Colors.black54,
                                                   child: Center(
                                                     child: Text(
-                                                      '+${mensagens[index].anexos.length - 4}',
+                                                      '+${mensagens[index].anexos!.length - 4}',
                                                       style: TextStyle(
                                                         color: Theme.of(context)
                                                             .canvasColor,
@@ -295,7 +302,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                                             );
                                           }
                                           return Image.network(
-                                            mensagens[index].anexos[imgIndex],
+                                            mensagens[index].anexos![imgIndex],
                                             fit: BoxFit.cover,
                                           );
                                         },
@@ -307,7 +314,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                           ),
                           SizedBox(height: altura * 0.01),
                           Text(
-                            dataFormatadaMsg(mensagens[index].dataEnvio, "pt"),
+                            dataFormatadaMsg(mensagens[index].dataEnvio!, "pt"),
                             style: TextStyle(
                                 fontSize: 10,
                                 color: Theme.of(context).canvasColor),
@@ -352,46 +359,54 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      onPressed: () {
-                        // TODO implementar envio de mensagem e imagens
+                      onPressed: () async {
+                        // Envio de mensagem
                         if (_messageController.text.trim().isNotEmpty ||
                             _selectedImages.isNotEmpty) {
-                          setState(() {
-                            /*mensagens.add(
-                              Mensagem(
-                                mensagemId: mensagens.length + 1,
-                                mensagemTexto: _messageController.text.trim(),
-                                remetente: Utilizador(
-                                  utilizadorId,
-                                  'Alice',
-                                  'Johnson',
-                                  'alice.johnson@example.com',
-                                  'Some info',
-                                  1,
-                                  [1, 2],
-                                  1,
-                                  1,
+                          print("object etgrg");
+                          UtilizadorRepository utilizadorRepository =
+                              UtilizadorRepository();
+                          Utilizador? utilizadorEnvio;
+                          if (widget.msgGrupo == false && mensagens.isEmpty) {
+                            utilizadorEnvio = await utilizadorRepository
+                                .getUtilizador(utilizadorId.toString());
+                            print("UtilizadorEnvio: $utilizadorEnvio");
+                          }
+
+                          Mensagem msg = Mensagem(
+                            mensagemTexto: _messageController.text.trim(),
+                            destinatarioGrupo: widget.msgGrupo
+                                ? mensagens[0].destinatarioGrupo as Grupo
+                                : null,
+                            destinatarioUtil: widget.msgGrupo
+                                ? null
+                                : mensagens.isNotEmpty
+                                    ? mensagens[0].destinatarioUtil
+                                        as Utilizador
+                                    : utilizadorEnvio,
+                          );
+
+                          MensagemRepository mensagemRepository =
+                              MensagemRepository();
+                          bool enviou =
+                              await mensagemRepository.enviarMensagem(msg);
+
+                          if (!enviou) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  AppLocalizations.of(context)!.ocorreuErro,
                                 ),
-                                destinatarioUtil: Utilizador(
-                                  2,
-                                  'John',
-                                  'Doe',
-                                  'john.doe@example.com',
-                                  'Some info',
-                                  1,
-                                  [1, 2],
-                                  1,
-                                  1,
-                                ),
-                                dataEnvio: DateTime.now(),
-                                anexos: _selectedImages
-                                    .map((image) => image.path)
-                                    .toList(),
-                                vista: true,
                               ),
-                            );*/
-                            _messageController.clear();
-                          });
+                            );
+                          } else {
+                            // Actualiza a lista de mensagens
+                            actualizaDados();
+                            setState(() {
+                              _messageController.clear();
+                            });
+                          }
+
                           // Faz scroll para a última mensagem
                           WidgetsBinding.instance!.addPostFrameCallback((_) {
                             _scrollController.jumpTo(

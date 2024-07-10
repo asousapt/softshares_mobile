@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -99,7 +98,7 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
     setState(() {
       listaEvFiltrada = mensagens.where((element) {
         String mensagemlower = element.mensagemTexto.toLowerCase();
-        String nomelower = element.remetente.getNomeCompleto().toLowerCase();
+        String nomelower = element.remetente!.getNomeCompleto().toLowerCase();
 
         return mensagemlower.contains(texto) || nomelower.contains(texto);
       }).toList();
@@ -212,9 +211,8 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
                             ? mensagens[index].destinatarioGrupo!.fotoUrl1!
                             : ''
                         : mensagens[index].destinatarioUtil!.fotoUrl ?? '',
-
-                    hora: dataFormatadaMsg(mensagens[index].dataEnvio, idioama),
-                    //lida: mensagens[index].vista!,
+                    hora:
+                        dataFormatadaMsg(mensagens[index].dataEnvio!, idioama),
                   ),
                 );
               },

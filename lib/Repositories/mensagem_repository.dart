@@ -52,4 +52,12 @@ class MensagemRepository {
 
     return mensagens;
   }
+
+  Future<bool> enviarMensagem(Mensagem mensagem) async {
+    apiService.setAuthToken("tokenFixo");
+    Map<String, dynamic> mensagemJson = await mensagem.toJson();
+    var response = await apiService.postRequest("mensagens/", mensagemJson);
+
+    return response['data'] as bool;
+  }
 }

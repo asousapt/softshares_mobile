@@ -47,6 +47,7 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
 
     print(fetchedGrupo?.nome ?? '');
     setState(() {
+      print("###############################");
       grupo = fetchedGrupo;
       _isLoading = false;
     });
@@ -173,7 +174,8 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
                                         children: [
                                           Expanded(
                                             child: ListView(
-                                              children: (grupo?.utilizadores ??
+                                              children: (grupo
+                                                          ?.utilizadoresGrupo ??
                                                       [])
                                                   .map(
                                                     (utilizador) => ListTile(
@@ -269,7 +271,6 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
                           ),
                         ),
                         SizedBox(height: altura * 0.02),
-                        /*
                         Container(
                           margin:
                               EdgeInsets.symmetric(horizontal: largura * 0.02),
@@ -304,7 +305,7 @@ class _GrupoInfoScreenState extends State<GrupoInfoScreen> {
                                         color: Theme.of(context).canvasColor),
                                   ),
                                 ),
-                        ),*/
+                        ),
                         SizedBox(height: altura * 0.02),
                       ],
                     ),

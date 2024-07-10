@@ -1,23 +1,25 @@
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/models/grupo.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 
 class Mensagem {
   int? mensagemId;
   String mensagemTexto;
-  Utilizador remetente;
+  Utilizador? remetente;
   Utilizador? destinatarioUtil;
   Grupo? destinatarioGrupo;
-  DateTime dataEnvio;
-  List<String> anexos = [];
+  DateTime? dataEnvio;
+  List<String>? anexos = [];
 
   Mensagem({
     this.mensagemId,
     required this.mensagemTexto,
-    required this.remetente,
+    this.remetente,
     this.destinatarioUtil,
     this.destinatarioGrupo,
-    required this.dataEnvio,
-    required this.anexos,
+    this.dataEnvio,
+    this.anexos,
   });
 
   factory Mensagem.fromJson(Map<String, dynamic> json) {
@@ -46,5 +48,22 @@ class Mensagem {
           ? (json['anexos'] as List).map((e) => e.toString()).toList()
           : [],
     );
+  }
+
+  Future<Map<String, dynamic>> toJson() async {
+    final prefs = await SharedPreferences.getInstance();
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    int utilizadorId = utilizador.utilizadorId;
+
+    return {
+      "idRemetente": utilizadorId,
+      "idDestinatario": destinatarioUtil != null
+          ? destinatarioUtil!.utilizadorId
+          : destinatarioGrupo!.grupoId,
+      "tipoDestinatario": destinatarioUtil != null ? "UT" : "GR",
+      "mensagem": mensagemTexto,
+      "imagem": []
+    };
   }
 }
