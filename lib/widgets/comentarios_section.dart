@@ -29,12 +29,9 @@ class _CommentSectionState extends State<CommentSection> {
   Utilizador? util;
   bool _isLoading = true;
   Map<int, int> ratings = {}; // Store ratings
-<<<<<<< HEAD
-=======
   List<Commentario>? comentarios;
   String? tabela;
   int? idRegisto;
->>>>>>> 4685c70bea9fe12147bc1a18811877a0298fe971
 
   @override
   void initState() {
@@ -44,19 +41,6 @@ class _CommentSectionState extends State<CommentSection> {
     carregaDados();
   }
 
-<<<<<<< HEAD
-  Future<void> fetchAllRatings() async {
-    for (var comment in widget.comentarios) {
-      final rating = await _fetchRatingData(comment);
-      ratings[comment.comentarioid] = rating;
-    }
-    setState(() {}); // Update state after fetching all ratings
-  }
-
-  Future<int> _fetchRatingData(Commentario comment) async {
-    final response = await api.getRequest(
-        'avaliacao/comentario/${comment.comentarioid}/utilizador/${util!.utilizadorId}');
-=======
   Future<void> refreshComments() async {
     await carregaComentarios();
     await fetchAllRatings();
@@ -84,7 +68,6 @@ class _CommentSectionState extends State<CommentSection> {
     setState(() {
       _isLoading = false;
     });
->>>>>>> 4685c70bea9fe12147bc1a18811877a0298fe971
     if (response['data'] == 0) return 0;
     return response['data']['avaliacao'];
   }
@@ -106,17 +89,6 @@ class _CommentSectionState extends State<CommentSection> {
     await fetchAllRatings();
   }
 
-<<<<<<< HEAD
-  void _adicionaSubcomentario(Commentario commentario, String texto) {
-    /*setState(() {
-      commentario.subcomentarios.add(Commentario(
-        comentarioid: 0,
-        comentario: texto,
-        autor: util!, // Use the current user
-        data: DateTime.now(),
-      ));
-    });*/
-=======
   // faz o load dos comentarios da api com uma funcao generica
   Future<void> carregaComentarios() async {
     ComentarioRepository comentarioRepository = ComentarioRepository();
@@ -126,7 +98,6 @@ class _CommentSectionState extends State<CommentSection> {
     setState(() {
       comentarios = comentariosl;
     });
->>>>>>> 4685c70bea9fe12147bc1a18811877a0298fe971
   }
 
   Future<bool> _adicionaSubcomentario(
@@ -283,26 +254,6 @@ class _CommentSectionState extends State<CommentSection> {
                     ],
                   ),
                 ),
-<<<<<<< HEAD
-                SizedBox(width: 8.0),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        comment.autor,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 4.0), // Adjust vertical spacing
-                      Text(
-                        dataFormatada('pt', comment.data),
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-=======
->>>>>>> 4685c70bea9fe12147bc1a18811877a0298fe971
                 Spacer(),
                 IconButton(
                   icon: Icon(Icons.flag),
@@ -312,11 +263,7 @@ class _CommentSectionState extends State<CommentSection> {
             ),
             const SizedBox(height: 8.0),
             Container(
-<<<<<<< HEAD
-              width: double.infinity, // Ensure content stretches within card
-=======
               width: double.infinity,
->>>>>>> 4685c70bea9fe12147bc1a18811877a0298fe971
               child: SingleChildScrollView(
                 scrollDirection:
                     Axis.horizontal, // Scroll horizontally if necessary
@@ -355,11 +302,7 @@ class _CommentSectionState extends State<CommentSection> {
                 ),
               ],
             ),
-<<<<<<< HEAD
-            ...comment.subcomentarios.map((subcomment) {
-=======
             ...comment.subcomentarios!.map((subcomment) {
->>>>>>> 4685c70bea9fe12147bc1a18811877a0298fe971
               int subRating = ratings[subcomment.comentarioid] ?? 0;
               return Padding(
                 padding: const EdgeInsets.only(left: 16.0),
@@ -382,11 +325,7 @@ class _CommentSectionState extends State<CommentSection> {
           )
         : Expanded(
             child: ListView(
-<<<<<<< HEAD
-              children: widget.comentarios.map((comment) {
-=======
               children: comentarios!.map((comment) {
->>>>>>> 4685c70bea9fe12147bc1a18811877a0298fe971
                 int rating = ratings[comment.comentarioid] ?? 0;
                 return _buildCommentario(comment, rating);
               }).toList(),

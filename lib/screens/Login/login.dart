@@ -83,6 +83,8 @@ class _EcraLoginState extends State<EcraLogin> {
     final prefs = await SharedPreferences.getInstance();
     bool? exists = false;
     final tipo = prefs.getString("tipoLogin");
+    final utilStrin = prefs.getString("utilizadorObj");
+    Utilizador util = Utilizador.fromJson(jsonDecode(utilStrin!));
     if (tipo == "google") {
       final email = prefs.getString("email");
       final token = prefs.getString("token");
