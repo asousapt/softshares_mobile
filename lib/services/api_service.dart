@@ -58,7 +58,7 @@ class ApiService {
 
     final response = await postRequestNoAuth('utilizadores/login', dados);
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    if (response['message']) {
       print(response.body);
       final responseBody = json.decode(response.body);
       await setAuthToken(responseBody['token']);

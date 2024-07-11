@@ -190,9 +190,9 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
     if (widget.tipo == "normal") {
       utilJson['passwd'] = widget.pass;
     } else if (widget.tipo == "google") {
-      utilJson['tokengoogle'] = widget.token;
+      utilJson['token'] = widget.token;
     } else if (widget.tipo == "facebook") {
-      utilJson['tokenfacebook'] = widget.token;
+      utilJson['token'] = widget.token;
     }
     print(jsonEncode(utilJson));
     api.postRequest("utilizadores/add/mobile", utilJson);

@@ -150,7 +150,7 @@ class _EcraLoginState extends State<EcraLogin> {
         print('$key: $value');
       });
       await prefs.setString("email", _facebookData!['email']);
-      await prefs.setString("token", _accessToken!.tokenString);
+      await prefs.setString("facebooktoken", _accessToken!.tokenString);
       carregaDados();
     } else {
       print(result.status);
@@ -172,10 +172,8 @@ class _EcraLoginState extends State<EcraLogin> {
       print(
           "Sign in by google\nNome do user: ${user.displayName}, Email: ${user.email}");
       final googleAuth = await user.authentication;
-      final authToken = await api.getRequestNoAuth("utilizadores/login");
-      //final authToken = await api.getRequestNoAuth("utilizadores/login");
       await prefs.setString("email", user.email);
-      await prefs.setString("token", googleAuth.accessToken!);
+      await prefs.setString("googletoken", googleAuth.accessToken!);
       //Get and set user local with this data
       carregaDados();
     }
