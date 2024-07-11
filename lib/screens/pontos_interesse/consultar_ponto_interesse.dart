@@ -205,6 +205,7 @@ class _ConsultPontoInteresseScreenState
               : SafeArea(
                   top: true,
                   bottom: true,
+                  right: true,
                   child: Container(
                     margin: EdgeInsets.only(
                       top: altura * 0.01,
@@ -224,6 +225,7 @@ class _ConsultPontoInteresseScreenState
                           )
                         : SingleChildScrollView(
                             child: Container(
+                              
                               decoration: BoxDecoration(
                                 color: Theme.of(context).canvasColor,
                               ),

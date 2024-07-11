@@ -177,5 +177,7 @@
   "pontoInteresseCriado" : "Point of Interest Created",
   "avaliacaoCriada" : "Rating created",
   "avaliacaoAtualizada" : "Updated Rating",
-  "comentarioAdd" : "Comment Added and "
+  "comentarioAdd" : "Comment Added and ",
+  "cliqueParaEscolherLocal" : "Click on the icon to choose the location",
+  "contaCriada" : "Cuenta creada"
 }

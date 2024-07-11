@@ -79,18 +79,37 @@ class _EcraLoginState extends State<EcraLogin> {
 
   Future<void> carregaDados() async {
     final context = this.context;
-    /*if (_formKey.currentState!.validate()) {
-                                          Navigator.pushNamed(context, '/home');
-                                        }*/
     final prefs = await SharedPreferences.getInstance();
-
-    UtilizadorRepository utilizadorRepository = UtilizadorRepository();
-
-    Utilizador util = await utilizadorRepository.getUtilizador("37");
-
-    Map<String, dynamic> utilJson = util.toJson();
-
-    await prefs.setString("utilizadorObj", jsonEncode(utilJson));
+    bool? exists = false;
+    final tipo = prefs.getString("tipoLogin");
+    if (tipo == "google") {
+      final email = prefs.getString("email");
+      final token = prefs.getString("token");
+      Map<String, dynamic> json = {
+        "tipo": "google",
+        "email": email,
+        "token": token,
+      };
+      api.fetchAuthTokenWithFallback(json);
+    } else if (tipo == "facebook") {
+      final email = prefs.getString("email");
+      final token = prefs.getString("token");
+      Map<String, dynamic> json = {
+        "tipo": "facebook",
+        "email": email,
+        "token": token,
+      };
+      api.fetchAuthTokenWithFallback(json);
+    } else if (tipo == "normal") {
+      final email = await prefs.getString("email");
+      final pass = await prefs.getString("pass");
+      Map<String, dynamic> json = {
+        "tipo": "normal",
+        "email": email,
+        "pass": pass,
+      };
+      api.fetchAuthTokenWithFallback(json);
+    }
 
     await prefs.setBool('isChecked', isChecked);
 
@@ -110,8 +129,16 @@ class _EcraLoginState extends State<EcraLogin> {
     }
   }
 
+  void resetUtil() async{
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('utilizadorObj');
+    prefs.remove('email');
+    prefs.remove('token');
+    prefs.remove('facebooktoken');
+    prefs.remove('googletoken');
+  }
+
   _loginFacebook() async {
-    await _logoutFacebook();
     final prefs = await SharedPreferences.getInstance();
     final LoginResult result = await FacebookAuth.instance.login();
     if (result.status == LoginStatus.success) {
@@ -244,11 +271,19 @@ class _EcraLoginState extends State<EcraLogin> {
     super.dispose();
   }
 
-  void sub() {
+  void sub() async {
+    print("Passa por aqui");
+    
     setState(() {
       email = controlEmail.text;
       pass = controlPass.text;
     });
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("utilizadorObj");
+    prefs.setString("tipoLogin", "normal");
+    prefs.setString("email", email);
+    prefs.setString("pass", pass);
+    await carregaDados();
     //bd.inserirvalor(Email, Passricao);
   }
 
@@ -460,10 +495,14 @@ class _EcraLoginState extends State<EcraLogin> {
                                     width: double.infinity,
                                     child: FilledButton(
                                       onPressed: () async {
-                                        final prefs = await SharedPreferences
-                                            .getInstance();
-                                        prefs.setString("tipoLogin", "normal");
-                                        await carregaDados();
+                                        /*UtilizadorRepository rep = UtilizadorRepository();
+                                        Utilizador utTeste = await rep.getUtilizador('37');
+                                        final prefs = await SharedPreferences.getInstance();
+                                        await prefs.setString(
+          'utilizadorObj', jsonEncode(utTeste.toJson()));*/
+                                        if (_formKey.currentState!.validate()) {
+                                          sub();
+                                        }
                                       },
                                       child: Text(
                                           AppLocalizations.of(context)!.login),

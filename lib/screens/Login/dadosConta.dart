@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import "package:flutter/material.dart";
 import 'package:country_flags/country_flags.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,6 +9,7 @@ import 'package:softshares_mobile/Repositories/idioma_repository.dart';
 import 'package:softshares_mobile/models/departamento.dart';
 import 'package:softshares_mobile/models/polo.dart';
 import 'package:softshares_mobile/models/funcao.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/services/google_signin_api.dart';
@@ -165,19 +168,34 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
     super.dispose();
   }
 
-  void sub() async{
+  void sub() async {
     final prefs = await SharedPreferences.getInstance();
     final idioma = prefs.getString("idioma");
     IdiomaRepository idiomaRep = IdiomaRepository();
+    idiomaId = await idiomaRep.getIdiomaId(idioma!);
+    pNome = _controlPNome.text;
+    uNome = _controlUNome.text;
+    Map<String, dynamic> utilJson = {
+      'pnome': pNome,
+      'unome': uNome,
+      'email': widget.email,
+      'poloid': poloId,
+      'funcaoid': funcaoId,
+      'departamentoid': departamentoId,
+      'idiomaid': idiomaId,
+      'tipo': widget.tipo,
+      'perfilid': 3,
+    };
 
-    setState(() async{
-      idiomaId = await idiomaRep.getIdiomaId(idioma!);
-      pNome = _controlPNome.text;
-      uNome = _controlUNome.text;
-    });
-
-    
-
+    if (widget.tipo == "normal") {
+      utilJson['passwd'] = widget.pass;
+    } else if (widget.tipo == "google") {
+      utilJson['tokengoogle'] = widget.token;
+    } else if (widget.tipo == "facebook") {
+      utilJson['tokenfacebook'] = widget.token;
+    }
+    print(jsonEncode(utilJson));
+    api.postRequest("utilizadores/add/mobile", utilJson);
   }
 
   Future<void> getVersion() async {
@@ -284,8 +302,8 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
                                   DropdownButtonFormField(
                                     padding: const EdgeInsets.only(
                                         left: 10, right: 10),
-                                    hint: Text(AppLocalizations.of(context)!
-                                        .polo),
+                                    hint: Text(
+                                        AppLocalizations.of(context)!.polo),
                                     isExpanded: true,
                                     value: poloId,
                                     items: getListaPoloDropdown(polos),
@@ -318,8 +336,8 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
                                   DropdownButtonFormField(
                                     padding: const EdgeInsets.only(
                                         left: 10, right: 10),
-                                    hint: Text(AppLocalizations.of(context)!
-                                        .funcao),
+                                    hint: Text(
+                                        AppLocalizations.of(context)!.funcao),
                                     isExpanded: true,
                                     value: funcaoId,
                                     items: getListaFunDropdown(funcoes),
@@ -339,6 +357,12 @@ class _EcraDadosContaState extends State<EcraDadosConta> {
                                       onPressed: () {
                                         sub();
                                         if (_formKey.currentState!.validate()) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .contaCriada)));
                                           Navigator.pushNamed(
                                               context, '/escolherPolo');
                                         }

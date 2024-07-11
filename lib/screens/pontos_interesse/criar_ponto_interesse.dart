@@ -533,6 +533,7 @@ class _CriarPontoInteresseScreen extends State<CriarPontoInteresseScreen> {
                                           label: Text(
                                               AppLocalizations.of(context)!
                                                   .localizacao),
+                                          hintText: AppLocalizations.of(context)!.cliqueParaEscolherLocal,
                                         ),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {

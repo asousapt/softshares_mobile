@@ -25,6 +25,7 @@ class _CommentSectionState extends State<CommentSection> {
   ApiService api = ApiService();
   Utilizador? util;
   bool _isLoading = true;
+  Map<int, int> ratings = {}; // Store ratings
 
   @override
   void initState() {
@@ -32,11 +33,18 @@ class _CommentSectionState extends State<CommentSection> {
     carregaDados();
   }
 
+  Future<void> fetchAllRatings() async {
+    for (var comment in widget.comentarios) {
+      final rating = await _fetchRatingData(comment);
+      ratings[comment.comentarioid] = rating;
+    }
+    setState(() {}); // Update state after fetching all ratings
+  }
+
   Future<int> _fetchRatingData(Commentario comment) async {
-    // Replace this with your actual API call logic
     final response = await api.getRequest(
-        'avaliacao/comentario/${comment!.comentarioid}/utilizador/${util!.utilizadorId}');
-    if (response['data'] == 0) return response['data'];
+        'avaliacao/comentario/${comment.comentarioid}/utilizador/${util!.utilizadorId}');
+    if (response['data'] == 0) return 0;
     return response['data']['avaliacao'];
   }
 
@@ -47,18 +55,18 @@ class _CommentSectionState extends State<CommentSection> {
       util = Utilizador.fromJson(jsonDecode(utilJson!));
       _isLoading = false;
     });
+    await fetchAllRatings();
   }
 
   void _adicionaSubcomentario(Commentario commentario, String texto) {
-    setState(() {
-      /*commentario.subcomentarios.add(Commentario(
+    /*setState(() {
+      commentario.subcomentarios.add(Commentario(
         comentarioid: 0,
         comentario: texto,
-        autor: Utilizador(1, 'User', 'Surname', 'email@example.com',
-            'some info', 1, [], 1, 1), // Replace with actual user
+        autor: util!, // Use the current user
         data: DateTime.now(),
-      ));*/
-    });
+      ));
+    });*/
   }
 
   void _reportComment(Commentario commentario) async {
@@ -145,6 +153,9 @@ class _CommentSectionState extends State<CommentSection> {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Criar")));
     }
+    setState(() {
+      ratings[idComentario] = newRating;
+    });
   }
 
   Widget _buildCommentario(Commentario comment, int rating) {
@@ -168,14 +179,21 @@ class _CommentSectionState extends State<CommentSection> {
                   ),
                 ),
                 SizedBox(width: 8.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(comment.autor),
-                    Text(
-                      dataFormatada('pt', comment.data),
-                    ),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        comment.autor,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 4.0), // Adjust vertical spacing
+                      Text(
+                        dataFormatada('pt', comment.data),
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
                 ),
                 Spacer(),
                 IconButton(
@@ -185,7 +203,14 @@ class _CommentSectionState extends State<CommentSection> {
               ],
             ),
             const SizedBox(height: 8.0),
-            Text(comment.comentario),
+            Container(
+              width: double.infinity, // Ensure content stretches within card
+              child: SingleChildScrollView(
+                scrollDirection:
+                    Axis.horizontal, // Scroll horizontally if necessary
+                child: Text(comment.comentario),
+              ),
+            ),
             RatingPicker(
               initialRating: rating,
               onRatingSelected: (newRating) {
@@ -211,23 +236,13 @@ class _CommentSectionState extends State<CommentSection> {
                 ),
               ],
             ),
-            ...comment.subcomentarios.map((subcomment) => Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: FutureBuilder<int>(
-                    future: _fetchRatingData(subcomment),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        final data = snapshot.data!;
-                        int subRating = data ?? 0;
-                        return _buildCommentario(subcomment, subRating);
-                      }
-                    },
-                  ),
-                )),
+            ...comment.subcomentarios.map((subcomment) {
+              int subRating = ratings[subcomment.comentarioid] ?? 0;
+              return Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: _buildCommentario(subcomment, subRating),
+              );
+            }).toList(),
           ],
         ),
       ),
@@ -244,20 +259,8 @@ class _CommentSectionState extends State<CommentSection> {
         : Expanded(
             child: ListView(
               children: widget.comentarios.map((comment) {
-                return FutureBuilder<int>(
-                  future: _fetchRatingData(comment),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      final data = snapshot.data!;
-                      int rating = data ?? 0;
-                      return _buildCommentario(comment, rating);
-                    }
-                  },
-                );
+                int rating = ratings[comment.comentarioid] ?? 0;
+                return _buildCommentario(comment, rating);
               }).toList(),
             ),
           );

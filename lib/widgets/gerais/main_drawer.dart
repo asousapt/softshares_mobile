@@ -130,16 +130,20 @@ class _MainDrawerState extends State<MainDrawer> {
             ListTile(
               onTap: () async {
                 Future<bool> confirma = confirmExit(
-                  context,
-                  AppLocalizations.of(context)!.confirmarSaida,
-                  AppLocalizations.of(context)!.temCerteza
-                );
+                    context,
+                    AppLocalizations.of(context)!.confirmarSaida,
+                    AppLocalizations.of(context)!.temCerteza);
                 confirma.then((value) async {
                   if (value) {
                     prefs.setBool('isChecked', false);
                     await FacebookAuth.instance.logOut();
                     await GoogleSignInApi.logout();
                     Navigator.pushNamed(context, "/login");
+                    prefs.remove('utilizadorObj');
+                    prefs.remove('email');
+                    prefs.remove('token');
+                    prefs.remove('facebooktoken');
+                    prefs.remove('googletoken');
                   }
                 });
               },

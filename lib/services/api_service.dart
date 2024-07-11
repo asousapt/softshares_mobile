@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import "package:flutter/material.dart";
 
 class ApiService {
   final String _baseUrl = dotenv.env['API_URL'] as String;
@@ -36,20 +37,36 @@ class ApiService {
 
   Future<void> fetchAuthToken(Map<String, dynamic> credentials) async {
     final prefs = await SharedPreferences.getInstance();
-    final response = await http.post(
-      Uri.parse('$_baseUrl/login'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(credentials),
-    );
+    final tipo = await prefs.getString("tipoLogin");
+    Map <String, dynamic> dados = {
+      "email" : credentials["email"],
+      "tipo" : tipo,
+    };
 
-    if (response.statusCode == 200) {
+    if(tipo == "normal"){
+      final pass = await prefs.getString("pass");
+      dados['pass'] = pass;
+    }else if(tipo == "google"){
+      final token = await prefs.getString("googletoken");
+      dados['token'] = token;
+    }else if(tipo == "facebook"){
+      final token = await prefs.getString("facebooktoken");
+      dados['token'] = token;
+    }
+
+    print("endereço: $_baseUrl/utilizadores/login\ndados: ${json.encode(dados)}");
+
+    final response = await postRequestNoAuth('utilizadores/login', dados);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print(response.body);
       final responseBody = json.decode(response.body);
       await setAuthToken(responseBody['token']);
       await prefs.setString(
           'utilizadorObj', jsonEncode(responseBody['utilizador']));
     } else {
+      print(response.body);
+
       throw Exception('Failed to authenticate');
     }
   }
@@ -65,7 +82,6 @@ class ApiService {
     } else {
       credentials = json.decode(utilizadorObj);
     }
-
     await fetchAuthToken(credentials);
   }
 
@@ -114,6 +130,24 @@ class ApiService {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': '$_authToken',
+      },
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 201) {
+      return json.decode(response.body);
+    } else {
+      print(json.decode(response.body));
+      throw Exception('Failed to post data');
+    }
+  }
+
+  Future<dynamic> postRequestNoAuth(String endpoint, Map<String, dynamic> data) async {
+    print('$_baseUrl/$endpoint');
+    final response = await http.post(
+      Uri.parse('$_baseUrl/$endpoint'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
     );
