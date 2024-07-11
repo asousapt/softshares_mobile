@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/mensagem_repository.dart';
 import 'package:softshares_mobile/Repositories/utilizador_repository.dart';
 import 'package:softshares_mobile/models/grupo.dart';
@@ -10,7 +13,6 @@ import 'package:softshares_mobile/screens/mensagensGrupos/info_grupo.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/info_utilizador.dart';
 import 'package:softshares_mobile/time_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:softshares_mobile/widgets/gerais/foto_picker.dart';
 
 class MensagemDetalheScreen extends StatefulWidget {
   const MensagemDetalheScreen({
@@ -44,39 +46,64 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
   List<Mensagem> mensagens = [];
   bool _isLoading = false;
   List<XFile> _selectedImages = [];
+  int mensagemId = 0;
+  int omeuUserId = 0;
 
+  // carrega mensagens da base de dados
+  // carrega mensagens da base de dados
   Future<void> actualizaDados() async {
+    final prefs = await SharedPreferences.getInstance();
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
     setState(() {
-      utilizadorId = widget.utilizadorId!;
-      print("UtilizadorId: $utilizadorId");
-      grupoId = widget.grupoId!;
-      _isLoading = true;
-      print(utilizadorId);
+      omeuUserId = utilizador.utilizadorId;
     });
-    MensagemRepository mensagemRepository = MensagemRepository();
-    if (!widget.msgGrupo) {
-      // carrega mensagens da base de dados
 
-      List<Mensagem> mensagensL =
-          await mensagemRepository.getConversa(widget.mensagemId);
-
+    // Check if mensagemId is not 0 and update state
+    if (widget.mensagemId != 0) {
       setState(() {
-        mensagens = mensagensL;
-        _isLoading = false;
-      });
-    } else {
-      List<Mensagem> mensagensL =
-          await mensagemRepository.getConversaGr(widget.mensagemId);
-      setState(() {
-        mensagens = mensagensL;
-        _isLoading = false;
+        mensagemId = widget.mensagemId;
       });
     }
+    print("o meu user id = $omeuUserId");
+    print("widget util = ${widget.utilizadorId}");
+    // Ensure utilizadorId and grupoId are not null
+    if (widget.utilizadorId == null) {
+      throw Exception("Utilizador ID is null");
+    }
+    if (widget.msgGrupo && widget.grupoId == null) {
+      throw Exception("Grupo ID is null");
+    }
 
-    // Faz scroll para a última mensagem
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    setState(() {
+      utilizadorId = widget.utilizadorId!;
+      grupoId = widget.grupoId ?? 0;
     });
+
+    print("mensagemId: $mensagemId");
+    if (mensagemId != 0) {
+      setState(() {
+        _isLoading = true;
+      });
+      MensagemRepository mensagemRepository = MensagemRepository();
+      List<Mensagem> mensagensL = [];
+
+      if (!widget.msgGrupo) {
+        mensagensL = await mensagemRepository.getConversa(mensagemId);
+      } else {
+        mensagensL = await mensagemRepository.getConversaGr(mensagemId);
+      }
+
+      setState(() {
+        mensagens = mensagensL;
+        _isLoading = false;
+      });
+
+      // Scroll to the last message
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      });
+    }
   }
 
   void _onImagesPicked(List<XFile> images) {
@@ -185,8 +212,8 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                       return SizedBox(height: altura * 0.1);
                     }
 
-                    bool isSender = mensagens[index].remetente!.utilizadorId ==
-                        utilizadorId;
+                    bool isSender =
+                        mensagens[index].remetente!.utilizadorId == omeuUserId;
                     return Container(
                       padding: EdgeInsets.only(
                           left: largura * 0.02,
@@ -363,14 +390,22 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                         // Envio de mensagem
                         if (_messageController.text.trim().isNotEmpty ||
                             _selectedImages.isNotEmpty) {
-                          print("object etgrg");
+                          setState(() {
+                            _isLoading = true;
+                          });
                           UtilizadorRepository utilizadorRepository =
                               UtilizadorRepository();
                           Utilizador? utilizadorEnvio;
                           if (widget.msgGrupo == false && mensagens.isEmpty) {
                             utilizadorEnvio = await utilizadorRepository
                                 .getUtilizador(utilizadorId.toString());
-                            print("UtilizadorEnvio: $utilizadorEnvio");
+                          } else if (mensagens.isNotEmpty &&
+                              omeuUserId != utilizadorId) {
+                            utilizadorEnvio = await utilizadorRepository
+                                .getUtilizador(utilizadorId.toString());
+                          } else {
+                            utilizadorEnvio = await utilizadorRepository
+                                .getUtilizador(omeuUserId.toString());
                           }
 
                           Mensagem msg = Mensagem(
@@ -378,12 +413,9 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                             destinatarioGrupo: widget.msgGrupo
                                 ? mensagens[0].destinatarioGrupo as Grupo
                                 : null,
-                            destinatarioUtil: widget.msgGrupo
-                                ? null
-                                : mensagens.isNotEmpty
-                                    ? mensagens[0].destinatarioUtil
-                                        as Utilizador
-                                    : utilizadorEnvio,
+                            destinatarioUtil: widget.msgGrupo == false
+                                ? utilizadorEnvio
+                                : null,
                           );
 
                           MensagemRepository mensagemRepository =
@@ -392,6 +424,9 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                               await mensagemRepository.enviarMensagem(msg);
 
                           if (!enviou) {
+                            setState(() {
+                              _isLoading = false;
+                            });
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
@@ -400,9 +435,22 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                               ),
                             );
                           } else {
+                            if (mensagemId == 0) {
+                              // vamos obter o mensagemid para carregar a consversa
+
+                              MensagemRepository mensagemRepository =
+                                  MensagemRepository();
+                              int mensagemIdl = await mensagemRepository
+                                  .obterUltimoId(utilizadorEnvio!.utilizadorId);
+
+                              setState(() {
+                                mensagemId = mensagemIdl;
+                              });
+                            }
                             // Actualiza a lista de mensagens
                             actualizaDados();
                             setState(() {
+                              _isLoading = false;
                               _messageController.clear();
                             });
                           }

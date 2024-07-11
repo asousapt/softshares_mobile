@@ -56,7 +56,7 @@ class Mensagem {
     Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
     int utilizadorId = utilizador.utilizadorId;
 
-    return {
+    Map<String, dynamic> teste = {
       "idRemetente": utilizadorId,
       "idDestinatario": destinatarioUtil != null
           ? destinatarioUtil!.utilizadorId
@@ -65,5 +65,7 @@ class Mensagem {
       "mensagem": mensagemTexto,
       "imagem": []
     };
+    print(teste);
+    return teste;
   }
 }

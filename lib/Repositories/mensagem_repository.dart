@@ -60,4 +60,47 @@ class MensagemRepository {
 
     return response['data'] as bool;
   }
+
+  Future<int> obterUltimoId(int utilizador2) async {
+    final prefs = await SharedPreferences.getInstance();
+    String util = prefs.getString("utilizadorObj") ?? "";
+
+    if (util.isEmpty) {
+      throw Exception("User data not found in SharedPreferences");
+    }
+
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    int utilizadorId = utilizador.utilizadorId;
+    apiService.setAuthToken("tokenFixo");
+
+    // Make the API request
+    var response = await apiService
+        .getRequest("mensagens/$utilizadorId/util/$utilizador2");
+
+    if (response == null) {
+      throw Exception("Response from API is null");
+    }
+
+    // Print the response for debugging
+    print(response);
+
+    // Check if 'data' key exists and is a list
+    if (!response.containsKey('data') ||
+        response['data'] == null ||
+        response['data'] is! List ||
+        response['data'].isEmpty) {
+      throw Exception("No message data found");
+    }
+
+    // Extract the message ID
+    var messageData = response['data'][0];
+    if (messageData == null ||
+        !messageData.containsKey('mensagemid') ||
+        messageData['mensagemid'] == null) {
+      throw Exception("Message ID is null or missing");
+    }
+
+    int mensagemId = messageData['mensagemid'];
+    return mensagemId;
+  }
 }
