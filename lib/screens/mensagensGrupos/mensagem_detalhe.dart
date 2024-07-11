@@ -1,13 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/mensagem_repository.dart';
+import 'package:softshares_mobile/Repositories/utilizador_repository.dart';
+import 'package:softshares_mobile/models/grupo.dart';
 import 'package:softshares_mobile/models/mensagem.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/generic/galeria_fotos.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/info_grupo.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/info_utilizador.dart';
 import 'package:softshares_mobile/time_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:softshares_mobile/widgets/gerais/foto_picker.dart';
 
 class MensagemDetalheScreen extends StatefulWidget {
   const MensagemDetalheScreen({
@@ -37,39 +42,68 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late int utilizadorId;
+  late int grupoId;
   List<Mensagem> mensagens = [];
   bool _isLoading = false;
   List<XFile> _selectedImages = [];
+  int mensagemId = 0;
+  int omeuUserId = 0;
 
+  // carrega mensagens da base de dados
+  // carrega mensagens da base de dados
   Future<void> actualizaDados() async {
+    final prefs = await SharedPreferences.getInstance();
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
     setState(() {
-      utilizadorId = widget.utilizadorId!;
-      _isLoading = true;
+      omeuUserId = utilizador.utilizadorId;
     });
-    MensagemRepository mensagemRepository = MensagemRepository();
-    if (!widget.msgGrupo) {
-      // carrega mensagens da base de dados
 
-      List<Mensagem> mensagensL =
-          await mensagemRepository.getConversa(widget.mensagemId);
-
+    // Check if mensagemId is not 0 and update state
+    if (widget.mensagemId != 0) {
       setState(() {
-        mensagens = mensagensL;
-        _isLoading = false;
-      });
-    } else {
-      List<Mensagem> mensagensL =
-          await mensagemRepository.getConversaGr(widget.mensagemId);
-      setState(() {
-        mensagens = mensagensL;
-        _isLoading = false;
+        mensagemId = widget.mensagemId;
       });
     }
+    print("o meu user id = $omeuUserId");
+    print("widget util = ${widget.utilizadorId}");
+    // Ensure utilizadorId and grupoId are not null
+    if (widget.utilizadorId == null) {
+      throw Exception("Utilizador ID is null");
+    }
+    if (widget.msgGrupo && widget.grupoId == null) {
+      throw Exception("Grupo ID is null");
+    }
 
-    // Faz scroll para a última mensagem
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    setState(() {
+      utilizadorId = widget.utilizadorId!;
+      grupoId = widget.grupoId ?? 0;
     });
+
+    print("mensagemId: $mensagemId");
+    if (mensagemId != 0) {
+      setState(() {
+        _isLoading = true;
+      });
+      MensagemRepository mensagemRepository = MensagemRepository();
+      List<Mensagem> mensagensL = [];
+
+      if (!widget.msgGrupo) {
+        mensagensL = await mensagemRepository.getConversa(mensagemId);
+      } else {
+        mensagensL = await mensagemRepository.getConversaGr(mensagemId);
+      }
+
+      setState(() {
+        mensagens = mensagensL;
+        _isLoading = false;
+      });
+
+      // Scroll to the last message
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      });
+    }
   }
 
   void _onImagesPicked(List<XFile> images) {
@@ -103,7 +137,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
               children: <Widget>[
                 IconButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context, true);
                   },
                   icon: const Icon(Icons.arrow_back, color: Colors.black),
                 ),
@@ -177,9 +211,9 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                     if (index == mensagens.length) {
                       return SizedBox(height: altura * 0.1);
                     }
-                    print(mensagens[index].remetente.utilizadorId);
+
                     bool isSender =
-                        mensagens[index].remetente.utilizadorId == utilizadorId;
+                        mensagens[index].remetente!.utilizadorId == omeuUserId;
                     return Container(
                       padding: EdgeInsets.only(
                           left: largura * 0.02,
@@ -196,12 +230,12 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                               children: [
                                 CircleAvatar(
                                   backgroundImage: NetworkImage(
-                                      mensagens[index].remetente.fotoUrl!),
+                                      mensagens[index].remetente!.fotoUrl!),
                                   maxRadius: 12,
                                 ),
                                 SizedBox(width: largura * 0.02),
                                 Text(
-                                  mensagens[index].remetente.getNomeCompleto(),
+                                  mensagens[index].remetente!.getNomeCompleto(),
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -232,7 +266,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                                   style: const TextStyle(fontSize: 15),
                                 ),
                                 // Mostrar imagens se existirem
-                                if (mensagens[index].anexos.isNotEmpty)
+                                if (mensagens[index].anexos!.isNotEmpty)
                                   InkWell(
                                     onTap: () {
                                       // Navegar para a galeria de fotos
@@ -241,7 +275,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               PhotoGalleryScreen(
-                                            imageUrls: mensagens[index].anexos,
+                                            imageUrls: mensagens[index].anexos!,
                                             initialIndex: 0,
                                           ),
                                         ),
@@ -261,28 +295,28 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                                           mainAxisSpacing: altura * 0.02,
                                         ),
                                         itemCount:
-                                            mensagens[index].anexos.length > 4
+                                            mensagens[index].anexos!.length > 4
                                                 ? 4
                                                 : mensagens[index]
-                                                    .anexos
+                                                    .anexos!
                                                     .length,
                                         itemBuilder: (context, imgIndex) {
                                           if (imgIndex == 3 &&
-                                              mensagens[index].anexos.length >
+                                              mensagens[index].anexos!.length >
                                                   4) {
                                             return Stack(
                                               fit: StackFit.expand,
                                               children: [
                                                 Image.network(
                                                   mensagens[index]
-                                                      .anexos[imgIndex],
+                                                      .anexos![imgIndex],
                                                   fit: BoxFit.cover,
                                                 ),
                                                 Container(
                                                   color: Colors.black54,
                                                   child: Center(
                                                     child: Text(
-                                                      '+${mensagens[index].anexos.length - 4}',
+                                                      '+${mensagens[index].anexos!.length - 4}',
                                                       style: TextStyle(
                                                         color: Theme.of(context)
                                                             .canvasColor,
@@ -295,7 +329,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                                             );
                                           }
                                           return Image.network(
-                                            mensagens[index].anexos[imgIndex],
+                                            mensagens[index].anexos![imgIndex],
                                             fit: BoxFit.cover,
                                           );
                                         },
@@ -307,7 +341,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                           ),
                           SizedBox(height: altura * 0.01),
                           Text(
-                            dataFormatadaMsg(mensagens[index].dataEnvio, "pt"),
+                            dataFormatadaMsg(mensagens[index].dataEnvio!, "pt"),
                             style: TextStyle(
                                 fontSize: 10,
                                 color: Theme.of(context).canvasColor),
@@ -352,46 +386,75 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      onPressed: () {
-                        // TODO implementar envio de mensagem e imagens
+                      onPressed: () async {
+                        // Envio de mensagem
                         if (_messageController.text.trim().isNotEmpty ||
                             _selectedImages.isNotEmpty) {
                           setState(() {
-                            /*mensagens.add(
-                              Mensagem(
-                                mensagemId: mensagens.length + 1,
-                                mensagemTexto: _messageController.text.trim(),
-                                remetente: Utilizador(
-                                  utilizadorId,
-                                  'Alice',
-                                  'Johnson',
-                                  'alice.johnson@example.com',
-                                  'Some info',
-                                  1,
-                                  [1, 2],
-                                  1,
-                                  1,
-                                ),
-                                destinatarioUtil: Utilizador(
-                                  2,
-                                  'John',
-                                  'Doe',
-                                  'john.doe@example.com',
-                                  'Some info',
-                                  1,
-                                  [1, 2],
-                                  1,
-                                  1,
-                                ),
-                                dataEnvio: DateTime.now(),
-                                anexos: _selectedImages
-                                    .map((image) => image.path)
-                                    .toList(),
-                                vista: true,
-                              ),
-                            );*/
-                            _messageController.clear();
+                            _isLoading = true;
                           });
+                          UtilizadorRepository utilizadorRepository =
+                              UtilizadorRepository();
+                          Utilizador? utilizadorEnvio;
+                          if (widget.msgGrupo == false && mensagens.isEmpty) {
+                            utilizadorEnvio = await utilizadorRepository
+                                .getUtilizador(utilizadorId.toString());
+                          } else if (mensagens.isNotEmpty &&
+                              omeuUserId != utilizadorId) {
+                            utilizadorEnvio = await utilizadorRepository
+                                .getUtilizador(utilizadorId.toString());
+                          } else {
+                            utilizadorEnvio = await utilizadorRepository
+                                .getUtilizador(omeuUserId.toString());
+                          }
+
+                          Mensagem msg = Mensagem(
+                            mensagemTexto: _messageController.text.trim(),
+                            destinatarioGrupo: widget.msgGrupo
+                                ? mensagens[0].destinatarioGrupo as Grupo
+                                : null,
+                            destinatarioUtil: widget.msgGrupo == false
+                                ? utilizadorEnvio
+                                : null,
+                          );
+
+                          MensagemRepository mensagemRepository =
+                              MensagemRepository();
+                          bool enviou =
+                              await mensagemRepository.enviarMensagem(msg);
+
+                          if (!enviou) {
+                            setState(() {
+                              _isLoading = false;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  AppLocalizations.of(context)!.ocorreuErro,
+                                ),
+                              ),
+                            );
+                          } else {
+                            if (mensagemId == 0) {
+                              // vamos obter o mensagemid para carregar a consversa
+
+                              MensagemRepository mensagemRepository =
+                                  MensagemRepository();
+                              int mensagemIdl = await mensagemRepository
+                                  .obterUltimoId(utilizadorEnvio!.utilizadorId);
+
+                              setState(() {
+                                mensagemId = mensagemIdl;
+                              });
+                            }
+                            // Actualiza a lista de mensagens
+                            actualizaDados();
+                            setState(() {
+                              _isLoading = false;
+                              _messageController.clear();
+                            });
+                          }
+
                           // Faz scroll para a última mensagem
                           WidgetsBinding.instance!.addPostFrameCallback((_) {
                             _scrollController.jumpTo(

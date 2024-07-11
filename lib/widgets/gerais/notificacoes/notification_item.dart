@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:softshares_mobile/time_utils.dart';
 
 class NotificationCard extends StatelessWidget {
-  const NotificationCard(
-      {super.key,
-      required this.texto,
-      required this.icone,
-      required this.data,
-      required this.idioma});
+  const NotificationCard({
+    super.key,
+    required this.texto,
+    required this.icone,
+    required this.data,
+    required this.idioma,
+  });
 
   final String texto;
   final Icon icone;
@@ -34,7 +35,7 @@ class NotificationCard extends StatelessWidget {
               Flexible(
                 child: Text(
                   texto,
-                  maxLines: 3,
+                  maxLines: 7,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

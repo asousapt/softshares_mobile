@@ -291,7 +291,7 @@ class CriarTopicoScreenState extends State<CriarTopicoScreen> {
                                                       .dadosGravados),
                                             ),
                                           );
-                                          Navigator.of(context).pop();
+                                          Navigator.of(context).pop(true);
                                         }
                                       },
                                       child: Text(AppLocalizations.of(context)!

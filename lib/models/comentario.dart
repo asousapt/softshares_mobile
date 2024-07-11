@@ -1,18 +1,20 @@
-import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Commentario {
-  final int comentarioid;
+  final int? comentarioid;
   final String comentario;
-  final String autor;
-  final DateTime data;
-  final List<Commentario> subcomentarios;
+  final String? autor;
+  final DateTime? data;
+  final List<Commentario>? subcomentarios;
+  final String? fotoUrl;
 
   Commentario({
-    required this.comentarioid,
+    this.comentarioid,
     required this.comentario,
-    required this.autor,
-    required this.data,
+    this.autor,
+    this.data,
     this.subcomentarios = const [],
+    this.fotoUrl,
   });
 
   factory Commentario.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,18 @@ class Commentario {
               .map((subjson) => Commentario.fromJson(subjson))
               .toList()
           : [],
+      fotoUrl: json['fotoUrl'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson(
+      String tipo, int comentarioPai, int utilizadoridl, int idRegisto) {
+    return {
+      'tipo': tipo,
+      'comentario': comentario,
+      'comentarioPai': comentarioPai,
+      'utilizadorid': utilizadoridl,
+      'idRegisto': idRegisto,
+    };
   }
 }

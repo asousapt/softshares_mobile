@@ -176,7 +176,19 @@
   "pontoInteresseCriado" : "Punto de interés creado",
   "avaliacaoCriada" : "Evaluación creada",
   "avaliacaoAtualizada" : "Evaluación actualizada",
+<<<<<<< HEAD
   "comentarioAdd" : "Comentario añadido y ",
   "cliqueParaEscolherLocal" : "Haga clic en el icono para elegir la ubicación",
   "contaCriada" : "Conta Criada"
+=======
+  "comentarioAdd" : "Comentario añadido y ", 
+  "idioma": "Idioma", 
+  "portugues": "Portugués", 
+  "espanhol": "Español", 
+  "ingles": "Inglês", 
+  "comentarios": "Comentários", 
+  "adicionarComentario": "Añade un comentario...", 
+  "responder": "Responder", 
+  "escreverResposta": "Escriba su respuesta"
+>>>>>>> 4685c70bea9fe12147bc1a18811877a0298fe971
 }

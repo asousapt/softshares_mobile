@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/comentario_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
+import 'package:softshares_mobile/models/comentario.dart';
 import 'package:softshares_mobile/models/topico.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/mensagensGrupos/info_utilizador.dart';
@@ -80,126 +82,132 @@ class _TopicoDetailsScreenState extends State<TopicoDetailsScreen> {
                     color: Theme.of(context).canvasColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: altura * 0.02,
-                            horizontal: largura * 0.02),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // informacao do utilizador
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                InkWell(
-                                  child: CircleAvatar(
-                                    radius: 25,
-                                    backgroundImage: _getUserImage(topico),
-                                    backgroundColor:
-                                        topico.utilizadorCriou!.fotoUrl!.isEmpty
-                                            ? Colors.blue
-                                            : null,
-                                    child:
-                                        topico.utilizadorCriou!.fotoUrl!.isEmpty
-                                            ? Text(
-                                                topico.utilizadorCriou!
-                                                    .getIniciais(),
-                                                style: const TextStyle(
-                                                  fontSize: 40,
-                                                  color: Colors.white,
-                                                ),
-                                              )
-                                            : null,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: altura * 0.02,
+                              horizontal: largura * 0.02),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // informacao do utilizador
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  InkWell(
+                                    child: CircleAvatar(
+                                      radius: 25,
+                                      backgroundImage: _getUserImage(topico),
+                                      backgroundColor: topico
+                                              .utilizadorCriou!.fotoUrl!.isEmpty
+                                          ? Theme.of(context).primaryColor
+                                          : null,
+                                      child: topico
+                                              .utilizadorCriou!.fotoUrl!.isEmpty
+                                          ? Text(
+                                              topico.utilizadorCriou!
+                                                  .getIniciais(),
+                                              style: const TextStyle(
+                                                fontSize: 40,
+                                                color: Colors.white,
+                                              ),
+                                            )
+                                          : null,
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return UtilizadorInfoScreen(
+                                              utilizadorId: user.utilizadorId,
+                                              mostraGaleria: false,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
                                   ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) {
-                                          return UtilizadorInfoScreen(
-                                            utilizadorId: user.utilizadorId,
-                                            mostraGaleria: false,
-                                          );
-                                        },
+                                  SizedBox(width: largura * 0.02),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        topico.utilizadorCriou!
+                                            .getNomeCompleto(),
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                    );
-                                  },
-                                ),
-                                SizedBox(width: largura * 0.02),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      topico.utilizadorCriou!.getNomeCompleto(),
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      dataFormatada(
-                                          idioma, topico.dataCriacao!),
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                                const Spacer(),
-                                categorias
-                                    .firstWhere((element) =>
-                                        element.categoriaId == topico.categoria)
-                                    .getIcone(),
-                              ],
-                            ),
-                            SizedBox(height: altura * 0.02),
-                            // Topic Title
-                            Text(
-                              topico.titulo,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
-                            ),
-                            SizedBox(height: altura * 0.02),
-                            GaleriaWidget(
-                              urls: topico.imagem != null ? topico.imagem! : [],
-                            ),
-                            SizedBox(height: altura * 0.02),
-                            // Topic Message
-                            Text(
-                              topico.mensagem,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            SizedBox(height: altura * 0.02),
-                            Divider(
-                              thickness: 7,
-                              color: Theme.of(context).dividerColor,
-                            ),
-                            SizedBox(height: altura * 0.02),
-                            Text(
-                              "Respostas",
-                              style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold),
-                            ),
-                            _buildResponseSection(context, altura, largura),
-                            SizedBox(height: altura * 0.02),
-                            Divider(
-                              thickness: 7,
-                              color: Theme.of(context).dividerColor,
-                            ),
-                            SizedBox(height: altura * 0.02),
-                            // Comment Section
-                            SizedBox(
-                              height:
-                                  altura * 0.3, // Adjust the height as needed
-                              child: SingleChildScrollView(
-                                  child: CommentSection(
-                                comentarios: [],
-                              )),
-                            ),
-                          ],
+                                      Text(
+                                        dataFormatada(
+                                            idioma, topico.dataCriacao!),
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                  const Spacer(),
+                                  categorias
+                                      .firstWhere((element) =>
+                                          element.categoriaId ==
+                                          topico.categoria)
+                                      .getIcone(),
+                                ],
+                              ),
+                              SizedBox(height: altura * 0.02),
+                              // Topic Title
+                              Text(
+                                topico.titulo,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                              SizedBox(height: altura * 0.02),
+                              GaleriaWidget(
+                                urls:
+                                    topico.imagem != null ? topico.imagem! : [],
+                              ),
+                              SizedBox(height: altura * 0.02),
+                              // Topic Message
+                              Text(
+                                topico.mensagem,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              SizedBox(height: altura * 0.02),
+                              Divider(
+                                thickness: 7,
+                                color: Theme.of(context).dividerColor,
+                              ),
+                              SizedBox(height: altura * 0.02),
+                              Text(
+                                AppLocalizations.of(context)!.comentarios,
+                                style: const TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold),
+                              ),
+                              _buildResponseSection(
+                                  context, altura, largura, topico),
+                              SizedBox(height: altura * 0.02),
+                              Divider(
+                                thickness: 7,
+                                color: Theme.of(context).dividerColor,
+                              ),
+                              SizedBox(height: altura * 0.02),
+                              // Comment Section
+                              SizedBox(
+                                height:
+                                    altura * 0.3, // Adjust the height as needed
+                                child: CommentSection(
+                                    idRegisto: topico.topicoId!,
+                                    tabela: 'THREAD'),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -219,7 +227,7 @@ class _TopicoDetailsScreenState extends State<TopicoDetailsScreen> {
   }
 
   Widget _buildResponseSection(
-      BuildContext context, double altura, double largura) {
+      BuildContext context, double altura, double largura, Topico topico) {
     return Container(
       padding: EdgeInsets.symmetric(
           vertical: altura * 0.02, horizontal: largura * 0.02),
@@ -238,13 +246,15 @@ class _TopicoDetailsScreenState extends State<TopicoDetailsScreen> {
                 radius: 25,
                 backgroundImage:
                     user.fotoUrl!.isEmpty ? null : NetworkImage(user.fotoUrl!),
-                backgroundColor: user.fotoUrl!.isEmpty ? Colors.blue : null,
+                backgroundColor: user.fotoUrl!.isEmpty
+                    ? Theme.of(context).primaryColor
+                    : null,
                 child: user.fotoUrl!.isEmpty
                     ? Text(
                         user.getIniciais(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 36,
-                          color: Colors.white,
+                          color: Theme.of(context).canvasColor,
                         ),
                       )
                     : null,
@@ -265,7 +275,7 @@ class _TopicoDetailsScreenState extends State<TopicoDetailsScreen> {
             controller: _respostaController,
             style: TextStyle(color: Theme.of(context).canvasColor),
             decoration: InputDecoration(
-              hintText: "Escreva a sua resposta",
+              hintText: AppLocalizations.of(context)!.escreverResposta,
               hintStyle: TextStyle(color: Theme.of(context).canvasColor),
               border: OutlineInputBorder(
                 borderSide: BorderSide(color: Theme.of(context).canvasColor),
@@ -280,10 +290,23 @@ class _TopicoDetailsScreenState extends State<TopicoDetailsScreen> {
           ),
           SizedBox(height: altura * 0.02),
           ElevatedButton(
-            onPressed: () {
-              // Handle response submission
+            onPressed: () async {
+              // faz a inserçao de comentario
+              if (_respostaController.text.isNotEmpty) {
+                ComentarioRepository comentarioRepository =
+                    ComentarioRepository();
+                Commentario comentario = Commentario(
+                  comentario: _respostaController.text,
+                );
+                bool result = await comentarioRepository.addComentario(
+                    comentario, 'THREAD', topico.topicoId!, 0);
+                if (result) {
+                  _respostaController.clear();
+                  setState(() {});
+                }
+              }
             },
-            child: const Text("Responder"),
+            child: Text(AppLocalizations.of(context)!.responder),
           ),
         ],
       ),

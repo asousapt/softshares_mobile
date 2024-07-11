@@ -56,7 +56,7 @@ class GrupoRepository {
         print(response['data'][0]);
         var grupoFormatted = response['data'][0] as Map<String, dynamic>;
         Grupo grupo = Grupo.fromJson(grupoFormatted);
-        print(grupo.utilizadores!.length);
+
         return grupo;
       } else {
         return null;

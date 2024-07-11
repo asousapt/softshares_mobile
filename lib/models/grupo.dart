@@ -8,7 +8,7 @@ class Grupo {
   int? subcategoriaId;
   int? categoriaId;
   List<Imagem>? imagem;
-  List<Utilizador>? utilizadores;
+  List<Utilizador>? utilizadoresGrupo;
   bool publico;
   List<String>? fotourls;
   String? fotoUrl1;
@@ -19,7 +19,7 @@ class Grupo {
     required this.nome,
     this.subcategoriaId,
     required this.descricao,
-    this.utilizadores,
+    this.utilizadoresGrupo,
     required this.publico,
     this.imagem,
     required this.utilizadorCriouId,
@@ -35,7 +35,7 @@ class Grupo {
       descricao: json['descricao'],
       subcategoriaId: json['subcategoriaid'],
       categoriaId: json['categoriaid'],
-      utilizadores: json['utilizadores'] != null
+      utilizadoresGrupo: json['utilizadores'] != null
           ? (json['utilizadores'] as List)
               .map((e) => Utilizador.fromJsonSimplificado(e))
               .toList()
@@ -59,7 +59,7 @@ class Grupo {
       'descricao': descricao,
       'subcategoriaid': subcategoriaId,
       'categoriaid': categoriaId,
-      'users': utilizadores?.map((e) => e.toJsonGrupo()).toList(),
+      'users': utilizadoresGrupo?.map((e) => e.toJsonGrupo()).toList(),
       'publico': publico,
       'imagem': imagem?.map((e) => e.toJson()).toList(),
       'utilizadorcriou': utilizadorCriouId,

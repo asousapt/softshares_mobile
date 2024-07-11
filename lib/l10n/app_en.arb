@@ -178,6 +178,17 @@
   "avaliacaoCriada" : "Rating created",
   "avaliacaoAtualizada" : "Updated Rating",
   "comentarioAdd" : "Comment Added and ",
+<<<<<<< HEAD
   "cliqueParaEscolherLocal" : "Click on the icon to choose the location",
   "contaCriada" : "Cuenta creada"
+=======
+  "idioma": "Language", 
+  "portugues": "Portuguese", 
+  "espanhol": "Spanish", 
+  "ingles": "English", 
+  "comentarios": "Commnets", 
+  "adicionarComentario": "Add a comment...", 
+  "responder": "Reply", 
+  "escreverResposta": "Write your answer"
+>>>>>>> 4685c70bea9fe12147bc1a18811877a0298fe971
 }

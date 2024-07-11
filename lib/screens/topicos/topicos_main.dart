@@ -194,8 +194,12 @@ class _TopicosListaScreenState extends State<TopicosListaScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
-        onPressed: () {
-          Navigator.pushNamed(context, '/criarTopico');
+        onPressed: () async {
+          final inseriu = await Navigator.pushNamed(context, '/criarTopico');
+
+          if (inseriu != null && inseriu == true) {
+            actualizaDados();
+          }
         },
         child: const Icon(
           FontAwesomeIcons.plus,

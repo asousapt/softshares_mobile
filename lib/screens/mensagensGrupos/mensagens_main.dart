@@ -21,7 +21,8 @@ class MensagensMainScreen extends StatefulWidget {
   }
 }
 
-class _MensagensMainScreenState extends State<MensagensMainScreen> {
+class _MensagensMainScreenState extends State<MensagensMainScreen>
+    with RouteAware {
   final TextEditingController _searchController = TextEditingController();
   List<Mensagem> listaEvFiltrada = [];
   List<Mensagem> mensagens = [];
@@ -70,6 +71,28 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
     actualizaDados();
   }
 
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    // Refresh the data when coming back to this screen
+    actualizaDados();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Subscribe to the route observer to be notified of route changes
+    RouteObserver<ModalRoute<void>>().subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    // Unsubscribe from the route observer
+    RouteObserver<ModalRoute<void>>().unsubscribe(this);
+    _searchController.dispose();
+    super.dispose();
+  }
+
   // constroi o widget de pesquisa
   Widget _buildSearchField() {
     return TextField(
@@ -99,7 +122,7 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
     setState(() {
       listaEvFiltrada = mensagens.where((element) {
         String mensagemlower = element.mensagemTexto.toLowerCase();
-        String nomelower = element.remetente.getNomeCompleto().toLowerCase();
+        String nomelower = element.remetente!.getNomeCompleto().toLowerCase();
 
         return mensagemlower.contains(texto) || nomelower.contains(texto);
       }).toList();
@@ -174,35 +197,62 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
               itemCount: mensagens.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
-                  onTap: () {
-                    // Navegar para a página de detalhes da mensagem
-                    Navigator.pushNamed(
+                  onTap: () async {
+                    // Navegar para a página de detalhes da mensagem e aguardar o resultado
+                    await Navigator.pushNamed(
                       context,
                       '/mensagem_detalhe',
                       arguments: {
                         'mensagemId': mensagens[index].mensagemId,
                         'nome': mensagens[index].destinatarioGrupo != null
                             ? mensagens[index].destinatarioGrupo!.nome
-                            : mensagens[index]
-                                .destinatarioUtil!
-                                .getNomeCompleto(),
+                            : mensagens[index].destinatarioUtil!.utilizadorId !=
+                                    utilizadorId
+                                ? mensagens[index]
+                                    .destinatarioUtil!
+                                    .getNomeCompleto()
+                                : mensagens[index].remetente!.getNomeCompleto(),
                         'imagemUrl': mensagens[index].destinatarioGrupo != null
-                            ? mensagens[index].destinatarioGrupo!.fotoUrl1
-                            : mensagens[index].destinatarioUtil!.fotoUrl ?? '',
+                            ? mensagens[index]
+                                    .destinatarioGrupo!
+                                    .fotoUrl1!
+                                    .isNotEmpty
+                                ? mensagens[index].destinatarioGrupo!.fotoUrl1!
+                                : ''
+                            : mensagens[index].destinatarioUtil!.utilizadorId !=
+                                    utilizadorId
+                                ? mensagens[index].destinatarioUtil!.fotoUrl ??
+                                    ''
+                                : mensagens[index].remetente!.fotoUrl ?? '',
                         'msgGrupo': mensagens[index].destinatarioGrupo != null
                             ? true
                             : false,
                         'grupoId': mensagens[index].destinatarioGrupo != null
                             ? mensagens[index].destinatarioGrupo!.grupoId
                             : 0,
-                        'utilizadorId': utilizadorId,
+                        'utilizadorId': mensagens[index].destinatarioUtil !=
+                                null
+                            ? mensagens[index].destinatarioUtil!.utilizadorId !=
+                                    utilizadorId
+                                ? mensagens[index]
+                                    .destinatarioUtil!
+                                    .utilizadorId
+                                : mensagens[index].remetente!.utilizadorId
+                            : 0,
                       },
                     );
+                    // Refresh the data after coming back from the detail screen
+                    actualizaDados();
                   },
                   child: MensagemItem(
                     nome: mensagens[index].destinatarioGrupo != null
                         ? mensagens[index].destinatarioGrupo!.nome
-                        : mensagens[index].destinatarioUtil!.getNomeCompleto(),
+                        : mensagens[index].destinatarioUtil!.utilizadorId !=
+                                utilizadorId
+                            ? mensagens[index]
+                                .destinatarioUtil!
+                                .getNomeCompleto()
+                            : mensagens[index].remetente!.getNomeCompleto(),
                     mensagemTexto: mensagens[index].mensagemTexto,
                     imagemUrl: mensagens[index].destinatarioGrupo != null
                         ? mensagens[index]
@@ -211,10 +261,12 @@ class _MensagensMainScreenState extends State<MensagensMainScreen> {
                                 .isNotEmpty
                             ? mensagens[index].destinatarioGrupo!.fotoUrl1!
                             : ''
-                        : mensagens[index].destinatarioUtil!.fotoUrl ?? '',
-
-                    hora: dataFormatadaMsg(mensagens[index].dataEnvio, idioama),
-                    //lida: mensagens[index].vista!,
+                        : mensagens[index].destinatarioUtil!.utilizadorId !=
+                                utilizadorId
+                            ? mensagens[index].destinatarioUtil!.fotoUrl ?? ''
+                            : mensagens[index].remetente!.fotoUrl ?? '',
+                    hora:
+                        dataFormatadaMsg(mensagens[index].dataEnvio!, idioama),
                   ),
                 );
               },

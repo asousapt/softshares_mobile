@@ -92,7 +92,9 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
         _subCategoriaId = subcategorias![0].subcategoriaId.toString();
         editar = widget.editar;
         if (widget.editar && widget.existingGroup != null) {
-          _initializeFormWithExistingData(widget.existingGroup!);
+          GrupoRepository grupoRepository = GrupoRepository();
+
+          _initializeFormWithExistingData();
         }
         _isLoading = false;
       });
@@ -102,13 +104,19 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
   }
 
   // inicializa os dados do formulario do grupo em modo de edição
-  void _initializeFormWithExistingData(Grupo group) {
-    _descricaoController.text = group.descricao;
-    publico = group.publico;
-    if (group.imagem != null && group.imagem!.isNotEmpty) {
-      //_selectedImages = [XFile(group.imagem!)];
+  void _initializeFormWithExistingData() async {
+    GrupoRepository grupoRepository = GrupoRepository();
+    Grupo? grupoLocal =
+        await grupoRepository.getGrupo(widget.existingGroup!.grupoId!);
+    if (grupoLocal != null) {
+      _descricaoController.text = grupoLocal.descricao;
+      _nomeController.text = grupoLocal.nome;
+      publico = grupoLocal.publico;
+      _categoriaId = grupoLocal.categoriaId.toString();
+      _subCategoriaId = grupoLocal.subcategoriaId.toString();
+
+      listaUtilizadoresSelecionados = grupoLocal.utilizadoresGrupo!;
     }
-    listaUtilizadoresSelecionados = group.utilizadores!;
   }
 
   // faz a seleção da imagem para o grupo
@@ -388,7 +396,7 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
                                                     _descricaoController.text,
                                                 nome: _nomeController.text,
                                                 publico: publico,
-                                                utilizadores:
+                                                utilizadoresGrupo:
                                                     listaUtilizadoresSelecionados,
                                                 categoriaId: publico
                                                     ? int.parse(_categoriaId!)

@@ -27,6 +27,7 @@ class _NovaMensagemState extends State<NovaMensagem> {
   final TextEditingController _searchController = TextEditingController();
   bool _isLoading = false;
   bool _isSearching = false;
+  List<Utilizador> utilizadores = [];
 
   @override
   void initState() {
@@ -53,7 +54,7 @@ class _NovaMensagemState extends State<NovaMensagem> {
   // Função que retorna o id da mensagem que contém o utilizador
   int getMensagemId(List<Mensagem> msgs, int utilizadorId) {
     for (Mensagem msg in msgs) {
-      if (msg.remetente.utilizadorId == utilizadorId ||
+      if (msg.remetente!.utilizadorId == utilizadorId ||
           (msg.destinatarioUtil != null &&
               msg.destinatarioUtil!.utilizadorId == utilizadorId)) {
         return msg.mensagemId!;
@@ -191,6 +192,9 @@ class _NovaMensagemState extends State<NovaMensagem> {
                                           listaUtilizadoresFiltrada[index]
                                               .fotoUrl!,
                                       msgGrupo: false,
+                                      utilizadorId:
+                                          listaUtilizadoresFiltrada[index]
+                                              .utilizadorId,
                                     ),
                                   ),
                                 );

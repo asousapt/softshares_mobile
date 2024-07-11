@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/Repositories/utilizador_repository.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/screens/generic/galeria_fotos.dart';
 
@@ -35,7 +36,11 @@ class _UtilizadorInfoScreenState extends State<UtilizadorInfoScreen> {
       mostraGaleria = widget.mostraGaleria;
     });
     try {
-      Utilizador fetchUtil = await fetchUtilizadorById(widget.utilizadorId);
+      UtilizadorRepository utilizadorRepository = UtilizadorRepository();
+      Utilizador fetchUtil = await utilizadorRepository.getUtilizador(
+        widget.utilizadorId.toString(),
+      );
+
       setState(() {
         utilizador = fetchUtil;
         _isLoading = false;
@@ -46,16 +51,6 @@ class _UtilizadorInfoScreenState extends State<UtilizadorInfoScreen> {
         _isLoading = false;
       });
     }
-  }
-
-  Future<List<String>> fetchGalleryImages() async {
-    await Future.delayed(Duration(seconds: 2));
-
-    // Dummy list de imagens
-    return List.generate(
-      12,
-      (index) => 'https://via.placeholder.com/150?text=Image+$index',
-    );
   }
 
   @override
@@ -78,8 +73,8 @@ class _UtilizadorInfoScreenState extends State<UtilizadorInfoScreen> {
           : utilizador == null
               ? Center(
                   child: Text(
-                    'Utilizador not found',
-                    style: TextStyle(
+                    AppLocalizations.of(context)!.ocorreuErro,
+                    style: const TextStyle(
                       color: Colors.red,
                       fontSize: 16,
                     ),
@@ -97,13 +92,23 @@ class _UtilizadorInfoScreenState extends State<UtilizadorInfoScreen> {
                           height: 150,
                           child: Stack(
                             children: [
-                              CircleAvatar(
-                                radius: 180,
-                                backgroundImage: NetworkImage(
-                                  utilizador!.fotoUrl ??
-                                      'https://via.placeholder.com/150',
-                                ),
-                              ),
+                              utilizador!.fotoUrl!.isEmpty
+                                  ? CircleAvatar(
+                                      radius: 180,
+                                      child: Text(
+                                        utilizador!.getIniciais(),
+                                        style: TextStyle(
+                                          fontSize: 50,
+                                          color: Theme.of(context).canvasColor,
+                                        ),
+                                      ),
+                                    )
+                                  : CircleAvatar(
+                                      radius: 180,
+                                      backgroundImage: NetworkImage(
+                                        utilizador!.fotoUrl!,
+                                      ),
+                                    ),
                             ],
                           ),
                         ),
@@ -161,93 +166,7 @@ class _UtilizadorInfoScreenState extends State<UtilizadorInfoScreen> {
                                           ),
                                           // Tab de galeria
                                           mostraGaleria
-                                              ? FutureBuilder<List<String>>(
-                                                  future: fetchGalleryImages(),
-                                                  builder: (context, snapshot) {
-                                                    if (snapshot
-                                                            .connectionState ==
-                                                        ConnectionState
-                                                            .waiting) {
-                                                      return Center(
-                                                        child:
-                                                            CircularProgressIndicator(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                        ),
-                                                      );
-                                                    } else if (snapshot
-                                                        .hasError) {
-                                                      return Center(
-                                                        child: Text(
-                                                          AppLocalizations.of(
-                                                                  context)!
-                                                              .ocorreuErro,
-                                                        ),
-                                                      );
-                                                    } else if (!snapshot
-                                                            .hasData ||
-                                                        snapshot
-                                                            .data!.isEmpty) {
-                                                      return Center(
-                                                        child: Text(
-                                                          AppLocalizations.of(
-                                                                  context)!
-                                                              .galeriaVazia,
-                                                        ),
-                                                      );
-                                                    } else {
-                                                      List<String> imageUrls =
-                                                          snapshot.data!;
-                                                      return GridView.builder(
-                                                        gridDelegate:
-                                                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                                          crossAxisCount: 3,
-                                                          crossAxisSpacing: 4.0,
-                                                          mainAxisSpacing: 4.0,
-                                                        ),
-                                                        itemCount:
-                                                            imageUrls.length,
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          return InkWell(
-                                                            onTap: () => {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .push(
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          PhotoGalleryScreen(
-                                                                    imageUrls:
-                                                                        imageUrls,
-                                                                    initialIndex:
-                                                                        index,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            },
-                                                            child: Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                image:
-                                                                    DecorationImage(
-                                                                  image:
-                                                                      NetworkImage(
-                                                                    imageUrls[
-                                                                        index],
-                                                                  ),
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
-                                                    }
-                                                  },
-                                                )
+                                              ? Container()
                                               : Container()
                                         ],
                                       ),
