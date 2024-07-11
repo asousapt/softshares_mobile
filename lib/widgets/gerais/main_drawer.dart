@@ -103,14 +103,14 @@ class _MainDrawerState extends State<MainDrawer> {
               leading: const Icon(FontAwesomeIcons.bell),
               title: Text(AppLocalizations.of(context)!.notificacoes),
             ),
-            ListTile(
+            /* ListTile(
               onTap: () {
                 Navigator.pushNamed(context, '/suporte');
               },
               contentPadding: const EdgeInsets.only(left: 15, top: 10),
               leading: const Icon(FontAwesomeIcons.headset),
               title: Text(AppLocalizations.of(context)!.suporte),
-            ),
+            ),*/
             ListTile(
               onTap: () {
                 Navigator.pushNamed(context, "/escolherPolo");
@@ -130,10 +130,9 @@ class _MainDrawerState extends State<MainDrawer> {
             ListTile(
               onTap: () async {
                 Future<bool> confirma = confirmExit(
-                  context,
-                  AppLocalizations.of(context)!.confirmarSaida,
-                  AppLocalizations.of(context)!.temCerteza
-                );
+                    context,
+                    AppLocalizations.of(context)!.confirmarSaida,
+                    AppLocalizations.of(context)!.temCerteza);
                 confirma.then((value) async {
                   if (value) {
                     prefs.setBool('isChecked', false);

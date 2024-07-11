@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/alerta_repository.dart';
+import 'package:softshares_mobile/Repositories/categoria_repository.dart';
+import 'package:softshares_mobile/Repositories/evento_repository.dart';
 import 'package:softshares_mobile/Repositories/notificacao_repository.dart';
+import 'package:softshares_mobile/Repositories/ponto_interesse_repository.dart';
+import 'package:softshares_mobile/Repositories/topico_repository.dart';
+import 'package:softshares_mobile/models/categoria.dart';
+import 'package:softshares_mobile/models/evento.dart';
+import 'package:softshares_mobile/models/ponto_de_interesse.dart';
+import 'package:softshares_mobile/models/topico.dart';
+import 'package:softshares_mobile/screens/eventos/consultar_evento.dart';
+import 'package:softshares_mobile/screens/pontos_interesse/consultar_ponto_interesse.dart';
+import 'package:softshares_mobile/screens/topicos/topico_details.dart';
 import 'package:softshares_mobile/widgets/gerais/bottom_navigation.dart';
 import 'package:softshares_mobile/widgets/gerais/main_drawer.dart';
 import 'package:softshares_mobile/models/notificacoes.dart';
@@ -26,6 +37,7 @@ class _NotificationsAlertScreenState extends State<NotificationsAlertScreen> {
   String titulo = "";
   bool isLoading = false;
   late String idioma;
+  late int idiomaId;
 
   @override
   void initState() {
@@ -39,6 +51,7 @@ class _NotificationsAlertScreenState extends State<NotificationsAlertScreen> {
     });
     final prefs = await SharedPreferences.getInstance();
     idioma = prefs.getString("idioma") ?? "pt";
+    idiomaId = prefs.getInt("idiomaId") ?? 1;
     AlertaRepository alertaRepository = AlertaRepository();
     listaAlertas = await alertaRepository.getAlertas();
 
@@ -145,14 +158,94 @@ class _NotificationsAlertScreenState extends State<NotificationsAlertScreen> {
                                                 listaNotificacoes.remove(e);
                                               });
                                             },
-                                            child: NotificationCard(
-                                              idioma: idioma,
-                                              data: e.data,
-                                              texto: e.notificacao,
-                                              icone: const Icon(
-                                                FontAwesomeIcons.bell,
-                                                color: Color.fromRGBO(
-                                                    77, 156, 250, 1),
+                                            // AREA DE NOTIFICACOES
+                                            child: InkWell(
+                                              onTap: () async {
+                                                List<Categoria> categorias = [];
+                                                CategoriaRepository
+                                                    categoriaRepository =
+                                                    CategoriaRepository();
+                                                categorias =
+                                                    await categoriaRepository
+                                                        .fetchCategoriasDB(
+                                                            idiomaId);
+                                                switch (e.tipo) {
+                                                  case "EVENTO":
+                                                    //navegar para o evento
+                                                    EventoRepository
+                                                        eventoRepository =
+                                                        EventoRepository();
+                                                    Evento evento =
+                                                        await eventoRepository
+                                                            .getEventobyId(
+                                                                e.idregisto);
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ConsultEventScreen(
+                                                            evento: evento,
+                                                            categorias:
+                                                                categorias,
+                                                          ),
+                                                        ));
+
+                                                    break;
+                                                  case "POI":
+                                                    //navegar para o POI
+                                                    PontoInteresseRepository
+                                                        pontoInteresseRepository =
+                                                        PontoInteresseRepository();
+                                                    PontoInteresse poi =
+                                                        await pontoInteresseRepository
+                                                            .getPoiById(
+                                                                e.idregisto);
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ConsultPontoInteresseScreen(
+                                                          pontoInteresse: poi,
+                                                        ),
+                                                      ),
+                                                    );
+
+                                                    break;
+                                                  case "THREAD":
+                                                    TopicoRepository
+                                                        topicoRepository =
+                                                        TopicoRepository();
+                                                    Topico topico =
+                                                        await topicoRepository
+                                                            .getTopicoByid(
+                                                                e.idregisto);
+
+                                                    //navegar para a thread
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            TopicoDetailsScreen(
+                                                          topico: topico,
+                                                          categorias:
+                                                              categorias,
+                                                        ),
+                                                      ),
+                                                    );
+                                                    break;
+                                                  default:
+                                                    break;
+                                                }
+                                              },
+                                              child: NotificationCard(
+                                                idioma: idioma,
+                                                data: e.data,
+                                                texto: e.notificacao,
+                                                icone: const Icon(
+                                                  FontAwesomeIcons.bell,
+                                                  color: Color.fromRGBO(
+                                                      77, 156, 250, 1),
+                                                ),
                                               ),
                                             ));
                                       }).toList(),
@@ -167,6 +260,7 @@ class _NotificationsAlertScreenState extends State<NotificationsAlertScreen> {
                                       ),
                                     )
                                   : ListView(
+                                      // alertas
                                       children: listaAlertas.map((e) {
                                         return NotificationCard(
                                           idioma: idioma,

@@ -16,6 +16,7 @@ class Topico {
   final List<String>? imagem;
   List<XFile>? images;
   List<Imagem>? imagens;
+  int? poloid;
 
   Topico({
     this.topicoId,
@@ -30,25 +31,26 @@ class Topico {
     this.utilizadorId,
     this.images,
     this.imagens,
+    this.poloid,
   });
 
   // retorna um objeto Topico a partir de um json
   factory Topico.fromJson(Map<String, dynamic> json) {
     return Topico(
-      topicoId: json['topicoId'],
-      categoria: json['categoria'],
-      subcategoria: json['subcategoria'],
-      utilizadorCriou: Utilizador.fromJsonSimplificado(json['utilizador']),
-      titulo: json['titulo'],
-      mensagem: json['mensagem'],
-      dataCriacao: json['dataCriacao'] != null
-          ? DateTime.parse(json['dataCriacao'])
-          : null,
-      idiomaId: json['idiomaId'],
-      imagem: json['imagens'] != null
-          ? List<String>.from(json['imagens'].map((item) => item.toString()))
-          : [],
-    );
+        topicoId: json['topicoId'],
+        categoria: json['categoria'],
+        subcategoria: json['subcategoria'],
+        utilizadorCriou: Utilizador.fromJsonSimplificado(json['utilizador']),
+        titulo: json['titulo'],
+        mensagem: json['mensagem'],
+        dataCriacao: json['dataCriacao'] != null
+            ? DateTime.parse(json['dataCriacao'])
+            : null,
+        idiomaId: json['idiomaId'],
+        imagem: json['imagens'] != null
+            ? List<String>.from(json['imagens'].map((item) => item.toString()))
+            : [],
+        poloid: json['poloid']);
   }
 
   Map<String, dynamic> toJsonCriar() {
@@ -61,7 +63,8 @@ class Topico {
       "mensagem": mensagem,
       "imagens": listaImagens,
       "utilizadorid": utilizadorId ?? 0,
-      "idiomaid": idiomaId
+      "idiomaid": idiomaId,
+      "poloid": poloid
     };
   }
 }

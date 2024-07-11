@@ -73,10 +73,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
             icon: const FaIcon(FontAwesomeIcons.calendar),
             label: AppLocalizations.of(context)!.eventos),
         NavigationDestination(
-            icon: Badge(
-              label: Text("2"),
-              child: const Icon(FontAwesomeIcons.message),
-            ),
+            icon: const Icon(FontAwesomeIcons.message),
             label: AppLocalizations.of(context)!.messages),
       ],
     );

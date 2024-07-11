@@ -100,6 +100,16 @@ class EventoRepository {
     }
   }
 
+  // busca um evento especifico
+  Future<Evento> getEventobyId(int eventoId) async {
+    _apiService.setAuthToken("tokenFixo");
+    final response = await _apiService.getRequest("evento/$eventoId/mobile");
+
+    final eventoformattr = response['data'];
+
+    return Evento.fromJson(eventoformattr);
+  }
+
   // cancelar inscricao do evento
   Future<void> cancelarInscricao(int eventoId, int utilizadorId) async {
     _apiService.setAuthToken("tokenFixo");
