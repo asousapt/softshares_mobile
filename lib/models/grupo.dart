@@ -59,7 +59,7 @@ class Grupo {
       'descricao': descricao,
       'subcategoriaid': subcategoriaId,
       'categoriaid': categoriaId,
-      'users': utilizadores?.map((e) => e.toJsonGrupo()).toList(),
+      'users': utilizadoresGrupo?.map((e) => e.toJsonGrupo()).toList(),
       'publico': publico,
       'imagem': imagem?.map((e) => e.toJson()).toList(),
       'utilizadorcriou': utilizadorCriouId,

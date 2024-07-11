@@ -181,5 +181,9 @@
   "idioma": "Idioma", 
   "portugues": "Português", 
   "espanhol": "Espanhol", 
-  "ingles": "Inglês"
+  "ingles": "Inglês", 
+  "comentarios": "Comentários", 
+  "adicionarComentario": "Adiciona um comentário...", 
+  "responder": "Responder", 
+  "escreverResposta": "Escreva a sua resposta"
 }

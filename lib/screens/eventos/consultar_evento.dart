@@ -8,6 +8,7 @@ import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/evento.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
+import 'package:softshares_mobile/screens/eventos/comentarios_evento.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/reposta_form.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/resposta_individual.dart';
 import 'package:softshares_mobile/screens/formularios_dinamicos/tabela_respostas.dart';
@@ -38,6 +39,8 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
   late int utilizadorId;
   bool isSaving = false;
   bool temFormularios = false;
+  final _respostaController = TextEditingController();
+  late Utilizador user;
 
   @override
   void initState() {
@@ -63,6 +66,7 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
     String util = prefs.getString("utilizadorObj") ?? "";
     Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
     utilizadorId = utilizador.utilizadorId;
+    user = utilizador;
   }
 
   Future<Widget>? inscreveOuCancela(Evento evento, double altura) async {
@@ -363,7 +367,18 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
                                                 ),
                                                 const Spacer(),
                                                 IconButton(
-                                                  onPressed: () {},
+                                                  onPressed: () {
+                                                    // navega para o ecrã de comentários
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ComentariosScreen(
+                                                          evento: evento!,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
                                                   icon: const Icon(
                                                       FontAwesomeIcons.message),
                                                 ),

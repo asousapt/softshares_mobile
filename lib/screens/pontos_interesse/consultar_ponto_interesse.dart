@@ -46,14 +46,13 @@ class _ConsultPontoInteresseScreenState
   List<Commentario> comentarios = [];
   final TextEditingController comentarioController = TextEditingController();
   bool tinhaAvaliado = false;
-  
 
   Future<void> carregaDados() async {
     pontoInteresse = widget.pontoInteresse;
     final prefs = await SharedPreferences.getInstance();
     api.setAuthToken("tokenFixo");
     final idiomaId = prefs.getInt("idiomaId") ?? 1;
-    await fetchComentarios();
+
     user = Utilizador.fromJson(jsonDecode(prefs.getString('utilizadorObj')!));
     final ratingAntigo = await api.getRequest(
         'avaliacao/poi/${pontoInteresse!.pontoInteresseId}/utilizador/${user!.utilizadorId}');
@@ -83,7 +82,7 @@ class _ConsultPontoInteresseScreenState
   }
 
   void enviarAvaliacao() async {
-    String message='';
+    String message = '';
     setState(() {
       comentarioAtual = comentarioController.text;
     });
@@ -96,7 +95,7 @@ class _ConsultPontoInteresseScreenState
         "comentarioPai ": null,
       };
       await api.postRequest("comentario/add", commentJson);
-      await fetchComentarios();
+
       message = AppLocalizations.of(context)!.comentarioAdd;
     }
     if (rating == 0) {
@@ -123,45 +122,14 @@ class _ConsultPontoInteresseScreenState
         await api.putRequest(
             "avaliacao/update/POI/${pontoInteresse!.pontoInteresseId}",
             atualizarAvaliacaoJson);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(message)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message)));
       } else {
         message += AppLocalizations.of(context)!.avaliacaoCriada;
         await api.postRequest("avaliacao/add", criarAvaliacaoJson);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(message)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message)));
       }
-    }
-  }
-
-  Future<void> fetchComentarios() async {
-    try {
-      _isLoading = true;
-      final lista = await api.getRequest(
-          'comentario/tabela/POI/registo/${pontoInteresse!.pontoInteresseId}');
-      final listaFormatted = lista['data'][0]['comentarios'];
-      if (listaFormatted is! List) {
-        throw Exception("Failed to load data: Expected a list in 'data'");
-      }
-
-      // Parse the JSON data into a list of PontoInteresse objects
-      List<Commentario> listaUpdated = listaFormatted.map<Commentario>((item) {
-        try {
-          return Commentario.fromJson(item);
-        } catch (e) {
-          print("Error parsing item2: $item");
-          print("Error details: $e");
-          rethrow;
-        }
-      }).toList();
-      setState(() {
-        comentarios = List.from(listaUpdated);
-        _isLoading = false;
-      });
-      print(comentarios);
-    } catch (e) {
-      print("Error fetching data1: $e");
-      // Handle error appropriately
     }
   }
 
@@ -365,7 +333,10 @@ class _ConsultPontoInteresseScreenState
                                   SizedBox(
                                     height: altura * 0.5,
                                     child: CommentSection(
-                                        comentarios: comentarios),
+                                      tabela: "POI",
+                                      idRegisto:
+                                          pontoInteresse!.pontoInteresseId,
+                                    ),
                                   )
                                 ],
                               ),

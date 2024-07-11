@@ -27,6 +27,7 @@ class _NovaMensagemState extends State<NovaMensagem> {
   final TextEditingController _searchController = TextEditingController();
   bool _isLoading = false;
   bool _isSearching = false;
+  List<Utilizador> utilizadores = [];
 
   @override
   void initState() {

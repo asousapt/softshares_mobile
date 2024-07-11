@@ -1,20 +1,23 @@
-import 'package:flutter/material.dart';
-import 'package:softshares_mobile/models/comentario.dart';
-import 'package:softshares_mobile/models/utilizador.dart';
-import 'package:softshares_mobile/time_utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:softshares_mobile/Repositories/comentario_repository.dart';
+import 'package:softshares_mobile/models/comentario.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/services/api_service.dart';
+import 'package:softshares_mobile/time_utils.dart';
 import 'package:softshares_mobile/widgets/pontos__de_interesse/escolherRating.dart';
 
 class CommentSection extends StatefulWidget {
   const CommentSection({
-    Key? key,
-    required this.comentarios,
-  }) : super(key: key);
+    super.key,
+    required this.tabela,
+    required this.idRegisto,
+  });
 
-  final List<Commentario> comentarios;
+  final String tabela;
+  final int idRegisto;
 
   @override
   State<CommentSection> createState() => _CommentSectionState();
@@ -25,40 +28,88 @@ class _CommentSectionState extends State<CommentSection> {
   ApiService api = ApiService();
   Utilizador? util;
   bool _isLoading = true;
+  Map<int, int> ratings = {}; // Store ratings
+  List<Commentario>? comentarios;
+  String? tabela;
+  int? idRegisto;
 
   @override
   void initState() {
     super.initState();
+    tabela = widget.tabela;
+    idRegisto = widget.idRegisto;
     carregaDados();
   }
 
-  Future<int> _fetchRatingData(Commentario comment) async {
-    // Replace this with your actual API call logic
-    final response = await api.getRequest(
-        'avaliacao/comentario/${comment!.comentarioid}/utilizador/${util!.utilizadorId}');
-    if (response['data'] == 0) return response['data'];
-    return response['data']['avaliacao'];
+  Future<void> refreshComments() async {
+    await carregaComentarios();
+    await fetchAllRatings();
   }
 
-  void carregaDados() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? utilJson = prefs.getString("utilizadorObj");
+  Future<void> fetchAllRatings() async {
     setState(() {
-      util = Utilizador.fromJson(jsonDecode(utilJson!));
+      _isLoading = true;
+    });
+    for (var comment in comentarios!) {
+      final rating = await _fetchRatingData(comment);
+      ratings[comment.comentarioid!] = rating;
+    }
+    setState(() {
       _isLoading = false;
     });
   }
 
-  void _adicionaSubcomentario(Commentario commentario, String texto) {
+  Future<int> _fetchRatingData(Commentario comment) async {
     setState(() {
-      /*commentario.subcomentarios.add(Commentario(
-        comentarioid: 0,
-        comentario: texto,
-        autor: Utilizador(1, 'User', 'Surname', 'email@example.com',
-            'some info', 1, [], 1, 1), // Replace with actual user
-        data: DateTime.now(),
-      ));*/
+      _isLoading = true;
     });
+    final response = await api.getRequest(
+        'avaliacao/comentario/${comment.comentarioid}/utilizador/${util!.utilizadorId}');
+    setState(() {
+      _isLoading = false;
+    });
+    if (response['data'] == 0) return 0;
+    return response['data']['avaliacao'];
+  }
+
+  Future<void> carregaDados() async {
+    setState(() {
+      _isLoading = true;
+    });
+    await carregaComentarios();
+    final prefs = await SharedPreferences.getInstance();
+    String? utilJson = prefs.getString("utilizadorObj");
+    setState(() {
+      util = Utilizador.fromJson(jsonDecode(utilJson!));
+    });
+
+    setState(() {
+      _isLoading = false;
+    });
+    await fetchAllRatings();
+  }
+
+  // faz o load dos comentarios da api com uma funcao generica
+  Future<void> carregaComentarios() async {
+    ComentarioRepository comentarioRepository = ComentarioRepository();
+    print("table: $tabela, id: $idRegisto");
+    final List<Commentario> comentariosl =
+        await comentarioRepository.fetchAllComentarios(tabela!, idRegisto!);
+    setState(() {
+      comentarios = comentariosl;
+    });
+  }
+
+  Future<bool> _adicionaSubcomentario(
+      Commentario commentario, String texto) async {
+    int comentarioPai = commentario.comentarioid!;
+    String tipo = tabela!;
+    int idRegistol = idRegisto!;
+    Commentario comentario = Commentario(comentario: texto);
+    ComentarioRepository comentarioRepository = ComentarioRepository();
+    bool sucesso = await comentarioRepository.addComentario(
+        comentario, tipo, idRegistol, comentarioPai);
+    return sucesso;
   }
 
   void _reportComment(Commentario commentario) async {
@@ -137,18 +188,27 @@ class _CommentSectionState extends State<CommentSection> {
       message += AppLocalizations.of(context)!.avaliacaoAtualizada;
       await api.putRequest(
           "avaliacao/update/COMENTARIO/$idComentario", atualizarAvaliacaoJson);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Update")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.dadosGravados),
+        ),
+      );
     } else {
       message += AppLocalizations.of(context)!.avaliacaoCriada;
       await api.postRequest("avaliacao/add", criarAvaliacaoJson);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Criar")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.dadosGravados),
+        ),
+      );
     }
+    setState(() {
+      ratings[idComentario] = newRating;
+    });
   }
 
   Widget _buildCommentario(Commentario comment, int rating) {
-    TextEditingController _controller = TextEditingController();
+    final TextEditingController _controller = TextEditingController();
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -161,21 +221,38 @@ class _CommentSectionState extends State<CommentSection> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundImage: const NetworkImage(
-                    'https://picsum.photos/250?image=9',
+                comment.fotoUrl!.isNotEmpty
+                    ? CircleAvatar(
+                        radius: 25,
+                        backgroundImage: NetworkImage(comment.fotoUrl!),
+                      )
+                    : CircleAvatar(
+                        radius: 25,
+                        backgroundColor: Theme.of(context).primaryColor,
+                        child: Text(
+                          comment.autor![0].toUpperCase(),
+                          style: TextStyle(
+                            color: Theme.of(context).canvasColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                const SizedBox(width: 8.0),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        comment.autor!,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 4.0),
+                      Text(
+                        dataFormatada('pt', comment.data!),
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(width: 8.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(comment.autor),
-                    Text(
-                      dataFormatada('pt', comment.data),
-                    ),
-                  ],
                 ),
                 Spacer(),
                 IconButton(
@@ -185,11 +262,18 @@ class _CommentSectionState extends State<CommentSection> {
               ],
             ),
             const SizedBox(height: 8.0),
-            Text(comment.comentario),
+            Container(
+              width: double.infinity,
+              child: SingleChildScrollView(
+                scrollDirection:
+                    Axis.horizontal, // Scroll horizontally if necessary
+                child: Text(comment.comentario),
+              ),
+            ),
             RatingPicker(
               initialRating: rating,
               onRatingSelected: (newRating) {
-                enviarAvaliacao(rating, newRating, comment.comentarioid);
+                enviarAvaliacao(rating, newRating, comment.comentarioid!);
               },
             ),
             Row(
@@ -197,37 +281,34 @@ class _CommentSectionState extends State<CommentSection> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: InputDecoration(hintText: 'Add a comment...'),
+                    decoration: InputDecoration(
+                        hintText:
+                            AppLocalizations.of(context)!.adicionarComentario),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: () {
+                  icon: const Icon(Icons.send),
+                  onPressed: () async {
                     if (_controller.text.isNotEmpty) {
-                      _adicionaSubcomentario(comment, _controller.text);
-                      _controller.clear();
+                      bool sucesso = await _adicionaSubcomentario(
+                          comment, _controller.text);
+
+                      if (sucesso) {
+                        _controller.clear();
+                        await carregaComentarios();
+                      }
                     }
                   },
                 ),
               ],
             ),
-            ...comment.subcomentarios.map((subcomment) => Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: FutureBuilder<int>(
-                    future: _fetchRatingData(subcomment),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        final data = snapshot.data!;
-                        int subRating = data ?? 0;
-                        return _buildCommentario(subcomment, subRating);
-                      }
-                    },
-                  ),
-                )),
+            ...comment.subcomentarios!.map((subcomment) {
+              int subRating = ratings[subcomment.comentarioid] ?? 0;
+              return Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: _buildCommentario(subcomment, subRating),
+              );
+            }).toList(),
           ],
         ),
       ),
@@ -237,27 +318,16 @@ class _CommentSectionState extends State<CommentSection> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? const Center(
+        ? Center(
             child: CircularProgressIndicator(
-            color: Colors.white,
-          ))
+              color: Theme.of(context).primaryColor,
+            ),
+          )
         : Expanded(
             child: ListView(
-              children: widget.comentarios.map((comment) {
-                return FutureBuilder<int>(
-                  future: _fetchRatingData(comment),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      final data = snapshot.data!;
-                      int rating = data ?? 0;
-                      return _buildCommentario(comment, rating);
-                    }
-                  },
-                );
+              children: comentarios!.map((comment) {
+                int rating = ratings[comment.comentarioid] ?? 0;
+                return _buildCommentario(comment, rating);
               }).toList(),
             ),
           );
