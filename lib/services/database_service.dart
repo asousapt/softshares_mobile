@@ -76,7 +76,8 @@ class DatabaseService {
     await db.execute('''CREATE TABLE notification_preferences (
     id $idType PRIMARY KEY,
     type $textType,
-    enabled $boolType
+    enabled $boolType, 
+    utilizadorId $idType
   )''');
     await db.execute('''CREATE TABLE cidade (
       cidadeid $idType,
@@ -135,7 +136,8 @@ class DatabaseService {
       await db.execute('''CREATE TABLE IF NOT EXISTS notification_preferences (
     id $idType PRIMARY KEY,
     type $textType,
-    enabled $boolType
+    enabled $boolType, 
+    utilizadorId $idType
   )''');
       await db.execute('''CREATE TABLE IF NOT EXISTS cidade (
       cidadeid $idType,

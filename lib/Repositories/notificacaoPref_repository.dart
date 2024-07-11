@@ -1,45 +1,81 @@
+import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/models/notification_preference.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 import 'package:softshares_mobile/services/database_service.dart';
 
 class NotificationPreferenceRepository {
   final DatabaseService _databaseService = DatabaseService.instance;
 
-  // Fetch notification preferences from the local database
-  Future<List<NotificationPreference>> fetchLocalNotificationPreferences() async {
-    const query = 'SELECT * FROM notification_preferences';
-    final result = await _databaseService.execSQL(query);
-    return result.map((row) => NotificationPreference.fromJson(row)).toList();
+  Future<List<NotificationPreference>> getPrefsUtil() async {
+    final prefs = await SharedPreferences.getInstance();
+    String util = prefs.getString("utilizadorObj") ?? "";
+    Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
+    int utilizadorId = utilizador.utilizadorId;
+
+    String query =
+        'SELECT * FROM notification_preferences WHERE utilizadorId = $utilizadorId';
+
+    final prefsUtil = await _databaseService.execSQL(query);
+    return prefsUtil
+        .map((item) => NotificationPreference.fromJson(item))
+        .toList();
   }
 
-  // Insert a notification preference into the local database
-  Future<bool> createNotificationPreference(NotificationPreference preference) async {
+  // insere uma nova preferência de notificação
+  Future<bool> createNotificationPreference(
+      NotificationPreference notificationPreference) async {
     final db = await _databaseService.database;
-    final id = await db.insert('notification_preferences', preference.toJson());
+    final id = await db.insert(
+        'notification_preferences', notificationPreference.toJson());
     return id > 0;
   }
 
-  // Get the ID of a notification preference by type
-  Future<int> getNotificationPreferenceId(String type) async {
-    final query = 'SELECT id FROM notification_preferences WHERE type = "$type"';
-    final result = await _databaseService.execSQL(query);
-    return result[0]['id'] as int;
+  // Verifica se um utilizador ja tem as permissoes de notificacao criadas
+  Future<bool> verificaPermissoesUtilizador(int utilizadorId) async {
+    String query =
+        'SELECT * FROM notification_preferences WHERE utilizadorId = $utilizadorId';
+
+    final prefsUtil = await _databaseService.execSQL(query);
+    return prefsUtil.isNotEmpty;
   }
 
-  // Delete all notification preferences from the local database
-  Future<void> deleteAllNotificationPreferences() async {
+  // cria as preferências de notificação para um utilizador
+  Future<void> criarPrefsutil(int utilizadorId) async {
     final db = await _databaseService.database;
-    await db.delete('notification_preferences');
+    final prefs = [
+      NotificationPreference(
+          type: 'THREAD', enabled: true, utilizadorId: utilizadorId),
+      NotificationPreference(
+          type: 'EVENTO', enabled: true, utilizadorId: utilizadorId),
+      NotificationPreference(
+          type: 'POI', enabled: true, utilizadorId: utilizadorId),
+    ];
+
+    for (var pref in prefs) {
+      await db.insert('notification_preferences', pref.toJson());
+    }
   }
 
-  // Update a notification preference in the local database
-  Future<bool> updateNotificationPreference(String type, bool enabled) async {
+  // atualiza uma preferência de notificação de um determinado utilizador
+  // baseado no utilizadorid e tipo
+  Future<bool> updateNotificationPreference(
+      NotificationPreference notificationPreference) async {
     final db = await _databaseService.database;
-    final rows = await db.update(
+
+    final updateData = notificationPreference.toJson();
+    updateData.remove('id');
+
+    final rowsAffected = await db.update(
       'notification_preferences',
-      {'enabled': enabled ? 1 : 0}, // Assuming 'enabled' is stored as an integer (0 or 1) in the database
-      where: 'type = ?',
-      whereArgs: [type],
+      updateData,
+      where: 'utilizadorId = ? AND type = ?',
+      whereArgs: [
+        notificationPreference.utilizadorId,
+        notificationPreference.type
+      ],
     );
-    return rows > 0;
+    return rowsAffected > 0;
   }
 }

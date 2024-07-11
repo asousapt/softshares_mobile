@@ -177,5 +177,9 @@
   "pontoInteresseCriado" : "Ponto de interesse criado",
   "avaliacaoCriada" : "Avaliação Criada",
   "avaliacaoAtualizada" : "Avaliação Atualizada",
-  "comentarioAdd" : "Comentário Adicionado e "
+  "comentarioAdd" : "Comentário Adicionado e ", 
+  "idioma": "Idioma", 
+  "portugues": "Português", 
+  "espanhol": "Espanhol", 
+  "ingles": "Inglês"
 }

@@ -177,5 +177,9 @@
   "pontoInteresseCriado" : "Point of Interest Created",
   "avaliacaoCriada" : "Rating created",
   "avaliacaoAtualizada" : "Updated Rating",
-  "comentarioAdd" : "Comment Added and "
+  "comentarioAdd" : "Comment Added and ",
+  "idioma": "Language", 
+  "portugues": "Portuguese", 
+  "espanhol": "Spanish", 
+  "ingles": "English"
 }

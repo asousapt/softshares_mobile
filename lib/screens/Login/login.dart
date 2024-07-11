@@ -10,6 +10,7 @@ import 'package:softshares_mobile/Repositories/categoria_repository.dart';
 import 'package:softshares_mobile/Repositories/cidade_repository.dart';
 import 'package:softshares_mobile/Repositories/departamento_repository.dart';
 import 'package:softshares_mobile/Repositories/funcao_repositry.dart';
+import 'package:softshares_mobile/Repositories/notificacaoPref_repository.dart';
 import 'package:softshares_mobile/Repositories/polo_repository.dart';
 import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
 import 'package:softshares_mobile/Repositories/utilizador_repository.dart';
@@ -93,6 +94,13 @@ class _EcraLoginState extends State<EcraLogin> {
     await prefs.setString("utilizadorObj", jsonEncode(utilJson));
 
     await prefs.setBool('isChecked', isChecked);
+    NotificationPreferenceRepository notificationPreferenceRepository =
+        NotificationPreferenceRepository();
+    bool temprefs = await notificationPreferenceRepository
+        .verificaPermissoesUtilizador(util.utilizadorId);
+    if (!temprefs) {
+      await notificationPreferenceRepository.criarPrefsutil(util.utilizadorId);
+    }
 
     await carregaPolos();
     await carregaCategorias();
