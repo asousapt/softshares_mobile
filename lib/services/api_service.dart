@@ -58,14 +58,13 @@ class ApiService {
 
     final response = await postRequestNoAuth('utilizadores/login', dados);
 
-    if (response['message']) {
-      print(response.body);
-      final responseBody = json.decode(response.body);
-      await setAuthToken(responseBody['token']);
+    if (response['message'] != null) {
+      //print(response.body);
+      await setAuthToken(response['token']);
       await prefs.setString(
-          'utilizadorObj', jsonEncode(responseBody['utilizador']));
+          'utilizadorObj', jsonEncode(response['utilizador']));
     } else {
-      print(response.body);
+      print(response);
 
       throw Exception('Failed to authenticate');
     }

@@ -83,8 +83,7 @@ class _EcraLoginState extends State<EcraLogin> {
     final prefs = await SharedPreferences.getInstance();
     bool? exists = false;
     final tipo = prefs.getString("tipoLogin");
-    final utilStrin = prefs.getString("utilizadorObj");
-    Utilizador util = Utilizador.fromJson(jsonDecode(utilStrin!));
+    
     if (tipo == "google") {
       final email = prefs.getString("email");
       final token = prefs.getString("token");
@@ -113,7 +112,8 @@ class _EcraLoginState extends State<EcraLogin> {
       };
       api.fetchAuthTokenWithFallback(json);
     }
-
+    /*final utilStrin = prefs.getString("utilizadorObj");
+    Utilizador util = Utilizador.fromJson(jsonDecode(utilStrin!));
     await prefs.setBool('isChecked', isChecked);
     NotificationPreferenceRepository notificationPreferenceRepository =
         NotificationPreferenceRepository();
@@ -121,7 +121,7 @@ class _EcraLoginState extends State<EcraLogin> {
         .verificaPermissoesUtilizador(util.utilizadorId);
     if (!temprefs) {
       await notificationPreferenceRepository.criarPrefsutil(util.utilizadorId);
-    }
+    }*/
 
     await carregaPolos();
     await carregaCategorias();
