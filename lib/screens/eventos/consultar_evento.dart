@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/evento_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
@@ -293,6 +294,17 @@ class _ConsultEventScreenState extends State<ConsultEventScreen> {
         title: Text(
           AppLocalizations.of(context)!.evento,
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              // navega para o ecrã de edição do evento
+              String partilha =
+                  "${AppLocalizations.of(context)!.evento}: ${evento!.titulo} - ${evento!.dataFormatada(idioma)} - ${evento!.horaFormatada(idioma)}";
+              Share.share(partilha);
+            },
+            icon: const Icon(FontAwesomeIcons.shareNodes),
+          ),
+        ],
       ),
       body: Stack(
         children: [
