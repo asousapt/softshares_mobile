@@ -3,6 +3,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import "package:flutter/material.dart";
+import 'package:softshares_mobile/Repositories/utilizador_repository.dart';
+import 'package:softshares_mobile/models/utilizador.dart';
 
 class ApiService {
   final String _baseUrl = dotenv.env['API_URL'] as String;
@@ -38,31 +40,36 @@ class ApiService {
   Future<void> fetchAuthToken(Map<String, dynamic> credentials) async {
     final prefs = await SharedPreferences.getInstance();
     final tipo = await prefs.getString("tipoLogin");
-    Map <String, dynamic> dados = {
-      "email" : credentials["email"],
-      "tipo" : tipo,
+    Map<String, dynamic> dados = {
+      "email": credentials["email"],
+      "tipo": tipo,
     };
 
-    if(tipo == "normal"){
+    if (tipo == "normal") {
       final pass = await prefs.getString("pass");
       dados['pass'] = pass;
-    }else if(tipo == "google"){
+    } else if (tipo == "google") {
       final token = await prefs.getString("googletoken");
       dados['token'] = token;
-    }else if(tipo == "facebook"){
+    } else if (tipo == "facebook") {
       final token = await prefs.getString("facebooktoken");
       dados['token'] = token;
     }
 
-    print("endereço: $_baseUrl/utilizadores/login\ndados: ${json.encode(dados)}");
+    print(
+        "endereço: $_baseUrl/utilizadores/login\ndados: ${json.encode(dados)}");
 
     final response = await postRequestNoAuth('utilizadores/login', dados);
 
     if (response['message'] != null) {
       //print(response.body);
       await setAuthToken(response['token']);
-      await prefs.setString(
-          'utilizadorObj', jsonEncode(response['utilizador']));
+      //await prefs.setString(
+          //'utilizadorObj', jsonEncode(response['utilizador']));
+      UtilizadorRepository rep = UtilizadorRepository();
+      Utilizador utTeste =
+          await rep.getUtilizador(response['utilizador']['utilizadorid'].toString());
+      await prefs.setString('utilizadorObj', jsonEncode(utTeste.toJson()));
     } else {
       print(response);
 
@@ -119,7 +126,8 @@ class ApiService {
     }
   }
 
-  Future<dynamic> postRequest(String endpoint, Map<String, dynamic> data) async {
+  Future<dynamic> postRequest(
+      String endpoint, Map<String, dynamic> data) async {
     if (_authToken == null) {
       throw Exception('Auth token is not set. Please authenticate first.');
     }
@@ -141,7 +149,8 @@ class ApiService {
     }
   }
 
-  Future<dynamic> postRequestNoAuth(String endpoint, Map<String, dynamic> data) async {
+  Future<dynamic> postRequestNoAuth(
+      String endpoint, Map<String, dynamic> data) async {
     print('$_baseUrl/$endpoint');
     final response = await http.post(
       Uri.parse('$_baseUrl/$endpoint'),

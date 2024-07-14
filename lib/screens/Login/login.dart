@@ -13,7 +13,6 @@ import 'package:softshares_mobile/Repositories/funcao_repositry.dart';
 import 'package:softshares_mobile/Repositories/notificacaoPref_repository.dart';
 import 'package:softshares_mobile/Repositories/polo_repository.dart';
 import 'package:softshares_mobile/Repositories/subcategoria_repository.dart';
-import 'package:softshares_mobile/Repositories/utilizador_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
 import 'package:softshares_mobile/models/polo.dart';
 import 'package:softshares_mobile/models/utilizador.dart';
