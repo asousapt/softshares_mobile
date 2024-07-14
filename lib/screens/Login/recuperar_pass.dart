@@ -1,7 +1,9 @@
 import "package:flutter/material.dart";
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:softshares_mobile/services/api_service.dart';
 import '../../widgets/gerais/logo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EcraRecPass extends StatefulWidget {
   const EcraRecPass({
@@ -23,6 +25,7 @@ class _EcraRecPassState extends State<EcraRecPass> {
   late TextEditingController controlEmail;
   bool passwordVisible = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  ApiService api = ApiService();
 
   bool isValidEmail(String email) {
     final RegExp emailRegex = RegExp(
@@ -121,7 +124,11 @@ class _EcraRecPassState extends State<EcraRecPass> {
                                 height: 50,
                                 width: double.infinity,
                                 child: FilledButton(
-                                  onPressed: () {
+                                  onPressed: () async{
+                                    email = controlEmail.text;
+                                    final codigo = api.getRequestNoAuth('utilizadores/recuperarPass/$email');
+                                    final prefs = await SharedPreferences.getInstance();
+                                    //prefs.setString("codigo", codigo);
                                     Navigator.pushNamed(
                                         context, '/confirmarID');
                                   },
