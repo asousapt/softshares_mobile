@@ -92,7 +92,7 @@ class _EcraLoginState extends State<EcraLogin> {
         "email": email,
         "token": token,
       };
-      api.fetchAuthTokenWithFallback(json);
+      await api.fetchAuthTokenWithFallback(json);
     } else if (tipo == "facebook") {
       final email = prefs.getString("email");
       final token = prefs.getString("token");
@@ -101,7 +101,7 @@ class _EcraLoginState extends State<EcraLogin> {
         "email": email,
         "token": token,
       };
-      api.fetchAuthTokenWithFallback(json);
+      await api.fetchAuthTokenWithFallback(json);
     } else if (tipo == "normal") {
       final email = await prefs.getString("email");
       final pass = await prefs.getString("pass");
@@ -110,9 +110,9 @@ class _EcraLoginState extends State<EcraLogin> {
         "email": email,
         "pass": pass,
       };
-      api.fetchAuthTokenWithFallback(json);
+      await api.fetchAuthTokenWithFallback(json);
     }
-    /*final utilStrin = prefs.getString("utilizadorObj");
+    final utilStrin = prefs.getString("utilizadorObj");
     Utilizador util = Utilizador.fromJson(jsonDecode(utilStrin!));
     await prefs.setBool('isChecked', isChecked);
     NotificationPreferenceRepository notificationPreferenceRepository =
@@ -121,7 +121,7 @@ class _EcraLoginState extends State<EcraLogin> {
         .verificaPermissoesUtilizador(util.utilizadorId);
     if (!temprefs) {
       await notificationPreferenceRepository.criarPrefsutil(util.utilizadorId);
-    }*/
+    }
 
     await carregaPolos();
     await carregaCategorias();
@@ -226,7 +226,7 @@ class _EcraLoginState extends State<EcraLogin> {
       final tipo = await prefs.getString("tipoLogin");
       if (tipo == "google") {
         final email = prefs.getString("email");
-        final token = prefs.getString("token");
+        final token = prefs.getString("googletoken");
         Map<String, dynamic> json = {
           "tipo": "google",
           "email": email,
@@ -235,7 +235,7 @@ class _EcraLoginState extends State<EcraLogin> {
         api.fetchAuthTokenWithFallback(json);
       } else if (tipo == "facebook") {
         final email = await prefs.getString("email");
-        final token = await prefs.getString("token");
+        final token = await prefs.getString("facebooktoken");
         Map<String, dynamic> json = {
           "tipo": "facebook",
           "email": email,
