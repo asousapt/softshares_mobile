@@ -126,9 +126,11 @@ class _EcraRecPassState extends State<EcraRecPass> {
                                 child: FilledButton(
                                   onPressed: () async{
                                     email = controlEmail.text;
-                                    final codigo = api.getRequestNoAuth('utilizadores/recuperarPass/$email');
+                                    Map<String,dynamic> codigo = await api.getRequestNoAuth('utilizadores/recuperarPass/$email');
                                     final prefs = await SharedPreferences.getInstance();
-                                    //prefs.setString("codigo", codigo);
+                                    int code = int.parse(codigo["codigo"]);
+                                    prefs.setInt("codigo", code);
+                                    prefs.setString("email", email);
                                     Navigator.pushNamed(
                                         context, '/confirmarID');
                                   },

@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../widgets/gerais/logo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EcraConfID extends StatefulWidget {
   const EcraConfID({
@@ -20,18 +21,27 @@ class EcraConfID extends StatefulWidget {
 class _EcraConfIDState extends State<EcraConfID> {
   String version = 'Loading...';
   String codigo = '';
+  int? codigoValid;
   late TextEditingController controlCodigo;
   bool passwordVisible = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool isValidcodigo(String codigo) {
-    //Por acrescentar
-    return true;
+    int code = int.parse(codigo);
+    return (code == codigoValid);
+  }
+
+  void inicializar() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      codigoValid = prefs.getInt("codigo");
+    });
   }
 
   @override
   void initState() {
     super.initState();
+    inicializar();
     controlCodigo = TextEditingController();
     getVersion();
   }
@@ -93,16 +103,16 @@ class _EcraConfIDState extends State<EcraConfID> {
                               TextFormField(
                                 controller: controlCodigo,
                                 decoration: InputDecoration(
-                                  labelText: AppLocalizations.of(context)!.codigo,
-                                  prefixIcon:
-                                      Icon(Icons.lock_outline_rounded),
+                                  labelText:
+                                      AppLocalizations.of(context)!.codigo,
+                                  prefixIcon: Icon(Icons.lock_outline_rounded),
                                 ),
                                 validator: (value) {
                                   if (value == null ||
                                       value.isEmpty ||
                                       !isValidcodigo(value)) {
-                                    //return AppLocalizations.of(context)!.insiraEmaiValido;
-                                    //fazer outra coisa
+                                    return AppLocalizations.of(context)!
+                                        .codigoInvalido;
                                   }
                                   return null;
                                 },
@@ -114,7 +124,10 @@ class _EcraConfIDState extends State<EcraConfID> {
                                   width: double.infinity,
                                   child: FilledButton(
                                     onPressed: () {
-                                      Navigator.pushNamed(context, '/reporPass');
+                                      if (_formKey.currentState!.validate()) {
+                                        Navigator.pushNamed(
+                                            context, '/reporPass');
+                                      }
                                     },
                                     child: Text(AppLocalizations.of(context)!
                                         .confirmar),

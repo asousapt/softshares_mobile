@@ -189,5 +189,6 @@
   "adicionarComentario": "Adiciona um comentário...", 
   "responder": "Responder", 
   "escreverResposta": "Escreva a sua resposta",
-  "loginInvalido":"Login inválido"
+  "loginInvalido":"Login inválido",
+  "codigoInvalido": "Código Invalido"
 }

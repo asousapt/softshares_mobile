@@ -188,5 +188,6 @@
   "adicionarComentario": "Add a comment...", 
   "responder": "Reply", 
   "escreverResposta": "Write your answer",
-  "loginInvalido":"Invalid Login"
+  "loginInvalido":"Invalid Login",
+  "codigoInvalido": "Invalid Code"
 }
