@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/comentario_repository.dart';
 import 'package:softshares_mobile/models/categoria.dart';
@@ -67,6 +69,16 @@ class _TopicoDetailsScreenState extends State<TopicoDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.detalhesTopico),
+        actions: [
+          IconButton(
+            icon: const Icon(FontAwesomeIcons.shareNodes),
+            onPressed: () {
+              String partilha =
+                  "${AppLocalizations.of(context)!.threads} - ${topico.titulo}";
+              Share.share(partilha);
+            },
+          ),
+        ],
       ),
       body: isLoading
           ? Center(
