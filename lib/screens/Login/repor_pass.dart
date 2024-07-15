@@ -2,6 +2,8 @@ import "package:flutter/material.dart";
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../widgets/gerais/logo.dart';
+import 'package:softshares_mobile/services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EcraReporPass extends StatefulWidget {
   const EcraReporPass({
@@ -19,34 +21,35 @@ class EcraReporPass extends StatefulWidget {
 
 class _EcraReporPassState extends State<EcraReporPass> {
   String version = 'Loading...';
-  String codigo = '';
-  late TextEditingController controlCodigo;
+  String pass = '';
+  String pass2 = '';
+  late TextEditingController _controlPass;
+  late TextEditingController _controlPass2;
   bool passwordVisible = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  bool isValidcodigo(String codigo) {
-    //Por acrescentar
-    return true;
-  }
+  ApiService api = ApiService();
 
   @override
   void initState() {
     super.initState();
-    controlCodigo = TextEditingController();
+    _controlPass = TextEditingController();
+    _controlPass2 = TextEditingController();
     getVersion();
   }
 
   @override
   void dispose() {
     //libertar recurso
-    controlCodigo.dispose();
+    _controlPass2.dispose();
+    _controlPass.dispose();
     super.dispose();
   }
 
-  void sub() {
-    setState(() {
-      codigo = controlCodigo.text;
-    });
+  void sub() async {
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString("email");
+    final json = {"password": pass};
+    api.putRequestNoAuth('utilizadores/alterarPass/email/$email', json);
   }
 
   Future<void> getVersion() async {
@@ -74,7 +77,9 @@ class _EcraReporPassState extends State<EcraReporPass> {
                     children: [
                       const SizedBox(height: 30),
                       Text(
-                        AppLocalizations.of(context)!.repor+' '+AppLocalizations.of(context)!.password,
+                        AppLocalizations.of(context)!.repor +
+                            ' ' +
+                            AppLocalizations.of(context)!.password,
                         style: TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
@@ -91,17 +96,18 @@ class _EcraReporPassState extends State<EcraReporPass> {
                           child: Column(
                             children: [
                               TextFormField(
-                                controller: controlCodigo,
+                                controller: _controlPass,
                                 decoration: InputDecoration(
-                                  labelText: (AppLocalizations.of(context)!.nova + ' '+AppLocalizations.of(context)!.password),
-                                  prefixIcon:
-                                      Icon(Icons.lock_outline_rounded),
+                                  labelText: (AppLocalizations.of(context)!
+                                          .nova +
+                                      ' ' +
+                                      AppLocalizations.of(context)!.password),
+                                  prefixIcon: Icon(Icons.lock_outline_rounded),
                                 ),
                                 validator: (value) {
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      !isValidcodigo(value)) {
-                                    //return AppLocalizations.of(context)!.insiraEmaiValido;
+                                  if (value == null || value.isEmpty) {
+                                    AppLocalizations.of(context)!
+                                        .introduzapassword;
                                     //fazer outra coisa
                                   }
                                   return null;
@@ -109,18 +115,22 @@ class _EcraReporPassState extends State<EcraReporPass> {
                               ),
                               const SizedBox(height: 20),
                               TextFormField(
-                                controller: controlCodigo,
+                                controller: _controlPass2,
                                 decoration: InputDecoration(
-                                  labelText: (AppLocalizations.of(context)!.confirmar  + ' ' + AppLocalizations.of(context)!.password),
-                                  prefixIcon:
-                                      Icon(Icons.lock_outline_rounded),
+                                  labelText: (AppLocalizations.of(context)!
+                                          .confirmar +
+                                      ' ' +
+                                      AppLocalizations.of(context)!.password),
+                                  prefixIcon: Icon(Icons.lock_outline_rounded),
                                 ),
                                 validator: (value) {
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      !isValidcodigo(value)) {
-                                    //return AppLocalizations.of(context)!.insiraEmaiValido;
-                                    //fazer outra coisa
+                                  if (value == null || value.isEmpty) {
+                                    return "${AppLocalizations.of(context)!.porfavorInsiraA}${AppLocalizations.of(context)!.password}";
+                                  } else if (value != pass) {
+                                    print(
+                                        "Valor de value - $value, Valor de pass1 - $pass");
+                                    return AppLocalizations.of(context)!
+                                        .passwordsDiferentes;
                                   }
                                   return null;
                                 },
@@ -131,9 +141,22 @@ class _EcraReporPassState extends State<EcraReporPass> {
                                   height: 70,
                                   width: double.infinity,
                                   child: FilledButton(
-                                    onPressed: () {
-                                      
-                                      Navigator.pushNamed(context, '/login');
+                                    onPressed: () async {
+                                      setState(() {
+                                        pass = _controlPass.text;
+                                        pass2 = _controlPass2.text;
+                                      });
+                                      if (_formKey.currentState!.validate()) {
+                                        sub();
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .loginInvalido)),
+                                        );
+                                        Navigator.pushNamed(context, '/login');
+                                      }
                                     },
                                     child: Text(AppLocalizations.of(context)!
                                         .confirmar),

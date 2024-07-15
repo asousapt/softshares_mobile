@@ -190,5 +190,6 @@
   "responder": "Responder", 
   "escreverResposta": "Escreva a sua resposta",
   "loginInvalido":"Login inválido",
-  "codigoInvalido": "Código Invalido"
+  "codigoInvalido": "Código Invalido",
+  "mudacaSenha":"Senha alterada com sucesso"
 }

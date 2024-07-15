@@ -189,5 +189,6 @@
   "responder": "Responder", 
   "escreverResposta": "Escriba su respuesta",
   "loginInvalido":"Ingreso invalido",
-  "codigoInvalido": "Codigo invalido"
+  "codigoInvalido": "Codigo invalido",
+  "mudacaSenha":"Contraseña cambiada con éxito"
 }

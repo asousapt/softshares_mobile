@@ -189,5 +189,6 @@
   "responder": "Reply", 
   "escreverResposta": "Write your answer",
   "loginInvalido":"Invalid Login",
-  "codigoInvalido": "Invalid Code"
+  "codigoInvalido": "Invalid Code",
+  "mudacaSenha":"Password changed successfully"
 }

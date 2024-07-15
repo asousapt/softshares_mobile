@@ -190,6 +190,24 @@ class ApiService {
     }
   }
 
+  Future<dynamic> putRequestNoAuth(String endpoint, Map<String, dynamic> data) async {
+    print('$_baseUrl/$endpoint');
+    final response = await http.put(
+      Uri.parse('$_baseUrl/$endpoint'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return json.decode(response.body);
+    } else {
+      print(json.decode(response.body));
+      throw Exception('Failed to put data');
+    }
+  }
+
   Future<dynamic> deleteRequest(String endpoint) async {
     if (_authToken == null) {
       throw Exception('Auth token is not set. Please authenticate first.');

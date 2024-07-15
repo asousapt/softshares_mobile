@@ -136,7 +136,28 @@ class _EcraConfIDState extends State<EcraConfID> {
                               ),
                               SizedBox(
                                   height: (MediaQuery.of(context).size.height) *
-                                      0.1),
+                                      0.002),
+                              Container(
+                                padding: EdgeInsets.fromLTRB(0, 30, 0, 10),
+                                child: SizedBox(
+                                  height: 70,
+                                  width: double.infinity,
+                                  child: FilledButton(
+                                    onPressed: () async {
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      prefs.remove("codigo");
+                                      Navigator.pushNamed(
+                                          context, '/recuperarPass');
+                                    },
+                                    child: Text(
+                                        AppLocalizations.of(context)!.cancelar),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                  height: (MediaQuery.of(context).size.height) *
+                                      0.15),
                               Logo()
                             ],
                           ),
