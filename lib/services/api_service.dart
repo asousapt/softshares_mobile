@@ -72,7 +72,7 @@ class ApiService {
       await prefs.setString('utilizadorObj', jsonEncode(utTeste.toJson()));
     } else {
       print(response);
-
+      
       throw Exception('Failed to authenticate');
     }
   }

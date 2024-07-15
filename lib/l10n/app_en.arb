@@ -187,5 +187,6 @@
   "comentarios": "Commnets", 
   "adicionarComentario": "Add a comment...", 
   "responder": "Reply", 
-  "escreverResposta": "Write your answer"
+  "escreverResposta": "Write your answer",
+  "loginInvalido":"Invalid Login"
 }

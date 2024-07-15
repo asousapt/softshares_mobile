@@ -188,5 +188,6 @@
   "comentarios": "Comentários", 
   "adicionarComentario": "Adiciona um comentário...", 
   "responder": "Responder", 
-  "escreverResposta": "Escreva a sua resposta"
+  "escreverResposta": "Escreva a sua resposta",
+  "loginInvalido":"Login inválido"
 }

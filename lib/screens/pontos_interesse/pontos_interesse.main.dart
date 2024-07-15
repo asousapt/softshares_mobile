@@ -76,8 +76,10 @@ class _PontosDeInteresseMainScreenState
 
   Future<void> fetchPontosDeInteresse() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      int poloId = prefs.getInt("poloId")!;
       _isLoading = true;
-      final lista = await api.getRequest('pontoInteresse/aprovados');
+      final lista = await api.getRequest('pontoInteresse/aprovados?poloid=$poloId');
       final listaFormatted = lista['data'];
       if (listaFormatted is! List) {
         throw Exception("Failed to load data: Expected a list in 'data'");
@@ -136,32 +138,32 @@ class _PontosDeInteresseMainScreenState
         itemBuilder: (BuildContext context) => getCatLista(categoriasFiltro),
       ),
       IconButton(
-      onPressed: () {
-        // Reset selected rating when icon is tapped
-        setState(() {
-          _selectedRating = null;
-          listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
-        });
-      },
-      icon: Icon(Icons.star),
-    ),
-    DropdownButton<int>(
-      value: _selectedRating,
-      onChanged: (int? newValue) {
-        setState(() {
-          _selectedRating = newValue;
-          // Apply rating filter
-          if (_selectedRating != null) {
-            listaPontosDeInteresseFiltrados = listaPontosDeInteresse
-                .where((element) => element.avaliacao == _selectedRating)
-                .toList();
-          } else {
+        onPressed: () {
+          // Reset selected rating when icon is tapped
+          setState(() {
+            _selectedRating = null;
             listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
-          }
-        });
-      },
-      items: buildRatingDropdownItems(),
-    )
+          });
+        },
+        icon: Icon(Icons.star),
+      ),
+      DropdownButton<int>(
+        value: _selectedRating,
+        onChanged: (int? newValue) {
+          setState(() {
+            _selectedRating = newValue;
+            // Apply rating filter
+            if (_selectedRating != null) {
+              listaPontosDeInteresseFiltrados = listaPontosDeInteresse
+                  .where((element) => element.avaliacao == _selectedRating)
+                  .toList();
+            } else {
+              listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
+            }
+          });
+        },
+        items: buildRatingDropdownItems(),
+      )
     ];
   }
 
@@ -172,8 +174,9 @@ class _PontosDeInteresseMainScreenState
       if (cat == 0) {
         listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
       } else {
-        listaPontosDeInteresseFiltrados =
-            listaPontosDeInteresse.where((element) => element.categoriaId == cat).toList();
+        listaPontosDeInteresseFiltrados = listaPontosDeInteresse
+            .where((element) => element.categoriaId == cat)
+            .toList();
       }
 
       if (listaPontosDeInteresseFiltrados.isEmpty) {
