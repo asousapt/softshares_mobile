@@ -31,7 +31,9 @@ class Pergunta {
       obrigatorio: json['obrigatorio'],
       min: json['min'],
       max: json['max'],
-      tamanho: json['tamanho'],
+      tamanho: (json['tamanho'] == null || json['tamanho'] == 0)
+          ? 60
+          : json['tamanho'],
       valoresPossiveis: List<String>.from(json['valoresPossiveis']),
       ordem: json['ordem'],
     );
