@@ -88,7 +88,7 @@ class _CriarEventoScreen extends State<CriarEventoScreen> {
     String util = prefs.getString("utilizadorObj") ?? "";
     Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
     utilizadorId = utilizador.utilizadorId;
-    poloId = utilizador.poloId;
+    poloId = prefs.getInt("poloId") ?? utilizador.poloId;
 
     setState(() {
       categorias = categoriasL;

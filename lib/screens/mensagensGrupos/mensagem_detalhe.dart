@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:softshares_mobile/Repositories/mensagem_repository.dart';
@@ -125,6 +126,16 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              // atualiza a lista de mensagens
+              actualizaDados();
+            },
+            icon:
+                const Icon(FontAwesomeIcons.arrowsRotate, color: Colors.black),
+          ),
+        ],
         elevation: 0,
         automaticallyImplyLeading: false,
         flexibleSpace: SafeArea(

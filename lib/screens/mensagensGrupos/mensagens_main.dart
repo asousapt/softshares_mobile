@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,7 +28,7 @@ class _MensagensMainScreenState extends State<MensagensMainScreen>
   Color containerColorMensagens = Colors.transparent;
   bool _isSearching = false;
   bool _isLoading = false;
-  late String idioama;
+  late String idioma;
   late int utilizadorId;
 
   Future<void> actualizaDados() async {
@@ -38,14 +37,14 @@ class _MensagensMainScreenState extends State<MensagensMainScreen>
     });
 
     final prefs = await SharedPreferences.getInstance();
-    var idioamal = prefs.getString('idioma') ?? 'pt';
+    var idiomaLocal = prefs.getString('idioma') ?? 'pt';
     String util = prefs.getString("utilizadorObj") ?? "";
     Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
-    int utilizadorIdl = utilizador.utilizadorId;
+    int utilizadorIdLocal = utilizador.utilizadorId;
 
     setState(() {
-      utilizadorId = utilizadorIdl;
-      idioama = idioamal;
+      utilizadorId = utilizadorIdLocal;
+      idioma = idiomaLocal;
     });
 
     // Carregar mensagens
@@ -109,6 +108,8 @@ class _MensagensMainScreenState extends State<MensagensMainScreen>
           onPressed: () {
             setState(() {
               _searchController.clear();
+              filtraPorTexto(
+                  ''); // Clear the filter when clearing the search field
             });
           },
         ),
@@ -120,18 +121,35 @@ class _MensagensMainScreenState extends State<MensagensMainScreen>
   void filtraPorTexto(String texto) {
     texto = texto.toLowerCase();
     setState(() {
-      listaEvFiltrada = mensagens.where((element) {
-        String mensagemlower = element.mensagemTexto.toLowerCase();
-        String nomelower = element.remetente!.getNomeCompleto().toLowerCase();
+      _isLoading = true;
+    });
 
-        return mensagemlower.contains(texto) || nomelower.contains(texto);
-      }).toList();
+    listaEvFiltrada = mensagens.where((element) {
+      String nomeDestlower =
+          element.destinatarioUtil!.getNomeCompleto().toLowerCase();
+      String nomeGrupo = element.destinatarioGrupo != null
+          ? element.destinatarioGrupo!.nome.toLowerCase()
+          : '';
+      String nomeRemetenteLower =
+          element.remetente!.getNomeCompleto().toLowerCase();
 
-      if (listaEvFiltrada.isEmpty) {
-        containerColorMensagens = Theme.of(context).canvasColor;
-      } else {
-        containerColorMensagens = Colors.transparent;
-      }
+      bool matchesNomeDestlower = nomeDestlower.contains(texto);
+      bool matchesNomeGrupo = nomeGrupo.contains(texto);
+      bool matchesNomeRemetenteLower = nomeRemetenteLower.contains(texto);
+
+      return matchesNomeDestlower ||
+          matchesNomeGrupo ||
+          matchesNomeRemetenteLower;
+    }).toList();
+
+    if (listaEvFiltrada.isEmpty) {
+      containerColorMensagens = Theme.of(context).canvasColor;
+    } else {
+      containerColorMensagens = Colors.transparent;
+    }
+
+    setState(() {
+      _isLoading = false;
     });
   }
 
@@ -143,6 +161,7 @@ class _MensagensMainScreenState extends State<MensagensMainScreen>
             _isSearching = !_isSearching;
             if (!_isSearching) {
               _searchController.clear();
+              filtraPorTexto(''); // Clear the filter when closing the search
             }
           });
         },
@@ -194,7 +213,7 @@ class _MensagensMainScreenState extends State<MensagensMainScreen>
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListView.builder(
-              itemCount: mensagens.length,
+              itemCount: listaEvFiltrada.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () async {
@@ -203,70 +222,99 @@ class _MensagensMainScreenState extends State<MensagensMainScreen>
                       context,
                       '/mensagem_detalhe',
                       arguments: {
-                        'mensagemId': mensagens[index].mensagemId,
-                        'nome': mensagens[index].destinatarioGrupo != null
-                            ? mensagens[index].destinatarioGrupo!.nome
-                            : mensagens[index].destinatarioUtil!.utilizadorId !=
+                        'mensagemId': listaEvFiltrada[index].mensagemId,
+                        'nome': listaEvFiltrada[index].destinatarioGrupo != null
+                            ? listaEvFiltrada[index].destinatarioGrupo!.nome
+                            : listaEvFiltrada[index]
+                                        .destinatarioUtil!
+                                        .utilizadorId !=
                                     utilizadorId
-                                ? mensagens[index]
+                                ? listaEvFiltrada[index]
                                     .destinatarioUtil!
                                     .getNomeCompleto()
-                                : mensagens[index].remetente!.getNomeCompleto(),
-                        'imagemUrl': mensagens[index].destinatarioGrupo != null
-                            ? mensagens[index]
+                                : listaEvFiltrada[index]
+                                    .remetente!
+                                    .getNomeCompleto(),
+                        'imagemUrl': listaEvFiltrada[index].destinatarioGrupo !=
+                                null
+                            ? listaEvFiltrada[index]
                                     .destinatarioGrupo!
                                     .fotoUrl1!
                                     .isNotEmpty
-                                ? mensagens[index].destinatarioGrupo!.fotoUrl1!
+                                ? listaEvFiltrada[index]
+                                    .destinatarioGrupo!
+                                    .fotoUrl1!
                                 : ''
-                            : mensagens[index].destinatarioUtil!.utilizadorId !=
+                            : listaEvFiltrada[index]
+                                        .destinatarioUtil!
+                                        .utilizadorId !=
                                     utilizadorId
-                                ? mensagens[index].destinatarioUtil!.fotoUrl ??
+                                ? listaEvFiltrada[index]
+                                        .destinatarioUtil!
+                                        .fotoUrl ??
                                     ''
-                                : mensagens[index].remetente!.fotoUrl ?? '',
-                        'msgGrupo': mensagens[index].destinatarioGrupo != null
-                            ? true
-                            : false,
-                        'grupoId': mensagens[index].destinatarioGrupo != null
-                            ? mensagens[index].destinatarioGrupo!.grupoId
-                            : 0,
-                        'utilizadorId': mensagens[index].destinatarioUtil !=
+                                : listaEvFiltrada[index].remetente!.fotoUrl ??
+                                    '',
+                        'msgGrupo':
+                            listaEvFiltrada[index].destinatarioGrupo != null
+                                ? true
+                                : false,
+                        'grupoId': listaEvFiltrada[index].destinatarioGrupo !=
                                 null
-                            ? mensagens[index].destinatarioUtil!.utilizadorId !=
-                                    utilizadorId
-                                ? mensagens[index]
-                                    .destinatarioUtil!
-                                    .utilizadorId
-                                : mensagens[index].remetente!.utilizadorId
+                            ? listaEvFiltrada[index].destinatarioGrupo!.grupoId
                             : 0,
+                        'utilizadorId':
+                            listaEvFiltrada[index].destinatarioUtil != null
+                                ? listaEvFiltrada[index]
+                                            .destinatarioUtil!
+                                            .utilizadorId !=
+                                        utilizadorId
+                                    ? listaEvFiltrada[index]
+                                        .destinatarioUtil!
+                                        .utilizadorId
+                                    : listaEvFiltrada[index]
+                                        .remetente!
+                                        .utilizadorId
+                                : 0,
                       },
                     );
                     // Refresh the data after coming back from the detail screen
                     actualizaDados();
                   },
                   child: MensagemItem(
-                    nome: mensagens[index].destinatarioGrupo != null
-                        ? mensagens[index].destinatarioGrupo!.nome
-                        : mensagens[index].destinatarioUtil!.utilizadorId !=
+                    nome: listaEvFiltrada[index].destinatarioGrupo != null
+                        ? listaEvFiltrada[index].destinatarioGrupo!.nome
+                        : listaEvFiltrada[index]
+                                    .destinatarioUtil!
+                                    .utilizadorId !=
                                 utilizadorId
-                            ? mensagens[index]
+                            ? listaEvFiltrada[index]
                                 .destinatarioUtil!
                                 .getNomeCompleto()
-                            : mensagens[index].remetente!.getNomeCompleto(),
-                    mensagemTexto: mensagens[index].mensagemTexto,
-                    imagemUrl: mensagens[index].destinatarioGrupo != null
-                        ? mensagens[index]
+                            : listaEvFiltrada[index]
+                                .remetente!
+                                .getNomeCompleto(),
+                    mensagemTexto: listaEvFiltrada[index].mensagemTexto,
+                    imagemUrl: listaEvFiltrada[index].destinatarioGrupo != null
+                        ? listaEvFiltrada[index]
                                 .destinatarioGrupo!
                                 .fotoUrl1!
                                 .isNotEmpty
-                            ? mensagens[index].destinatarioGrupo!.fotoUrl1!
+                            ? listaEvFiltrada[index]
+                                .destinatarioGrupo!
+                                .fotoUrl1!
                             : ''
-                        : mensagens[index].destinatarioUtil!.utilizadorId !=
+                        : listaEvFiltrada[index]
+                                    .destinatarioUtil!
+                                    .utilizadorId !=
                                 utilizadorId
-                            ? mensagens[index].destinatarioUtil!.fotoUrl ?? ''
-                            : mensagens[index].remetente!.fotoUrl ?? '',
-                    hora:
-                        dataFormatadaMsg(mensagens[index].dataEnvio!, idioama),
+                            ? listaEvFiltrada[index]
+                                    .destinatarioUtil!
+                                    .fotoUrl ??
+                                ''
+                            : listaEvFiltrada[index].remetente!.fotoUrl ?? '',
+                    hora: dataFormatadaMsg(
+                        listaEvFiltrada[index].dataEnvio!, idioma),
                   ),
                 );
               },
