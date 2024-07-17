@@ -79,7 +79,8 @@ class _PontosDeInteresseMainScreenState
       final prefs = await SharedPreferences.getInstance();
       int poloId = prefs.getInt("poloId")!;
       _isLoading = true;
-      final lista = await api.getRequest('pontoInteresse/aprovados?poloid=$poloId');
+      final lista =
+          await api.getRequest('pontoInteresse/aprovados?poloid=$poloId');
       final listaFormatted = lista['data'];
       if (listaFormatted is! List) {
         throw Exception("Failed to load data: Expected a list in 'data'");
@@ -155,7 +156,9 @@ class _PontosDeInteresseMainScreenState
             // Apply rating filter
             if (_selectedRating != null) {
               listaPontosDeInteresseFiltrados = listaPontosDeInteresse
-                  .where((element) => element.avaliacao == _selectedRating)
+                  .where((element) =>
+                      element.avaliacao! >= _selectedRating! &&
+                      element.avaliacao! < _selectedRating! + 1)
                   .toList();
             } else {
               listaPontosDeInteresseFiltrados = listaPontosDeInteresse;
@@ -262,14 +265,13 @@ class _PontosDeInteresseMainScreenState
               color: Theme.of(context).canvasColor,
             ))
           : listaPontosDeInteresseFiltrados.isEmpty
-              ? Container(
-                  height: altura * 0.8,
-                  color: containerColorPontosDeInteresse,
-                  child: Center(
-                    child: Column(
-                      children: [
-                        Text(AppLocalizations.of(context)!.naoHaDados),
-                      ],
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: altura * 0.8,
+                    color: Theme.of(context).canvasColor,
+                    child: Center(
+                      child: Text(AppLocalizations.of(context)!.naoHaDados),
                     ),
                   ),
                 )

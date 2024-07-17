@@ -66,8 +66,7 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
         mensagemId = widget.mensagemId;
       });
     }
-    print("o meu user id = $omeuUserId");
-    print("widget util = ${widget.utilizadorId}");
+
     // Ensure utilizadorId and grupoId are not null
     if (widget.utilizadorId == null) {
       throw Exception("Utilizador ID is null");
@@ -81,7 +80,6 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
       grupoId = widget.grupoId ?? 0;
     });
 
-    print("mensagemId: $mensagemId");
     if (mensagemId != 0) {
       setState(() {
         _isLoading = true;
@@ -374,10 +372,6 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
               color: Theme.of(context).canvasColor,
               child: Row(
                 children: <Widget>[
-                  /*FotoPicker(
-                    pickedImages: _selectedImages,
-                    onImagesPicked: _onImagesPicked,
-                  ), */
                   SizedBox(width: largura * 0.02),
                   Expanded(
                     child: TextField(
@@ -411,9 +405,12 @@ class _MensagemDetalheScreenState extends State<MensagemDetalheScreen> {
                             utilizadorEnvio = await utilizadorRepository
                                 .getUtilizador(utilizadorId.toString());
                           } else if (mensagens.isNotEmpty &&
-                              omeuUserId != utilizadorId) {
+                              omeuUserId != utilizadorId &&
+                              widget.msgGrupo == false) {
                             utilizadorEnvio = await utilizadorRepository
                                 .getUtilizador(utilizadorId.toString());
+                          } else if (widget.msgGrupo) {
+                            utilizadorEnvio = null;
                           } else {
                             utilizadorEnvio = await utilizadorRepository
                                 .getUtilizador(omeuUserId.toString());

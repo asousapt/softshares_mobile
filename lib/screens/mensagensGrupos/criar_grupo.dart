@@ -64,7 +64,7 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
     String util = prefs.getString("utilizadorObj") ?? "";
     Utilizador utilizador = Utilizador.fromJson(jsonDecode(util));
     utilizadorId = utilizador.utilizadorId;
-    poloId = utilizador.poloId;
+    poloId = prefs.getInt("poloId") ?? 1;
 
     setState(() {
       categorias = categoriasL;
@@ -92,7 +92,7 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
         _subCategoriaId = subcategorias![0].subcategoriaId.toString();
         editar = widget.editar;
         if (widget.editar && widget.existingGroup != null) {
-          GrupoRepository grupoRepository = GrupoRepository();
+          //GrupoRepository grupoRepository = GrupoRepository();
 
           _initializeFormWithExistingData();
         }
@@ -256,34 +256,35 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
                                     ],
                                   ),
                                   // Selecção de categoria
-                                  DropdownButtonFormField(
+                                  // Selecção de categoria
+                                  DropdownButtonFormField<String>(
                                     padding: const EdgeInsets.only(
                                         left: 10, right: 10),
                                     hint: Text(AppLocalizations.of(context)!
                                         .categoria),
                                     isExpanded: true,
-                                    value: _categoriaId.toString(),
-                                    items: categorias!.map((e) {
-                                      return DropdownMenuItem(
-                                        value: e.categoriaId.toString(),
-                                        child: Row(
-                                          children: [
-                                            e.getIcone(),
-                                            const SizedBox(width: 10),
-                                            Text(e.descricao),
-                                          ],
-                                        ),
-                                      );
-                                    }).toList(),
+                                    value: _categoriaId,
+                                    items: categorias?.map((e) {
+                                          return DropdownMenuItem<String>(
+                                            value: e.categoriaId.toString(),
+                                            child: Row(
+                                              children: [
+                                                e.getIcone(),
+                                                const SizedBox(width: 10),
+                                                Text(e.descricao),
+                                              ],
+                                            ),
+                                          );
+                                        }).toList() ??
+                                        [],
                                     onChanged: publico
                                         ? (value) {
                                             setState(() {
-                                              _categoriaId = value! as String;
-                                              _subCategoriaId = subcategorias!
-                                                  .where((e) =>
+                                              _categoriaId = value;
+                                              _subCategoriaId = subcategorias
+                                                  ?.where((e) =>
                                                       e.categoriaId ==
-                                                      int.parse(
-                                                          value as String))
+                                                      int.parse(value!))
                                                   .first
                                                   .subcategoriaId
                                                   .toString();
@@ -293,22 +294,22 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
                                   ),
                                   SizedBox(height: altura * 0.02),
                                   //selecção de subcategoria
-                                  DropdownButton(
+                                  DropdownButton<String>(
                                     padding: const EdgeInsets.only(
                                         left: 10, right: 10),
                                     borderRadius: BorderRadius.circular(20),
                                     hint: Text(AppLocalizations.of(context)!
                                         .subCategoria),
                                     isExpanded: true,
-                                    value: _subCategoriaId.toString(),
-                                    items: getListaSubCatDropdown(
-                                        subcategorias!,
-                                        int.parse(_categoriaId!)),
+                                    value: _subCategoriaId,
+                                    items: _categoriaId != null
+                                        ? getListaSubCatDropdown(subcategorias!,
+                                            int.parse(_categoriaId!))
+                                        : [],
                                     onChanged: publico
                                         ? (value) {
                                             setState(() {
-                                              _subCategoriaId =
-                                                  value! as String;
+                                              _subCategoriaId = value;
                                             });
                                           }
                                         : null,
@@ -480,7 +481,7 @@ class _CriarGrupoScreenState extends State<CriarGrupoScreen> {
                                               child: Text(
                                                 currentUser.getIniciais(),
                                                 style: TextStyle(
-                                                    color: Theme.of(context)!
+                                                    color: Theme.of(context)
                                                         .canvasColor),
                                               ),
                                             )

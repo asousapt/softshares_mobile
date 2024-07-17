@@ -17,7 +17,7 @@ Future<Imagem?> convertImageUrlToBase64(String imageUrl) async {
       final finalFileName = fileName.split('?').first;
 
       return Imagem(
-        nome: fileName,
+        nome: finalFileName,
         base64: base64Encode(bytes),
         tamanho: bytes.length,
       );

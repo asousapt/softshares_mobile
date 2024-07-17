@@ -270,6 +270,8 @@ class _TabPerfilState extends State<TabPerfil> with TickerProviderStateMixin {
                                                 subcatFav!
                                                     .add(subcat.subcategoriaId);
                                               }
+                                              widget.utilizador.preferencias =
+                                                  subcatFav;
                                             });
                                           },
                                           title: Text(subcat.descricao),

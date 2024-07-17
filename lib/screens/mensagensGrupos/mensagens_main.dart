@@ -182,8 +182,8 @@ class _MensagensMainScreenState extends State<MensagensMainScreen>
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).primaryColor,
-          onPressed: () {
-            Navigator.of(context).push(
+          onPressed: () async {
+            final refresh = await Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => NovaMensagem(
                   mensagens: mensagens,
@@ -218,7 +218,7 @@ class _MensagensMainScreenState extends State<MensagensMainScreen>
                 return GestureDetector(
                   onTap: () async {
                     // Navegar para a página de detalhes da mensagem e aguardar o resultado
-                    await Navigator.pushNamed(
+                    final result = await Navigator.pushNamed(
                       context,
                       '/mensagem_detalhe',
                       arguments: {
@@ -279,7 +279,9 @@ class _MensagensMainScreenState extends State<MensagensMainScreen>
                       },
                     );
                     // Refresh the data after coming back from the detail screen
-                    actualizaDados();
+                    if (result != null && result == true) {
+                      actualizaDados();
+                    }
                   },
                   child: MensagemItem(
                     nome: listaEvFiltrada[index].destinatarioGrupo != null

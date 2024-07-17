@@ -42,28 +42,36 @@ class PontoInteresseCard extends StatelessWidget {
                 },
               ),
             ),
-            FadeInImage(
-              fit: BoxFit.cover,
-              height: altura * 0.2,
-              width: double.infinity,
-              placeholder: const AssetImage("Images/Restaurante.jpg"),
-              image: pontoInteresse.imagens != null &&
-                      pontoInteresse.imagens!.isNotEmpty
-                  ? NetworkImage(pontoInteresse.imagens![0])
-                  : const AssetImage("Images/Restaurante.jpg") as ImageProvider,
-              imageErrorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: altura * 0.2,
-                  width: double.infinity,
-                  color: Colors.grey[200],
-                  child: const Icon(
-                    Icons.broken_image,
-                    color: Colors.grey,
-                    size: 50,
+            pontoInteresse.imagens != null && pontoInteresse.imagens!.isNotEmpty
+                ? FadeInImage(
+                    fit: BoxFit.cover,
+                    height: altura * 0.2,
+                    width: double.infinity,
+                    placeholder: MemoryImage(kTransparentImage),
+                    image: NetworkImage(pontoInteresse.imagens![0]),
+                    imageErrorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: altura * 0.2,
+                        width: double.infinity,
+                        color: Colors.grey[200],
+                        child: const Icon(
+                          Icons.broken_image,
+                          color: Colors.grey,
+                          size: 50,
+                        ),
+                      );
+                    },
+                  )
+                : Container(
+                    height: altura * 0.2,
+                    width: double.infinity,
+                    color: Colors.grey[200],
+                    child: const Icon(
+                      Icons.broken_image,
+                      color: Colors.grey,
+                      size: 50,
+                    ),
                   ),
-                );
-              },
-            ),
             Divider(),
             SizedBox(height: 8),
             Row(
